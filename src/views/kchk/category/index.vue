@@ -1,0 +1,385 @@
+<template>
+  <div class="main">
+    <xr-header
+      icon-class="iconfont icon-huopin-"
+      icon-color="#2362FB"
+      label="货品管理" >
+      <template v-slot:ft>
+        <el-button
+          class="main-table-header-button "
+          type="primary"
+          icon="el-icon-plus"
+          @click="addJurisdiction">新建</el-button>
+        <el-button
+          class="main-table-header-button "
+          type=""
+          icon="iconfont icon-xianxing-daoru"
+          @click="bulkImportClick">导入</el-button>
+        <el-button
+          class="main-table-header-button "
+          type=""
+          icon="iconfont icon-daochu1"
+          @click="downs">导出</el-button>
+        <el-button
+          :disabled="JSON.stringify(obj)=='{}'"
+          class="main-table-header-button "
+          type=""
+          icon="wk wk-delete"
+          @click="handleClick('delete')">删除</el-button>
+      </template>
+    </xr-header>
+    <div class="main-body">
+      <div class="main-table-header">
+        <el-input v-model="inputs" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入货品名称">
+          <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
+        </el-input>
+        <el-button
+
+          class="main-table-header-button xr-btn--orange  "
+          type="primary" @click="openwarn('branth')">批量预警设置</el-button>
+      </div>
+      <el-table
+        v-loading="loading"
+        id="examine-table"
+        :data="list"
+        :height="tableHeight"
+        class="main-table"
+        highlight-current-row
+
+        @row-click="handleRowClick">
+        <el-table-column
+          show-overflow-tooltip
+          type="index"
+          width="80"
+          label="序号">
+
+          <template slot-scope="{ row, column, $index}">
+            <span class="status-name">
+              <span
+                class="index"
+                style="text-align: center; display: block;"
+                @mouseenter="row.hover = true"
+                @mouseleave="row.hover = false"
+              >
+                <el-checkbox
+                  v-show="row.hover || row.checked"
+                  v-model="row.checked"
+                  @change="onItemCheckboxChange"
+                />
+                <span v-show="!row.hover && !row.checked" class="text">{{
+                  $index+1
+                }}</span>
+              </span>
+
+            </span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="name"
+          label="货品名称"/>
+        <el-table-column
+          show-overflow-tooltip
+          prop="brand"
+          label="品牌"/>
+
+        <el-table-column
+          prop="categoryName"
+          label="所属类目"
+          width="200"/>
+        <el-table-column
+          prop="size"
+          label="规格"
+          width="200"/>
+        <el-table-column
+          prop="unitName"
+          label="单位"
+          width="200"/>
+        <el-table-column
+          prop="ean13"
+          label="操作"
+          width="200">
+          <template slot-scope="{ row, column, $index}">
+            <span class="buttonc" @click.stop="openplan(row)">计划管理</span>
+            <span class="buttonc" @click.stop="openwarn(row)">预警管理</span>
+          </template>
+        </el-table-column>
+
+      </el-table>
+      <div class="p-contianer">
+        <el-pagination
+          :current-page="currentPage"
+          :total="total"
+          :page-size="pageSize"
+          :pager-count="5"
+          class="p-bar"
+          background
+          layout="total, prev, pager, next"
+          @current-change="handleCurrentChange"/>
+      </div>
+    </div>
+    <Dio :showing="jurisdictionCreateShow" :info="info" @change="getList"/>
+    <Warning :warningshowing="warningshow" :info="info" :ids="ids" @change="getList"/>
+    <Plan :planing="planing" :info="info" @change="getList"/>
+    <!-- 批量导入 -->
+    <bulk-import-user
+      :show="bulkImportShow"
+      url="/api/zjlab/GoodsInfo/Upload"
+      @close="bulkImportShow = false"
+      @success="handleCurrentChange(0)"
+    />
+  </div>
+</template>
+
+<script>
+import BulkImportUser from '../import.vue'
+import { downloadFileWithBuffer } from '@/utils'
+import {
+  GoodsInfoPage,
+  DeleteMany,
+  DownloadGoodsInfoExcel,
+  GetInfo
+} from '@/api/kchk/goods'
+import Dio from './comp/dio.vue'
+import Warning from './comp/warning.vue'
+import Plan from './comp/plan.vue'
+import XrHeader from '@/components/XrHeader'
+import CreateSections from '@/components/CreateSections'
+export default {
+  /** 系统管理 的 项目管理 */
+  name: 'SystemProject',
+  components: {
+    XrHeader,
+    CreateSections,
+    Dio,
+    Warning,
+    Plan,
+    BulkImportUser
+  },
+  mixins: [],
+  data() {
+    return {
+      // 批量导入
+      bulkImportShow: false,
+      planing: true,
+      warningshow: true,
+      jurisdictionCreateShow: false,
+      inputs: '',
+      loading: false, // 加载动画
+      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      list: [],
+      createAction: {
+        type: 'save'
+      },
+      currentPage: 0,
+      pageSize: 15,
+      total: 0,
+      obj: {},
+      info: {},
+      ids: []
+    }
+  },
+  computed: {},
+  mounted() {
+    var self = this
+    /** 控制table的高度 */
+    window.onresize = function() {
+      self.tableHeight = document.documentElement.clientHeight - 196
+    }
+    if (this.$route.query.add == '1') {
+      this.addJurisdiction()
+    }
+    this.getList()
+  },
+  methods: {
+    /**
+     * 批量导入
+     */
+    bulkImportClick(val) {
+      this.bulkImportShow = true
+    },
+    openplan(row) {
+      GetInfo(row.id).then(res => {
+        console.log(res)
+        this.info = res.goodsInfo
+        this.planing = !this.planing
+      })
+    },
+    openwarn(row) {
+      if (row == 'branth') {
+        if (!this.ids.length) {
+          this.$message.error('请勾选列表')
+          return
+        }
+        this.info = {}
+        this.warningshow = !this.warningshow
+      } else {
+        GetInfo(row.id).then(res => {
+          this.info = res.goodsInfo
+          this.warningshow = !this.warningshow
+        })
+      }
+    },
+    /*
+   * 当checkbox选择change时事件
+   */
+    onItemCheckboxChange() {
+      this.obj = {}
+      this.ids = this.list.filter((d) => d.checked).map(e => {
+        return e.id
+      })
+      this.list.filter((d) => d.checked).map(e => {
+        const key = e.id; const val = e.code
+        this.obj[key] = val
+        return { [key]: val }
+      })
+    },
+    /**
+     * 获取列表数据
+     */
+    getList() {
+      this.loading = true
+      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputs }
+      GoodsInfoPage(data)
+        .then(res => {
+          for (let i = 0; i < res.items.length; i++) {
+            res.items[i].hover = false
+            res.items[i].checked = false
+          }
+          this.list = res.items
+          this.total = res.totalCount
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+    /**
+     * 更改当前页数
+     * @param {*} val
+     */
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.getList()
+    },
+
+    /**
+     *  添加权限
+     */
+    addJurisdiction() {
+      this.info = {}
+      this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+    },
+
+    /** 列表操作 */
+    /**
+     * 当某一行被点击时会触发该事件
+     */
+    handleRowClick(row, column, event) {
+      if (column.label == '操作' || column.label == '序号') {
+        return
+      }
+      console.log(row, column, event)
+      GetInfo(row.id).then(res => {
+        console.log(res)
+        this.info = res
+        this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+      })
+    },
+    handleClick1(type, scope) {
+      this.createAction = {
+        type: 'update',
+        data: scope.row
+      }
+      this.dbsyShow = true
+    },
+    /**
+     * 编辑删除
+     */
+    handleClick(type) {
+      if (type === 'delete') {
+        // 启用停用
+        this.$confirm('您确定要删除吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            DeleteMany(this.obj)
+              .then(res => {
+                this.$message({
+                  type: 'success',
+                  message: '操作成功'
+                })
+                this.getList()
+              })
+              .catch(() => {})
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            })
+          })
+      }
+    },
+    /**
+     * 导出
+     */
+    downs() {
+      DownloadGoodsInfoExcel({ maxResultCount: 1000, skipCount: 0 }).then(res => {
+        const blob = new Blob([res], {
+          type: ''
+        })
+        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+      })
+    }
+  }
+}
+</script>
+
+<style>
+.wk{
+     margin-right: 5px;
+}</style>
+<style lang="scss" scoped>
+
+.main {
+  height:100%;
+
+  /deep/ .xr-header {
+    padding: 15px 30px;
+  }
+}
+
+.main-body {
+      // height: calc(100% - 61px);
+  background-color: white;
+  border-top: 1px solid $xr-border-line-color;
+  border-bottom: 1px solid $xr-border-line-color;
+}
+// .main-table{
+//       height: calc(100% - 90px ) !important;
+// }
+.main-table-header {
+  height: 50px;
+  background-color: white;
+  position: relative;
+  .main-table-header-button {
+    float: right;
+    margin-right: 20px;
+    margin-top: 10px;
+  }
+}
+
+.project-reminder {
+  width: auto;
+  float: left;
+  margin-left: 20px;
+  margin-top: 10px;
+}
+@import '../styles/table.scss';
+.buttonc{
+  color:#4f81fc
+}
+</style>
