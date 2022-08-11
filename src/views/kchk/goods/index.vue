@@ -142,7 +142,6 @@ export default {
   methods: {
     formChange(item, index, value) {
       if (index == 'dutyUserName') {
-        debugger
         this.aoiinfo.dutyUserId = item.id
         this.aoiinfo.dutyUserName = item.name
       }
@@ -257,7 +256,6 @@ export default {
      * 选择部门
      */
     changeDepClick(data) {
-      debugger
       this.aoiinfo = data || {}
       // this.structureValue = data.id
     },
@@ -279,8 +277,6 @@ export default {
           this.loading = true
           Delete({ id: data.id })
             .then(res => {
-              debugger
-
               this.$message.success('删除成功')
               const parent = node.parent
               console.log(parent, 'parent')

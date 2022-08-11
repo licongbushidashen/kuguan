@@ -44,7 +44,7 @@
                 </div>
                 <el-button
                   :disabled="roleList.length === 0" size="medium" class="xr-btn--orange" type="primary"
-                  @click="addEmployees"> 关联员工 </el-button>
+                  @click="addEmployees"> 关联用户 </el-button>
               </flexbox>
               <el-table :data="tableData" :height="tableHeight" style="width: 100%">
                 <el-table-column v-for="(item, index) in tableList" :prop="item.field" :label="item.label" :key="index" show-overflow-tooltip />
@@ -65,10 +65,26 @@
           </el-tab-pane>
           <el-tab-pane label="角色权限" name="rule"><!-- v-if="roleActive && showRuleSet" -->
             <!-- 权限管理 -->
+
             <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box">
               <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
+              <div v-for="(item,index) in allrole" :key="index">
+                <el-checkbox :indeterminate="item.indeterminate" v-model="item.isGranted" @change="handleCheckAllChange(item,index)">{{ item.displayName }}</el-checkbox>
+                <br>
+                <div v-for="(item1, index1) in item.permissions" :key="index1" style="margin-left:20px">
+                  <el-checkbox :indeterminate="item1.indeterminate" v-model="item1.isGranted" @change="handleCheckAllChange1(item1,index,index1)">{{ item1.displayName }}</el-checkbox>
 
+                  <div style="margin-left:40px">
+                    <el-checkbox v-for="(item2 ,index2) in item1.permissions" :key="index2" v-model="item2.isGranted" >{{ item2.displayName }}</el-checkbox>
+                  </div>
+
+                </div>
+                <!-- <el-checkbox-group v-model="item.permissions.checkedCities" @change="handleCheckedCitiesChange"> -->
+
+                <!-- </el-checkbox-group> -->
+              </div>
             </div>
+
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -85,12 +101,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
-
   roleCopyAPI,
 
-  unbindingUserAPI
-
+  unbindingUserAPI,
+  permissions
 } from '@/api/admin/role'
 
 import RelateEmpoyee from './components/RelateEmpoyee'
@@ -144,8 +160,8 @@ export default {
       total: 0,
       tableList: [
         { label: '姓名', field: 'name' },
-        { label: '部门', field: 'mainOrganizationUnitName' },
-        { label: '职位', field: 'post' }
+        { label: '账号', field: 'userName' },
+        { label: '角色', field: 'post' }
       ],
       // 新建角色
       newRoleVisible: false,
@@ -194,11 +210,13 @@ export default {
       treeRadio: [false, false],
       crumbsList: [],
       currentCrumbs: {},
-      checkList: [] // 自定义选择
+      checkList: [], // 自定义选择,
+      allrole: [] // 按钮权限
     }
   },
 
   computed: {
+    ...mapGetters(['wylanguage']),
     roleId() {
       if (this.roleActive) {
         return this.roleActive.roleId
@@ -247,6 +265,44 @@ export default {
   },
 
   methods: {
+    handleCheckAllChange(val, index) {
+      debugger
+      const flag = val.isGranted
+      this.allrole[index].indeterminate = false
+      debugger
+      for (let i = 0; i < this.allrole[index].permissions.length; i++) { // 第一层全选反选
+        this.allrole[index].permissions[i].isGranted = flag
+        for (let j = 0; j < this.allrole[index].permissions[i].permissions.length; j++) { // 第二层全选反选
+          this.allrole[index].permissions[i].permissions[j].isGranted = flag
+        }
+      }
+    },
+    handleCheckAllChange1(val, index, index1) {
+      const flag = val.isGranted
+      let num = 0
+      debugger
+      this.allrole[index].permissions[index1].indeterminate = false
+      for (let i = 0; i < this.allrole[index].permissions.length; i++) { // 第一层全选反选
+        if (this.allrole[index].permissions[i].isGranted == false) {
+          num++
+          this.allrole[index].indeterminate = true
+        }
+        for (let j = 0; j < this.allrole[index].permissions[index1].permissions.length; j++) { // 第二层全选反选
+          this.allrole[index].permissions[index1].permissions[j].isGranted = flag
+        }
+      }
+      debugger
+      if (num == this.allrole[index].permissions.length) {
+        this.allrole[index].indeterminate = false
+        this.allrole[index].isGranted = false
+      } else if (num == 0) {
+        this.allrole[index].indeterminate = false
+        this.allrole[index].isGranted = true
+      }
+    },
+    handleCheckedCitiesChange(value) {
+
+    },
     // 获取角色管理左边栏列表
     identityRoles() {
       this.roleMenuLoading = true
@@ -255,6 +311,7 @@ export default {
         this.roleActive = res.items[0]
         this.roleMenuLoading = false
         this.getUserList()
+        this.permissionsRole()
         this.getRoleOrganization()
       }).catch(() => {
         this.roleMenuLoading = false
@@ -366,6 +423,28 @@ export default {
       this.roleActive = val
       this.getUserList()
       this.getRoleOrganization()
+      this.permissionsRole()
+    },
+    permissionsRole() {
+      permissions(`?providerName=R&providerKey=${this.roleActive.id}`).then(res => {
+        for (let i = 0; i < res.groups.length; i++) {
+          const data = res.groups[i]
+          debugger
+          const arr = []
+          for (let j = 0; j < data.permissions.length; j++) {
+            const add = data.permissions[j]
+            if (!add.parentName) {
+              add.permissions = []
+              arr.push(add)
+            } else {
+              arr[arr.length - 1].permissions.push(add)
+            }
+          }
+          res.groups[i].permissions = arr
+        }
+        console.log(res.groups)
+        this.allrole = res.groups
+      })
     },
     /**
        * 员工列表
@@ -388,7 +467,7 @@ export default {
         id: this.roleActive.id
       }).then(res => {
         this.tableData = res.items
-        // this.total = res.data.totalRow
+        this.total = res.totalCount
         this.userLoading = false
       })
         .catch(() => {

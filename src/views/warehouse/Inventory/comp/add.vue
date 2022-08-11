@@ -96,7 +96,6 @@ export default {
       })
     },
     saveClick(data) {
-      debugger
       if (!data) return
       // this.aoiinfo.dutyUserId = '3fa85f64-5717-4562-b3fc-2c963f66afa6'
       this.aoiinfo.startTime = this.aoiinfo.startTime + ' 00:00:00'
@@ -118,7 +117,6 @@ export default {
       }
     },
     formChange(id, type) {
-      debugger
       if (type == 'wareHouseId') {
         this.aoiinfo.wareHouseId = id.id
         // this.aoiinfo.wareHouseName = id.name

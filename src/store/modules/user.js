@@ -22,10 +22,14 @@ const user = {
     manage: {}, // 管理后台
     oa: {}, // 办公
     project: {}, // 项目管理
-    hrm: {} // 人力资源
+    hrm: {}, // 人力资源
+    wylanguage: {}
   },
 
   mutations: {
+    SET_language: (state, data) => {
+      state.wylanguage = data
+    },
     SET_USERINFO: (state, userInfo) => {
       state.userInfo = userInfo
       localStorage.setItem('loginUserInfo', JSON.stringify(userInfo))
@@ -93,6 +97,7 @@ const user = {
             const data = response
             Lockr.set('authList', data)
             data.wkFirstModel = data.firstModel
+            commit('SET_language', data.localization.values.Module)
             commit('SET_ALLAUTH', data)
             commit('SET_CRM', data.crm)
             commit('SET_BI', data.bi)

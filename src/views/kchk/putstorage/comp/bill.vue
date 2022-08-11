@@ -235,7 +235,7 @@
               <div v-if="!butoom1">
                 {{ scope.row.unitPrice }}
               </div>
-              <el-input v-else v-model="scope.row.unitPrice" oninput="value=value.replace(/^\d+(\.\d{0,2})?$/,'')" @change="totalNum(scope.$index)"/>
+              <el-input v-else v-model="scope.row.unitPrice" oninput="value=value.replace(/[^\d+(\.\d{0,2})]/,'')" @change="totalNum(scope.$index)"/>
             </template>
           </el-table-column>
 
@@ -679,7 +679,8 @@ export default{
           remark: this.objs.remark,
           identification: 0,
           companyId: this.objs.wldwId,
-          flag: val
+          flag: val,
+          goodsCategoryDutyUserId: this.objs.dutyUserId
         },
         detaiList: arr,
         attachmentList: this.fileList.map(e => e.id)

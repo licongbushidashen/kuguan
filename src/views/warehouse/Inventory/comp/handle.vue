@@ -139,7 +139,6 @@ export default {
     },
 
     saveClick(data) {
-      debugger
       if (!data) return
       if (this.aoiinfo.id) {
         Update(this.aoiinfo).then(res => {

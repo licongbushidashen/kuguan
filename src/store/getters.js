@@ -44,7 +44,7 @@ const getters = {
   oa: state => state.user.oa,
   project: state => state.user.project,
   hrm: state => state.user.hrm,
-
+  wylanguage: state => state.user.wylanguage,
   // 路由
   addRouters: state => state.permission.addRouters,
   crmRouters: state => state.permission.crmRouters,

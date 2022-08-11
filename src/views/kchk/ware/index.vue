@@ -257,10 +257,22 @@ export default {
           .then(() => {
             DeleteMany(this.obj)
               .then(res => {
-                this.$message({
-                  type: 'success',
-                  message: '操作成功'
+                const arr = res.data.failMsg.map(e => {
+                  return e + '<br/>'
                 })
+                if (!res.data.failCount) {
+                  this.$message({
+                    type: 'success',
+                    dangerouslyUseHTMLString: true,
+                    message: `删除成功${res.data.successCount}条`
+                  })
+                } else {
+                  this.$message({
+                    type: 'error',
+                    dangerouslyUseHTMLString: true,
+                    message: `删除成功${res.data.successCount}条，删除失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
+                  })
+                }
                 this.getList()
               })
               .catch(() => {})

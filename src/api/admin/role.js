@@ -15,6 +15,17 @@ import request from '@/utils/request'
 //     data: data
 //   })
 // }
+export function permissions(data) {
+  return request({
+    url: `api/permission-management/permissions${data}`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
 
 export function roleAddAPI(data) {
   return request({

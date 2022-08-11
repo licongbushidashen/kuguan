@@ -83,6 +83,7 @@ service.interceptors.request.use(
         config.baseURL = https
       }
     } else {
+      config.headers['accept-language'] = 'zh-Hans'
       if (config.url == '/connect/token') {
         config.baseURL = '/file1'
       } else if (config.url.indexOf('/api/identity/') != -1) {

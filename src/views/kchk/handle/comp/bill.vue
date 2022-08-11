@@ -737,7 +737,8 @@ export default{
           remark: this.objs.remark,
           identification: this.objs.identification,
           companyId: this.objs.wldwId,
-          flag: val
+          flag: val,
+          goodsCategoryDutyUserId: this.objs.dutyUserId
         },
         detaiList: arr,
         attachmentList: this.fileList.map(e => e.id)

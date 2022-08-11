@@ -4,7 +4,7 @@
     :visible="visible"
     :append-to-body="true"
     :close-on-click-modal="false"
-    title="关联员工"
+    title="关联用户"
     width="600px"
     @close="handleCancel">
     <div class="handle-box">
@@ -13,7 +13,7 @@
         align="stretch">
         <div
           class="handle-item-name"
-          style="margin-top: 8px;">选择员工：</div>
+          style="margin-top: 8px;">选择用户：</div>
         <wk-user-select
           :radio="false"
           v-model="selectUsers"
@@ -36,13 +36,13 @@
 <script>
 import { adminRoleRelatedUserAPI } from '@/api/admin/role'
 // import WkUserSelect from '../../amt/components/WkUserSelect.vue'
-// import WkUserSelect from '@/components/NewCom/WkUserSelect'
+import WkUserSelect from '@/components/NewCom/WkUserSelect'
 
 export default {
   /** 关联员工*/
   name: 'RelateEmpoyee',
   components: {
-    // WkUserSelect
+    WkUserSelect
   },
   mixins: [],
   props: {
@@ -82,7 +82,7 @@ export default {
      */
     handleConfirm() {
       if (this.selectUsers.length == 0) {
-        this.$message.error('请选择员工')
+        this.$message.error('请选择用户')
       } else {
         adminRoleRelatedUserAPI({
           userIds: this.selectUsers,

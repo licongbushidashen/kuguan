@@ -257,7 +257,6 @@ export default {
       handler() {
         this.$nextTick(() => {
           if (this.fieldFrom.categoryId) {
-            debugger
             const categoryId = this.fieldFrom.categoryId
             this.$refs.treeVerNew[0].setCheckedKeys([categoryId])
             const data = this.$refs.treeVerNew[0].getCheckedNodes()[0] || {}
@@ -330,7 +329,6 @@ export default {
     },
     typevalu(row) {
       if (this.urlname == 'dutyUserName') {
-        debugger
         this.fieldFrom['dutyUserName'] = row.name
         this.commonChange(row, 'dutyUserName')
       } else {

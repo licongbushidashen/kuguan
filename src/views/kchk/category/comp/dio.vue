@@ -8,7 +8,7 @@
         type="primary"
         icon="el-icon-plus" @click="addpush">新建</el-button>
       <el-button
-        icon="el-icon-plus" style="margin-bottom:20px">删除</el-button>
+        icon="el-icon-plus" style="margin-bottom:20px" @click="dellist">删除</el-button>
       <el-table
         ref="multipleTable"
         :data="list"
@@ -157,6 +157,8 @@ export default {
   watch: {
     showing: {
       handler(val) {
+        this.isDefault = false
+        this.mining = false
         this.showDialog = !this.showDialog
         if (this.info.goodsInfo) {
           this.aoiinfo = JSON.parse(JSON.stringify(this.info.goodsInfo))
@@ -236,6 +238,16 @@ export default {
     },
     addpush() {
       this.list.push({ hover: false, checked: false, isMin: 0, isDefault: 0 })
+    },
+    dellist() {
+      const arr = []
+      this.list.forEach((e) => {
+        if (!e.checked) {
+          arr.push(e)
+        }
+      })
+      this.list = arr
+      console.log(arr)
     },
     /*
    * 当checkbox选择change时事件
