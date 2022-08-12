@@ -10,6 +10,7 @@
         <div class="system-nav__title">
           类目管理
           <el-button
+            v-if="allAuth['SystemSetting.GoodsCategorys.Create']"
             type="text"
             icon="el-icon-circle-plus"
             style="margin: 0px;    padding: 0px;    float: right;"
@@ -42,8 +43,10 @@
                     {{ data.name }}
                   </div>
                   <div class="node-label-set">
-                    <i class="el-icon-plus" @click.stop="appendStruc(data)" />
+
+                    <i v-if="allAuth['SystemSetting.GoodsCategorys.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" />
                     <i
+                      v-if="allAuth['SystemSetting.GoodsCategorys.Delete']"
                       class="el-icon-delete"
                       @click.stop="deleteStruc(node,data)"
                     />
@@ -66,6 +69,7 @@
           <div>
             <template>
               <el-button
+                v-if="allAuth['SystemSetting.GoodsCategorys.Create'] ||allAuth['SystemSetting.GoodsCategorys.Edit']"
                 type="primary"
                 @click="savechange"
               >保存</el-button
@@ -86,6 +90,7 @@
 </template>
 
 <script>
+
 import { objDeepCopy } from '@/utils'
 import {
   GetGoodsCategoryTree,
@@ -97,6 +102,7 @@ import CreateSections from '@/components/CreateSections'
 import XrHeader from '@/components/XrHeader'
 import mtForm from '@/components/mtForm/index'
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
+import { mapGetters } from 'vuex'
 export default {
   /** 系统管理 的 员工部门管理 */
   name: 'EmployeeDep',
@@ -128,7 +134,9 @@ export default {
       fzrId: ''
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['allAuth'])
+  },
   mounted() {
     var self = this
     /** 控制table的高度 */

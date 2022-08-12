@@ -6,7 +6,7 @@ const layout = function(meta = {}, path = '/kchk', requiresAuth = true) {
     path: path,
     component: Layout,
     meta: {
-      // requiresAuth: requiresAuth,
+      requiresAuth: requiresAuth,
       ...meta
     }
   }
@@ -20,7 +20,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: '通讯录管理',
+      title: 'SystemSetting.GoodsCategorys',
       icon: 's-seas'
     },
     children: [
@@ -42,7 +42,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: '通讯录管理',
+      title: 'SystemSetting.GoodsInfos',
       icon: 's-seas'
     },
     children: [
@@ -62,7 +62,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: '通讯录管理',
+      title: 'SystemSetting.Warehouses',
       icon: 's-seas'
     },
     children: [
@@ -82,7 +82,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: '通讯录管理',
+      title: 'SystemSetting.Companys',
       icon: 's-seas'
     },
     children: [
@@ -102,7 +102,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: '通讯录管理',
+      title: 'OrderSetting.Orders',
       icon: 's-seas'
     },
     children: [
@@ -122,7 +122,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: '通讯录管理',
+      title: 'OrderSetting.Orders',
       icon: 's-seas'
     },
     children: [

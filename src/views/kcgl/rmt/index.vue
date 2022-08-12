@@ -66,22 +66,36 @@
           <el-tab-pane label="角色权限" name="rule"><!-- v-if="roleActive && showRuleSet" -->
             <!-- 权限管理 -->
 
-            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box">
-              <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
-              <div v-for="(item,index) in allrole" :key="index">
-                <el-checkbox :indeterminate="item.indeterminate" v-model="item.isGranted" @change="handleCheckAllChange(item,index)">{{ item.displayName }}</el-checkbox>
-                <br>
-                <div v-for="(item1, index1) in item.permissions" :key="index1" style="margin-left:20px">
-                  <el-checkbox :indeterminate="item1.indeterminate" v-model="item1.isGranted" @change="handleCheckAllChange1(item1,index,index1)">{{ item1.displayName }}</el-checkbox>
+            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box" style="padding-left:17px;overflow-y: scroll;">
 
-                  <div style="margin-left:40px">
-                    <el-checkbox v-for="(item2 ,index2) in item1.permissions" :key="index2" v-model="item2.isGranted" >{{ item2.displayName }}</el-checkbox>
+              <div style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;x">
+                <span :class="quanxian==1?'active':''" class="quanxian" @click="quanxian=1">功能权限</span>
+                <span :class="quanxian==2?'active':''" class="quanxian" @click="quanxian=2">数据权限</span>
+                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
+              </div>
+              <div v-if="quanxian==1" style="margin-left:20px">
+                <div v-for="(item,index) in allrole" :key="index" style="margin-top:5px">
+                  <el-checkbox :indeterminate="item.indeterminate" v-model="item.isGranted" @change="handleCheckAllChange(item,index)">{{ item.displayName }}</el-checkbox>
+                  <br style="margin-bottom:20px;margin-top:20px">
+                  <div v-for="(item1, index1) in item.permissions" :key="index1" style="margin-left:20px;margin-top:5px">
+                    <el-checkbox :indeterminate="item1.indeterminate" v-model="item1.isGranted" @change="handleCheckAllChange1(item1,index,index1)">{{ item1.displayName }}</el-checkbox>
+
+                    <div style="margin-left:40px;margin-top:5px">
+                      <el-checkbox v-for="(item2 ,index2) in item1.permissions" :key="index2" v-model="item2.isGranted" @change="handleCheckAllChange2(item2,index,index1,index2)" >{{ item2.displayName }}</el-checkbox>
+                    </div>
+
                   </div>
-
                 </div>
-                <!-- <el-checkbox-group v-model="item.permissions.checkedCities" @change="handleCheckedCitiesChange"> -->
-
-                <!-- </el-checkbox-group> -->
+              </div>
+              <div v-show="quanxian==2">
+                <el-tree
+                  ref="tree"
+                  :data="data"
+                  :props="defaultProps"
+                  show-checkbox
+                  default-expand-all
+                  node-key="id"
+                  highlight-current/>
               </div>
             </div>
 
@@ -90,7 +104,8 @@
       </div>
     </div>
     <!-- 关联员工 -->
-    <relate-empoyee :visible.sync="relateEmpoyeeShow" :role-id="roleId" :show-dep-data="showDepData" @save="employeesSave" />
+    <!-- <relate-empoyee :visible.sync="relateEmpoyeeShow" :role-id="roleId" :show-dep-data="showDepData" @save="employeesSave" /> -->
+    <Type :placeholder="placeholder" :typeling="typeling" :url="url" :name="name" @change="typevalu"/>
     <!-- 字段授权 -->
     <field-set-dialog :visible.sync="setFieldShow" :role-id="roleId" :label="setFieldLabel" />
     <!-- 角色编辑 -->
@@ -106,16 +121,17 @@ import {
   roleCopyAPI,
 
   unbindingUserAPI,
-  permissions
+  permissions,
+  updatapermissions
 } from '@/api/admin/role'
-
+import { GetTree, GetGoodsCategoryIds, EditDataPerMission } from '@/api/kchk/goods'
 import RelateEmpoyee from './components/RelateEmpoyee'
 import FieldSetDialog from './components/FieldSetDialog'
 import RoleRangeSetDialog from './components/RoleRangeSetDialog'
 import Reminder from '@/components/Reminder'
 import XrHeader from '@/components/XrHeader'
 // import EditRoleDialog from '../amt/components/EditRoleDialog'
-
+import Type from './components/type.vue'
 import crmTypeModel from '@/views/crm/model/crmTypeModel'
 import {
   objDeepCopy
@@ -127,7 +143,6 @@ import {
   putIdentityRoles,
   deteleIdentityRoles,
   getRoleUsers,
-  putOrganizationUnits,
   getRoleOrganization
 } from '@/api/admin/rmt'
 import {
@@ -142,18 +157,30 @@ export default {
     FieldSetDialog,
     RoleRangeSetDialog,
     Reminder,
-    XrHeader
+    XrHeader,
+    Type
     // EditRoleDialog
   },
 
   data() {
     return {
+      placeholder: '',
+      typeling: false,
+      url: '',
+      name: '',
+      data: [],
+      defaultProps: {
+        label: 'name',
+        children: 'childen',
+        isLeaf: 'hasChild'
+      },
+      quanxian: 1,
       pid: '',
       title: '',
       searchInput: '',
       tableData: [], // 与角色关联的员工
       tableHeight: document.documentElement.clientHeight - 305, // 表的高度
-      treeHeight: document.documentElement.clientHeight - 210, // 表的3度
+      treeHeight: document.documentElement.clientHeight - 240, // 表的3度
       currentPage: 1,
       pageSize: 15,
       pageSizes: [15, 30, 45, 60],
@@ -172,10 +199,10 @@ export default {
       // 权限管理
       ruleMenuIndex: 'data', // 默认模块 工作台
       ruleMenuList: [],
-      defaultProps: {
-        children: 'childMenu',
-        label: 'menuName'
-      },
+      // defaultProps: {
+      //   children: 'childMenu',
+      //   label: 'menuName'
+      // },
       relateEmpoyeeShow: false,
       // 选中的角色
       roleActive: null,
@@ -210,13 +237,14 @@ export default {
       treeRadio: [false, false],
       crumbsList: [],
       currentCrumbs: {},
-      checkList: [], // 自定义选择,
-      allrole: [] // 按钮权限
+      checkList: [], // 自定义选择
+      allrole: [], // 按钮权限
+      nowrole: []
     }
   },
 
   computed: {
-    ...mapGetters(['wylanguage']),
+    ...mapGetters(['allAuth']),
     roleId() {
       if (this.roleActive) {
         return this.roleActive.roleId
@@ -255,49 +283,156 @@ export default {
 
   mounted() {
     /** 控制table的高度 */
+    this.nowrole = []
     window.onresize = () => {
       this.tableHeight = document.documentElement.clientHeight - 305
       this.treeHeight = document.documentElement.clientHeight - 210
     }
+    this.GetTree()
     this.getRoleList()
     this.identityRoles()
     this.organizationUnitsRootNode()
   },
 
   methods: {
+    typevalu() {
+
+    },
+    GetTree() {
+      GetTree().then(res => {
+        this.data = res
+      })
+    },
+    setCheckedKeys() {
+      this.$refs.tree.getNode(3).indeterminate = true
+      // this.$refs.tree.setChecked(3, true, false)
+    },
+    checkedarr(val) {
+      if (this.nowrole.length == 0) {
+        this.nowrole = val
+      } else {
+        const arr = [...val, ...this.nowrole]
+        const res = new Map()
+        arr.filter((item) => !res.has(item.name) && res.set(item.name, item.isGranted))
+        const obj = []
+        for (const [k, v] of res) {
+          obj.push({ name: k, isGranted: v })
+        }
+        console.log()
+        this.nowrole = obj
+      }
+    },
     handleCheckAllChange(val, index) {
-      debugger
       const flag = val.isGranted
       this.allrole[index].indeterminate = false
-      debugger
+      const arr = []
       for (let i = 0; i < this.allrole[index].permissions.length; i++) { // 第一层全选反选
         this.allrole[index].permissions[i].isGranted = flag
+        arr.push({ name: this.allrole[index].permissions[i].name, isGranted: this.allrole[index].permissions[i].isGranted })
         for (let j = 0; j < this.allrole[index].permissions[i].permissions.length; j++) { // 第二层全选反选
           this.allrole[index].permissions[i].permissions[j].isGranted = flag
+          arr.push({ name: this.allrole[index].permissions[i].permissions[j].name, isGranted: this.allrole[index].permissions[i].permissions[j].isGranted })
         }
       }
+      this.checkedarr(arr)
     },
     handleCheckAllChange1(val, index, index1) {
       const flag = val.isGranted
+      const arr = []
       let num = 0
-      debugger
       this.allrole[index].permissions[index1].indeterminate = false
       for (let i = 0; i < this.allrole[index].permissions.length; i++) { // 第一层全选反选
         if (this.allrole[index].permissions[i].isGranted == false) {
           num++
           this.allrole[index].indeterminate = true
         }
+        debugger
         for (let j = 0; j < this.allrole[index].permissions[index1].permissions.length; j++) { // 第二层全选反选
+          arr.push({ name: this.allrole[index].permissions[index1].permissions[j].name, isGranted: flag })
           this.allrole[index].permissions[index1].permissions[j].isGranted = flag
         }
       }
-      debugger
       if (num == this.allrole[index].permissions.length) {
         this.allrole[index].indeterminate = false
         this.allrole[index].isGranted = false
       } else if (num == 0) {
         this.allrole[index].indeterminate = false
         this.allrole[index].isGranted = true
+      }
+      this.checkedarr(arr)
+    },
+    handleCheckAllChange2(val, index, index1, index2) {
+      let tickCount = 0
+      let unTickCount = 0
+      const arr = [{ name: val.name, isGranted: val.isGranted }]
+      const len = this.allrole[index].permissions[index1].permissions.length
+      for (let j = 0; j < this.allrole[index].permissions[index1].permissions.length; j++) { // 第二层全选反选
+        if (this.allrole[index].permissions[index1].permissions[j].isGranted)tickCount++
+        if (!this.allrole[index].permissions[index1].permissions[j].isGranted)unTickCount++
+      }
+      if (len == tickCount) {
+        this.allrole[index].permissions[index1].indeterminate = false
+        this.allrole[index].permissions[index1].isGranted = true
+        arr.push({ name: this.allrole[index].permissions[index1].name, isGranted: this.allrole[index].permissions[index1].isGranted })
+      } else if (len == unTickCount) {
+        this.allrole[index].permissions[index1].indeterminate = false
+        this.allrole[index].permissions[index1].isGranted = false
+        arr.push({ name: this.allrole[index].permissions[index1].name, isGranted: this.allrole[index].permissions[index1].isGranted })
+      } else {
+        this.allrole[index].permissions[index1].indeterminate = true
+        this.allrole[index].permissions[index1].isGranted = true
+        arr.push({ name: this.allrole[index].permissions[index1].name, isGranted: this.allrole[index].permissions[index1].isGranted })
+      }
+      let tickCount1 = 0
+      let unTickCount1 = 0
+
+      const len1 = this.allrole[index].permissions.length
+      for (let i = 0; i < len1; i++) {
+        if (this.allrole[index].permissions[i].isGranted)tickCount1++
+        if (!this.allrole[index].permissions[i].indeterminate)unTickCount1++
+      }
+      if (len1 == tickCount1) {
+        this.allrole[index].indeterminate = false
+        this.allrole[index].isGranted = true
+      } else if (len1 == unTickCount1) {
+        this.allrole[index].indeterminate = false
+        this.allrole[index].isGranted = false
+      } else {
+        this.allrole[index].indeterminate = true
+        this.allrole[index].isGranted = true
+      }
+      this.checkedarr(arr)
+    },
+    handleCheckAllChange4() {
+      for (let i = 0; i < this.allrole.length; i++) {
+        for (let j = 0; j < this.allrole[i].permissions.length; j++) { // 第二层全选反选
+          if (this.allrole[i].permissions[j].permissions.length > 0) {
+            const obj = this.GrantedArray(this.allrole[i].permissions[j].permissions)
+            this.allrole[i].permissions[j] = { ...this.allrole[i].permissions[j], ...obj }
+          }
+        }
+        const obj = this.GrantedArray(this.allrole[i].permissions, 1)
+        this.allrole[i] = { ...this.allrole[i], ...obj }
+      }
+    },
+    GrantedArray(arr, index) {
+      let tickCount = 0
+      let unTickCount = 0
+      const len = arr.length
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i].isGranted)tickCount++
+        if (!arr[i].isGranted)unTickCount++
+      }
+      if (len == tickCount) {
+        return { indeterminate: false, isGranted: true }
+      } else if (len == unTickCount) {
+        return { indeterminate: false, isGranted: false }
+      } else {
+        if (index == 1) {
+          return { indeterminate: true, isGranted: true }
+        } else {
+          return { indeterminate: true, isGranted: true }
+        }
       }
     },
     handleCheckedCitiesChange(value) {
@@ -313,6 +448,7 @@ export default {
         this.getUserList()
         this.permissionsRole()
         this.getRoleOrganization()
+        this.getgoodsCategoryIds()
       }).catch(() => {
         this.roleMenuLoading = false
       })
@@ -420,16 +556,24 @@ export default {
        * 角色列表点击
        */
     roleMenuSelect(val) {
+      this.nowrole = []
       this.roleActive = val
+      this.getgoodsCategoryIds()
       this.getUserList()
       this.getRoleOrganization()
       this.permissionsRole()
     },
+    getgoodsCategoryIds() {
+      GetGoodsCategoryIds(this.roleActive.name).then(res => {
+        this.$nextTick(() => {
+          this.$refs.tree.setCheckedKeys(res)
+        })
+      })
+    },
     permissionsRole() {
-      permissions(`?providerName=R&providerKey=${this.roleActive.id}`).then(res => {
+      permissions(`?providerName=R&providerKey=${this.roleActive.name}`).then(res => {
         for (let i = 0; i < res.groups.length; i++) {
           const data = res.groups[i]
-          debugger
           const arr = []
           for (let j = 0; j < data.permissions.length; j++) {
             const add = data.permissions[j]
@@ -442,8 +586,9 @@ export default {
           }
           res.groups[i].permissions = arr
         }
-        console.log(res.groups)
         this.allrole = res.groups
+        this.handleCheckAllChange4()
+        console.log(res.groups)
       })
     },
     /**
@@ -491,7 +636,10 @@ export default {
        * 关联员工
        */
     addEmployees() {
-      this.relateEmpoyeeShow = true
+      this.placeholder = '请输入负责人名称'
+      this.typeling = !this.typeling
+      this.url = '/api/identity/users'
+      this.name = 't'
     },
 
     /**
@@ -560,19 +708,39 @@ export default {
     // 权限提交
     ruleSubmit() {
       this.ruleLoading = true
-      putOrganizationUnits({
-        id: this.roleActive.id,
-        organizationUnitIds: this.checkList
-      }).then(res => {
-        this.$message.success('保存成功！')
-        this.ruleLoading = false
-      }).catch(() => {
-        this.ruleLoading = false
-      })
+      // const arr = []
+
+      if (this.quanxian == 1) {
+        this.newArr = []
+        // this.toOneArray(this.allrole)
+        // this.nowrole
+        updatapermissions(`?providerName=R&providerKey=${this.roleActive.name}`, { permissions: this.nowrole }).then(res => {
+          this.$message.success('保存成功！')
+          this.ruleLoading = false
+        }).catch(() => {
+          this.ruleLoading = false
+        })
+      } else {
+        EditDataPerMission({ roleName: this.roleActive.name, goodsCategoryIds: this.$refs.tree.getCheckedKeys() }).then(res => {
+          if (res) {
+            this.$message.success('保存成功！')
+            this.ruleLoading = false
+          }
+        })
+      }
     },
-
-
-
+    toOneArray(arr) {
+      for (var i = 0; i < arr.length; i++) {
+        if (Array.isArray(arr[i].permissions)) {
+          const x = JSON.parse(JSON.stringify(arr[i]))
+          delete x.permissions
+          // this.newArr.push(x)
+          this.toOneArray(arr[i].permissions)
+        } else {
+          this.newArr.push(arr[i])
+        }
+      }
+    },
 
 
     /**
@@ -1064,7 +1232,18 @@ export default {
     padding: 10px 0 20px;
     width: 100%;
   }
-
+.quanxian{
+ background: #F5F5F7;
+    line-height: 10px;
+    padding: 12px;
+    height: 33px;
+    display: inline-block;
+    margin-right:20px
+}
+.quanxian.active{
+    background:#334763;
+    color: #fff;
+}
   .role-nav-box {
     line-height: 30px;
     overflow-y: auto;

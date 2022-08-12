@@ -1,12 +1,12 @@
 /** 系统管理路由 */
 import Layout from '@/views/layout/warehouse'
 
-const layout = function(meta = {}, path = '/warehouse', requiresAuth = true) {
+const layout = function(meta = {}, path = '/warehouse', requiresAuth = false) {
   return {
     path: path,
     component: Layout,
     meta: {
-      // requiresAuth: requiresAuth,
+      requiresAuth: requiresAuth,
       ...meta
     }
   }
@@ -17,7 +17,7 @@ export default [
       permissions: ['warehouse', 'system-project']
     }),
     meta: {
-      title: '',
+      title: 'InventoryManager.Inventorys',
       icon: 's-seas'
     },
     children: [
@@ -39,7 +39,7 @@ export default [
       permissions: ['warehouse', 'system-project']
     }),
     meta: {
-      title: '',
+      title: 'InventoryManager.CheckPlans',
       icon: 's-seas'
     },
     children: [

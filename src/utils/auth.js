@@ -25,11 +25,11 @@ export function addAuth(adminToken) {
 /** 获取授权信息 */
 export function getAuth() {
   /** 全局路由触发这个方法  如果有缓存暂时在这里交与 */
-  if (Lockr.get('Authorization') && !axios.defaults.headers['Authorization']) {
+  if (Lockr.get('accessToken') && !axios.defaults.headers['Authorization']) {
     // cache.updateAxiosCache()
   }
 
-  if (axios.defaults.headers['Authorization']) {
+  if (Lockr.get('accessToken')) {
     return true
   }
   return false

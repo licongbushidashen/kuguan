@@ -6,11 +6,13 @@
       label="仓库管理" >
       <template v-slot:ft>
         <el-button
+          v-if="allAuth['SystemSetting.Warehouses.Create']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
           @click="addJurisdiction">新建</el-button>
         <el-button
+          v-if="allAuth['SystemSetting.Warehouses.Import']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
@@ -21,6 +23,7 @@
           icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
         <el-button
+          v-if="allAuth['SystemSetting.Warehouses.Delete']"
           :disabled="JSON.stringify(obj)=='{}'"
           class="main-table-header-button "
           type=""
@@ -123,6 +126,7 @@ import {
   GetInfo,
   DownloadWarehouseExcel
 } from '@/api/kchk/warn'
+import { mapGetters } from 'vuex'
 import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
@@ -155,7 +159,9 @@ export default {
       info: {}
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['allAuth'])
+  },
   mounted() {
     var self = this
     /** 控制table的高度 */
@@ -227,6 +233,10 @@ export default {
      * 当某一行被点击时会触发该事件
      */
     handleRowClick(row, column, event) {
+      if (!this.allAuth['SystemSetting.Warehouses.Edit']) {
+        this.$message.error('无详情权限')
+        return
+      }
       if (column.label == '序号') {
         return
       }

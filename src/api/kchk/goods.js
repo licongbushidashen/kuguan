@@ -91,6 +91,26 @@ export function GetTree(data) {
     }
   })
 }
+export function GetGoodsCategoryIds(data) {
+  return request({
+    url: `/api/zjlab/DataPermission/GetGoodsCategoryIds?RoleName=${data}`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function EditDataPerMission(data) {
+  return request({
+    url: '/api/zjlab/DataPermission/EditDataPerMission',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function DeleteMany(data) {
   return request({
     url: '/api/zjlab/GoodsInfo/DeleteMany',

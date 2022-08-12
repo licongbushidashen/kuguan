@@ -6,7 +6,7 @@ const layout = function(meta = {}, path = '/kcgl', requiresAuth = true) {
     path: path,
     component: Layout,
     meta: {
-      // requiresAuth: requiresAuth,
+      requiresAuth: requiresAuth,
       ...meta
     }
   }
@@ -17,7 +17,7 @@ export default [
       permissions: ['kcgl', 'system-project']
     }),
     meta: {
-      title: '',
+      title: 'AbpIdentity.IdentityClaimTypes',
       icon: 's-seas'
     },
     children: [
@@ -39,7 +39,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: '',
+      title: 'AbpIdentity.Roles',
       icon: 's-seas'
     },
     children: [
@@ -61,7 +61,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: '',
+      title: 'AbpIdentity.Users',
       icon: 's-seas'
     },
     children: [

@@ -6,11 +6,13 @@
       label="货品管理" >
       <template v-slot:ft>
         <el-button
+          v-if="allAuth['SystemSetting.GoodsInfos.Create']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
           @click="addJurisdiction">新建</el-button>
         <el-button
+          v-if="allAuth['SystemSetting.GoodsInfos.Import']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
@@ -21,6 +23,7 @@
           icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
         <el-button
+          v-if="allAuth['SystemSetting.GoodsInfos.Delete']"
           :disabled="JSON.stringify(obj)=='{}'"
           class="main-table-header-button "
           type=""
@@ -34,7 +37,7 @@
           <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
         </el-input>
         <el-button
-
+          v-if="allAuth['SystemSetting.WarningRules.Create']"
           class="main-table-header-button xr-btn--orange  "
           type="primary" @click="openwarn('branth')">批量预警设置</el-button>
       </div>
@@ -100,8 +103,8 @@
           label="操作"
           width="200">
           <template slot-scope="{ row, column, $index}">
-            <span class="buttonc" @click.stop="openplan(row)">计划管理</span>
-            <span class="buttonc" @click.stop="openwarn(row)">预警管理</span>
+            <span v-if="allAuth['SystemSetting.WarningRules.Create']" class="buttonc" @click.stop="openplan(row)">计划管理</span>
+            <span v-if="allAuth['SystemSetting.WarningRules.Create']" class="buttonc" @click.stop="openwarn(row)">预警管理</span>
           </template>
         </el-table-column>
 
@@ -132,6 +135,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import BulkImportUser from '../import.vue'
 import { downloadFileWithBuffer } from '@/utils'
 import {
@@ -179,7 +183,9 @@ export default {
       ids: []
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['allAuth'])
+  },
   mounted() {
     var self = this
     /** 控制table的高度 */
@@ -199,6 +205,10 @@ export default {
       this.bulkImportShow = true
     },
     openplan(row) {
+      if (!this.allAuth['SystemSetting.WarningRules.Edit']) {
+        this.$message.error('没有改按钮权限')
+        return
+      }
       GetInfo(row.id).then(res => {
         console.log(res)
         this.info = res.goodsInfo
@@ -206,6 +216,10 @@ export default {
       })
     },
     openwarn(row) {
+      if (!this.allAuth['SystemSetting.WarningRules.Edit']) {
+        this.$message.error('没有改按钮权限')
+        return
+      }
       if (row == 'branth') {
         if (!this.ids.length) {
           this.$message.error('请勾选列表')
@@ -276,6 +290,10 @@ export default {
      * 当某一行被点击时会触发该事件
      */
     handleRowClick(row, column, event) {
+      if (!this.allAuth['SystemSetting.GoodsInfos.Edit']) {
+        this.$message.error('无编辑当前权限')
+        return
+      }
       if (column.label == '操作' || column.label == '序号') {
         return
       }

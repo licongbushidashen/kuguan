@@ -24,6 +24,7 @@ const user = {
     project: {}, // 项目管理
     hrm: {}, // 人力资源
     wylanguage: {}
+
   },
 
   mutations: {
@@ -35,6 +36,7 @@ const user = {
       localStorage.setItem('loginUserInfo', JSON.stringify(userInfo))
     },
     SET_ALLAUTH: (state, allAuth) => {
+      debugger
       state.allAuth = allAuth
     },
     SET_CRM: (state, crm) => {
@@ -98,7 +100,7 @@ const user = {
             Lockr.set('authList', data)
             data.wkFirstModel = data.firstModel
             commit('SET_language', data.localization.values.Module)
-            commit('SET_ALLAUTH', data)
+            commit('SET_ALLAUTH', data.auth.grantedPolicies)
             commit('SET_CRM', data.crm)
             commit('SET_BI', data.bi)
             commit('SET_MANAGE', data.manage)
@@ -114,7 +116,7 @@ const user = {
               dispatch('GetHrmDeptList')
             }
 
-            resolve(data)
+            resolve(data.auth.grantedPolicies)
           })
           .catch(error => {
             reject(error)

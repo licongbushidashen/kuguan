@@ -14,12 +14,13 @@
         <div
           class="handle-item-name"
           style="margin-top: 8px;">选择用户：</div>
-        <wk-user-select
+          <!-- <wk-user-select
           :radio="false"
           v-model="selectUsers"
           :show-dep-data="showDepData"
           class="handle-item-content"
-          @change="depchange"/>
+          @change="depchange"/> -->
+
       </flexbox>
     </div>
     <span

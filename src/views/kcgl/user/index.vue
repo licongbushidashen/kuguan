@@ -17,7 +17,6 @@
         <el-input v-model="inputs" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入姓名/账号">
           <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
         </el-input>
-
       </div>
       <el-table
         v-loading="loading"
@@ -74,7 +73,7 @@
         />
         <el-table-column label="操作" width="150">
           <template slot-scope="{ row, column }">
-            <el-button type="text" icon="el-icon-user"/>
+            <el-button type="text" icon="el-icon-user" @click="handleRowpassword(row,column)"/>
             <el-button type="text" icon="el-icon-edit" @click="handleRowClick(row,column)" />
             <!-- <el-button type="text" icon="el-icon-help"></el-button> -->
             <el-button type="text" icon="el-icon-delete" />
@@ -104,17 +103,29 @@
       </div>
     </div>
     <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList"/>
+    <el-dialog :visible.sync="passwording" style="    margin-top: 2vh;width: 800px;left: 30%;   " title="重置密码">
+      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm">
+        <el-form-item label="请输入新的密码：" prop="password">
+          <el-input v-model="ruleForm.password" show-password style="width:200px"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer" style="text-align: center !important;">
+        <el-button @click="passwording = false">取 消</el-button>
+        <el-button type="primary" @click="saves">保 存</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import {
   Pageusers,
-  usersInfo
+  usersInfo, Updateusers
 } from '@/api/kcjl/user'
 import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
+
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -125,7 +136,18 @@ export default {
   },
   mixins: [],
   data() {
+    const validateCRM = (rule, value, callback) => {
+      var regex = /^(?![0-9A-Za-z]+$)(?![-`=\[\];',.~!@#$%^&*()_+|{}:"?]+$)(?![0-9-`=\[\];',.~!@#$%^&*()_+|{}:"?]+$)(?![A-Za-z-`=\[\];',.~!@#$%^&*()_+|{}:"?]+$)[0-9a-zA-Z-`=\[\];',.~!@#$%^&*()_+|{}:"?]{7,16}$/
+      var test = regex.test(value)
+      console.log(test, 'test')
+      if (test) {
+        callback()
+      } else {
+        callback(new Error('密码格式错误，至少有一位大写字母、小写字母、数字、特殊符号 '))
+      }
+    }
     return {
+      passwording: false,
       showing: false,
       planing: true,
       warningshow: true,
@@ -141,7 +163,15 @@ export default {
       pageSize: 15,
       total: 0,
       obj: {},
-      info: {}
+      info: {},
+      ruleForm: {
+        password: ''
+      },
+      rules: {
+        password: [
+          { validator: validateCRM, trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {},
@@ -216,12 +246,27 @@ export default {
     /**
      * 当某一行被点击时会触发该事件
      */
+    handleRowpassword(row, column, event) {
+      if (column.label == '序号') {
+        return
+      }
+      this.passwording = true
+      usersInfo(row.id).then(res => {
+        this.info = res
+      })
+    },
+    saves() {
+      this.info.password = this.ruleForm.password
+      Updateusers(this.info).then(res => {
+        this.$message.success('修改成功')
+        this.passwording = false
+      })
+    },
     handleRowClick(row, column, event) {
       if (column.label == '序号') {
         return
       }
       usersInfo(row.id).then(res => {
-        console.log(res)
         this.info = res
         this.jurisdictionCreateShow = !this.jurisdictionCreateShow
       })

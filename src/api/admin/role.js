@@ -26,7 +26,16 @@ export function permissions(data) {
   })
 }
 
-
+export function updatapermissions(data, data1) {
+  return request({
+    url: `api/permission-management/permissions${data}`,
+    method: 'put',
+    data: data1,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function roleAddAPI(data) {
   return request({
     url: '/adminRole/add',
