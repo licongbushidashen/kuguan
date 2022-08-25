@@ -1390,7 +1390,7 @@ export default {
 }
 
 .employee-dep-management {
-  padding: 0 15px;
+  // padding: 0 15px;
   height: 100%;
   box-sizing: border-box;
   display: flex;

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;" destroy-on-close>
+  <el-dialog :visible.sync="showDialog" style="    " destroy-on-close>
     <create-sections >
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
     </create-sections>
@@ -216,9 +216,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog{
-    margin-top:2vh !important;
-}
+// /deep/.el-dialog{
+    // margin-top:2vh !important;
+// }
 /deep/.el-dialog__footer{
     text-align: center !important;
 }

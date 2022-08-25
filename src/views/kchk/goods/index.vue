@@ -31,7 +31,8 @@
                 ref="tree"
                 :props="props"
                 :load="getDepTreeList"
-                lazy
+                :lazy="isLazy"
+                :data="treeData"
                 node-key="id"
                 highlight-current
                 @node-click="changeDepClick"
@@ -120,14 +121,16 @@ export default {
   mixins: [GenerateRulesMixin],
   data() {
     return {
+      isLazy: true,
+      treeData: [],
       keywords: '',
       props: {
         label: 'name',
         children: 'zones',
         isLeaf: 'hasChild'
       },
-      node_had: [],
-      resolve_had: '',
+      node_had: null,
+      resolve_had: null,
       resolve_had1: null,
       depLoading: false,
       showDepData: [],
@@ -157,22 +160,20 @@ export default {
   },
   methods: {
     changes() {
+      this.node_had.childNodes = []
       if (this.keywords != '') {
-        this.resolve_had1([])
+        this.isLazy = false
         CreateGoodsCategory1(this.keywords).then(response => {
           response.forEach(e => {
             e.hasChild = !e.hasChild
           })
-          this.node_had.level = 0
-          this.node_had.childNodes = []
+          this.isLazy = false
           this.aoiinfo = response ? response[0] : { flag: 1 }
-          this.resolve_had1(response || [])
-          this.showDepData = response || []
+          this.treeData = (response || [])
           this.depLoading = false
         })
       } else {
         this.node_had.level = 0
-        this.node_had.childNodes = []
         this.getDepTreeList(this.node_had, this.resolve_had)
       }
     },
@@ -345,28 +346,21 @@ export default {
     },
     // 获取树形列表
     getDepTreeList(node, resolve) {
+      debugger
       this.depLoading = true
       const data = node.level === 0 ? {} : { parentId: node.data.id }
       GetGoodsCategoryTree(data)
         .then(response => {
           this.node_had = node
-          if (!this.resolve_had1) {
-            this.resolve_had1 = resolve
-          }
           this.resolve_had = resolve
           response.forEach(e => {
             e.hasChild = !e.hasChild
           })
-          console.log(this.aoiinfo)
           if (node.level === 0) {
             this.aoiinfo == response ? response[0] : { flag: 1 }
+            this.resolve_had1 = resolve
           }
-          if (node.level > 0) {
-            resolve(response || [])
-          } else {
-            resolve(response || [])
-          }
-
+          resolve(response || [])
           this.showDepData = response || []
           this.depLoading = false
         })
@@ -432,7 +426,7 @@ export default {
 }
 
 .employee-dep-management {
-  padding: 0 15px;
+  // padding: 0 15px;
   height: 100%;
   box-sizing: border-box;
   display: flex;

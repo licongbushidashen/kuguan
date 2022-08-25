@@ -187,9 +187,7 @@ service.interceptors.response.use(
       const response = error.response
       if (response.status == 401) {
         localStorage.removeItem('accessToken')
-        debugger
         router.push('/login')
-        errorMessage('鉴权失败，')
       } else if (response.status == 500) {
         errorMessage('网络错误，请检查您的网络')
       } else if (response.data && response.data.error.message) {

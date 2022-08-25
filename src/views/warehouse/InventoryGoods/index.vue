@@ -9,7 +9,7 @@
         <el-button
           class="main-table-header-button "
           type="primary"
-          icon="iconfont icon-xianxing-daoru"
+          icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
       </template>
     </xr-header>
@@ -72,7 +72,7 @@
 
         <el-table-column
           prop="goodsCategoryName"
-          label="大类名称"
+          label="类目名称"
         />
         <el-table-column
           prop="goodsName"

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" style="    " title="新建盘点">
     <create-sections title="基础信息">
       <mtForm :rules="fieldsRules" :treever-data="tree" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
     </create-sections>
@@ -98,12 +98,12 @@ export default {
     saveClick(data) {
       if (!data) return
       // this.aoiinfo.dutyUserId = '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-      if (this.aoiinfo.startTime.indexOf('00:00:00') == -1) {
-        this.aoiinfo.startTime = this.aoiinfo.startTime + ' 00:00:00'
-      }
-      if (this.aoiinfo.endTime.indexOf('00:00:00') == -1) {
-        this.aoiinfo.endTime = this.aoiinfo.endTime + ' 00:00:00'
-      }
+      // if (this.aoiinfo.startTime.indexOf('00:00:00') == -1) {
+      //   this.aoiinfo.startTime = this.aoiinfo.startTime + ' 00:00:00'
+      // }
+      // if (this.aoiinfo.endTime.indexOf('00:00:00') == -1) {
+      //   this.aoiinfo.endTime = this.aoiinfo.endTime + ' 00:00:00'
+      // }
       this.aoiinfo.goodsCategoryId = this.aoiinfo.goodsCategoryName
       delete this.aoiinfo.goodsCategoryName
       if (this.aoiinfo.id) {
@@ -197,8 +197,7 @@ export default {
         placeholder: '请选择',
         setting: [],
         inputTips: '',
-        date: 'date',
-        format: 'yyyy-MM-dd',
+
         value: this.aoiinfo ? this.aoiinfo.startTime : ''
       })
       field.push({
@@ -209,24 +208,22 @@ export default {
         placeholder: '请选择',
         setting: [],
         inputTips: '',
-        format: 'yyyy-MM-dd',
-        date: 'date',
         value: this.aoiinfo ? this.aoiinfo.endTime : ''
       })
-      field.push({
-        field: 'flag',
-        formType: 'selete',
-        isNull: 1,
-        name: '状态',
-        setting: [
-          { name: '未开始', id: 0 },
-          { name: '进行中', id: 1 },
-          { name: '已完成', id: 2 }
-        ],
-        optionL: 'name',
-        optionV: 'id',
-        inputTips: ''
-      })
+      // field.push({
+      //   field: 'flag',
+      //   formType: 'selete',
+      //   isNull: 1,
+      //   name: '状态',
+      //   setting: [
+      //     { name: '未开始', id: 0 },
+      //     { name: '进行中', id: 1 },
+      //     { name: '已完成', id: 2 }
+      //   ],
+      //   optionL: 'name',
+      //   optionV: 'id',
+      //   inputTips: ''
+      // })
       field.push({
         field: 'remark',
         formType: 'textarea',
@@ -262,9 +259,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog{
-    margin-top:2vh !important;
-}
+// /deep/.el-dialog{
+    // margin-top:2vh !important;
+// }
 /deep/.el-dialog__footer{
     text-align: center !important;
 }

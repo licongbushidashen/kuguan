@@ -236,7 +236,7 @@ export default {
     },
     openurl() {
       if (this.name == 'wldw') {
-        this.$router.push('/kchk/kkcgj-company?add=1')
+        this.$router.push('/kchk/kcgj-company?add=1')
       } else if (this.name == 'dutyUser') {
         this.$router.push('/kchk/kcgj-project?add=1')
       } else if (this.name == 'ck') {

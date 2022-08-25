@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :title="title" style="    ">
     <create-sections title="基础信息">
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick"/>
     </create-sections>
@@ -53,7 +53,8 @@ export default {
       isSave: false,
       mining: false,
       isDefault: false,
-      typeList: []
+      typeList: [],
+      title: ''
     }
   },
   computed: {
@@ -66,11 +67,13 @@ export default {
       handler(val) {
         this.showDialog = !this.showDialog
         if (!this.info.id) {
+          this.title = '新增单位'
           this.aoiinfo = {
             flag: 1,
             remark: ''
           }
         } else {
+          this.title = '编辑单位'
           this.aoiinfo = this.info
         }
         this.gettype()
@@ -80,6 +83,7 @@ export default {
     }
   },
   created() {
+    this.getBaseField()
     this.gettype()
   },
   methods: {
@@ -92,7 +96,8 @@ export default {
             res.items[i].checked = false
           }
           this.typeList = res.items
-          this.getBaseField()
+          this.fields[4].setting = this.typeList
+          console.log(this.fields)
         })
     },
     saveClick(data) {
@@ -118,6 +123,7 @@ export default {
     },
     getBaseField() {
       const field = []
+      console.log(this.aoiinfo)
       field.push({
         field: 'code',
         formType: 'text',
@@ -126,7 +132,7 @@ export default {
         placeholder: '请输入',
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.code : ''
+        value: this.aoiinfo ? (this.aoiinfo.code || '') : ''
       })
       field.push({
         field: 'name',
@@ -220,9 +226,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog{
-    margin-top:2vh !important;
-}
+// /deep/.el-dialog{
+    // margin-top:2vh !important;
+// }
 /deep/.el-dialog__footer{
     text-align: center !important;
 }

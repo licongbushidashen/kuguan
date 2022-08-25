@@ -17,7 +17,7 @@
     </el-header>
     <el-container>
 
-      <el-main id="workLog-main-container" style="padding:15px;">
+      <el-main id="workLog-main-container" >
         <app-main />
       </el-main>
     </el-container>

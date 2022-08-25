@@ -9,7 +9,7 @@
         <el-button
           class="main-table-header-button "
           type="primary"
-          icon="iconfont icon-xianxing-daoru"
+          icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
       </template>
     </xr-header>
@@ -72,7 +72,7 @@
 
         <el-table-column
           prop="goodsCategoryName"
-          label="大类名称"
+          label="类目名称"
         />
         <el-table-column
           prop="goodsName"
@@ -108,24 +108,24 @@
         />
         <el-table-column
           prop="changeNum"
-          label="调整数量"
+          label="盈亏数量"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="changePrice"
           label="调整单价"
         />
         <el-table-column
           prop="changeAmount"
           label="调整金额"
-        />
+        /> -->
         <el-table-column
           prop="endNum"
           label="期末数量"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="endPrice"
           label="期末单价"
-        />
+        /> -->
         <el-table-column
           prop="endAmount"
           label="期末金额"

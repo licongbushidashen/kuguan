@@ -1,11 +1,11 @@
 <template>
-  <el-dialog v-loading="loading" :visible.sync="shows" append-to-body>
+  <el-dialog v-loading="loading" :visible.sync="shows" :title="p" append-to-body>
     <div style="margin-bottom :20px;display: flex;">
       <el-input
         :placeholder="placeholder"
         v-model="inputContent"
         class="search-input"
-        style="width:110px"
+        style="width:120px"
         @keyup.enter.native="Pagelist"/>
       <div v-if="name=='gldj1'" style="margin: 0px 10px">
         <label for="">出库日期</label>
@@ -15,7 +15,7 @@
           type="date"
           placeholder="入库日期"/>
       </div>
-      <div v-if="name=='gldj1'" style="margin: 0px 10px">
+      <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
         <label for="">入库类型</label>
         <el-select v-model="orderCategory" style="width:130px">
           <el-option
@@ -24,15 +24,15 @@
             :value="item.orderCategory"
             class="wy-select"/>
         </el-select>
-      </div>
-      <div v-if="name=='gldj1'" style="margin: 0px 10px">
+      </div> -->
+      <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
         <label for="">往来单位/仓库名称</label>
         <el-input
           v-model="company"
           style="width:130px;"
           placeholder="往来单位/仓库名称"
         />
-      </div>
+      </div> -->
       <el-button type="primary" @click="handleCurrentChange(0)"> 查询</el-button>
       <span v-if="shows1" style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    position: absolute;    right: 30px;" @click="openurl">新 增</span>
     </div>
@@ -140,6 +140,9 @@ export default {
       type: String
 
     },
+    p: {
+      type: String
+    },
     name: {
       type: String
     }
@@ -240,7 +243,7 @@ export default {
   methods: {
     openurl() {
       if (this.name == 'wldw') {
-        this.$router.push('/kchk/kkcgj-company?add=1')
+        this.$router.push('/kchk/kcgj-company?add=1')
       } else if (this.name == 'dutyUser') {
         this.$router.push('/kchk/kcgj-project?add=1')
       } else if (this.name == 'ck') {

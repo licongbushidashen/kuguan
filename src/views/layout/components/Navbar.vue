@@ -155,7 +155,7 @@ export default {
         type: 6,
         module: 'home',
         path: '/home',
-        icon: 'iconfont icon-kucunguanli',
+        icon: 'iconfont icon-shouye',
         fontSize: '17px'
       }
       if (JSON.stringify(this.allAuth).indexOf('SystemSetting') != -1) {
@@ -185,7 +185,7 @@ export default {
           type: 6,
           module: 'account',
           path: '/account',
-          icon: 'iconfont icon-tubiaozhizuomoban-154',
+          icon: 'iconfont icon-taizhangshuju',
           fontSize: '17px'
         }
       }

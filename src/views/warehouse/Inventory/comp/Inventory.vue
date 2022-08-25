@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" title="盘点明细" style="    margin-top: 2vh" width="1200px">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" title="盘点明细" style="    margin-top: 2vh" width="1200px">
     <div>
       <el-input
         v-model="inputs"
@@ -62,7 +62,7 @@
       <el-table-column prop="goodsCode" label="货品编码" />
       <el-table-column prop="brand" label="品牌" />
       <el-table-column prop="size" label="规格" />
-      <el-table-column prop="unitName" label="单位" />
+      <el-table-column prop="unit" label="单位" />
       <el-table-column prop="inventoryNum" label="库存数量" />
       <el-table-column prop="checkNum" label="盘点数量" >
         <template slot-scope="{ row, column, $index }">
@@ -76,8 +76,29 @@
       <el-table-column prop="lossNum" label="盘亏数量" />
 
       <el-table-column prop="checkUserName" label="盘点人" />
-      <el-table-column prop="checkTime" label="盘点时间" />
-      <el-table-column prop="remark" label="备注" />
+      <el-table-column prop="checkTime" label="盘点时间" width="200px">
+        <template slot-scope="{ row, column, $index }">
+          <el-date-picker
+            v-if="flag1==1"
+            v-model="row.checkTime"
+            type="datetime"
+            style="width:190px"
+            placeholder="选择日期时间"/>
+          <!-- <el-input v-if="flag1==1" v-model="row.checkNum" @change="listchange(row,$index)"/> -->
+          <span v-else>
+            {{ row.checkTime }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="remark" label="备注" width="100px">
+        <template slot-scope="{ row, column, $index }">
+          <el-input v-if="flag1==1" v-model="row.remark"/>
+          <span v-else>
+            {{ row.remark }}
+          </span>
+        </template>
+      </el-table-column>
+
     </el-table>
     <div class="p-contianer">
       <el-pagination
@@ -105,6 +126,8 @@
   </el-dialog>
 </template>
 <script>
+import { parseTime } from '@/utils'
+import { mapGetters } from 'vuex'
 import {
   Create,
   Update,
@@ -150,6 +173,11 @@ export default {
       flag1: 0
     }
   },
+  computed: {
+    ...mapGetters([
+      'userInfo'
+    ])
+  },
   watch: {
     showing: {
       handler(val) {
@@ -188,6 +216,7 @@ export default {
     FinishDetail(val) {
       const data = { detailList: [] }
       for (let i = 0; i < this.list.length; i++) {
+        this.list[i].checkTime = parseTime(this.list[i].checkTime)
         data.detailList.push({ id: this.list[i].id, checkPlanDetail: this.list[i] })
       }
       if (val) {
@@ -228,6 +257,10 @@ export default {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
             res.items[i].checked = false
+            if (this.flag1 == 1) {
+              res.items[i].checkUserName = this.userInfo.name
+              res.items[i].checkUserId = this.userInfo.id
+            }
           }
           this.list = res.items
           this.total = res.totalCount
@@ -276,9 +309,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog{
-    margin-top:2vh !important;
-}
+// /deep/.el-dialog{
+    // margin-top:2vh !important;
+// }
 /deep/.el-dialog__footer{
     text-align: center !important;
 }

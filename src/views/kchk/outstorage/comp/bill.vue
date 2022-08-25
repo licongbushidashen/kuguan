@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :destroy-on-close="true" style="    margin-top: 2vh;" width="1200px" class="bill" title="出库单">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :destroy-on-close="true" style="    " width="1200px" class="bill" title="出库单">
     <div class="wy-body">
       <div class="wy-body-info">
         <div class="wy-body-info-one">
@@ -95,7 +95,7 @@
           </div>
           <div class="wy-body-info-one-right">
             <div class="field__label">
-              来往单位
+              往来单位
             </div>
             <div v-if="!butoom1" class="wy-body-info-one-left-val ">
               {{ objs.wldwName }}
@@ -351,7 +351,7 @@
       <el-button v-if="butoom1" @click="dialogSure(0)">暂 存</el-button>
     </span>
 
-    <Type :placeholder="placeholder" :typeling="typeling" :url="url" :name="name" @change="typevalu"/>
+    <Type :placeholder="placeholder" :p="p" :typeling="typeling" :url="url" :name="name" @change="typevalu"/>
   </el-dialog>
 
 </template>
@@ -414,6 +414,7 @@ export default{
   },
   data() {
     return {
+      p: '',
       erroring: false,
       props: {
         label: 'name',
@@ -711,37 +712,44 @@ export default{
 
     opende(val, item) {
       if (val == 'wldw') {
+        this.p = '往来单位'
         this.placeholder = '请输入往来单位名称'
         this.typeling = !this.typeling
         this.url = '/api/zjlab/Company/CompanyPage'
         this.name = val
       } else if (val == 'ck') {
+        this.p = '仓库'
         this.placeholder = '请输入仓库名称'
         this.typeling = !this.typeling
         this.url = '/api/zjlab/Warehouse/WarehousePage'
         this.name = val
       } else if (val == 'type') {
+        this.p = '货品类目'
         this.placeholder = '请输入货品类目名称'
         this.typeling = !this.typeling
         this.url = '/api/zjlab/GoodsInfo/GoodsInfoPage'
         this.name = val
       } else if (val == 'jfkh') {
+        this.p = '经费卡号'
         this.placeholder = '请输入经费卡号或经费名称'
         this.typeling = !this.typeling
         this.url = '/api/zjlab/MoneyCard/MoneyCardPage'
         this.name = val
       } else if (val == 'dutyUser') {
+        this.p = '负责人'
         this.placeholder = '请输入负责人名称'
         this.typeling = !this.typeling
         this.url = '/api/identity/users'
         this.name = val
       } else if (val == 'goods') {
+        this.p = '货品'
         this.placeholder = '请输入货品名称'
         this.typeling = !this.typeling
         this.url = '/api/zjlab/GoodsInfo/GoodsInfoPage'
         this.name = val
         this.goodsIndex = item
-      } else if (val == 'gldj1') {
+      } else if (val == 'gldj1' || val == 'gldj2') {
+        this.p = '关联单据'
         this.placeholder = '请输入单据号'
         this.typeling = !this.typeling
         this.url = '/api/zjlab/Order/OrderPage'
@@ -876,6 +884,7 @@ export default{
 <style>
 .errorshow{
   border: 1px solid red !important;
+    margin: 0px !important;
 }
 .bill .el-dialog__header{
         text-align: center;

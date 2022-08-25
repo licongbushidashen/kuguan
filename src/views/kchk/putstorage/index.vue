@@ -40,7 +40,7 @@
             </div>
             <div>
               <label for="">入库类型</label>
-              <el-select v-model="orderCategory">
+              <el-select v-model="orderCategory" style="width:120px">
                 <el-option
                   v-for="(item,index) in Category"
                   :key="index" :label="item.name"
@@ -58,7 +58,7 @@
             </div>
             <div>
               <label for="">状态</label>
-              <el-select v-model="flag">
+              <el-select v-model="flag" style="width:100px">
                 <el-option
                   v-for="(item,index) in flagName"
                   :key="index" :label="item.name"
@@ -373,9 +373,12 @@ export default {
     border: 1px solid #e6e6e6;
     display: flex;
     padding: 20px;
+
     >div{
-      flex: 1;
+          display: inline-block;
+      // flex: 1;
           line-height: 44px;
+           margin-left: 20px;
       label{
         margin-right: 10px;
       }
@@ -405,8 +408,10 @@ export default {
   position: relative;
   .main-table-header-button {
     float: right;
-    margin-right: 20px;
-    margin-top: 10px;
+      margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 6px;
+    margin-left: 21px;
   }
 }
 

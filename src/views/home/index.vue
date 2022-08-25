@@ -15,11 +15,11 @@
       </div>
       <div>
         <h1 class="color4">{{ d.outOrderNum }}</h1>
-        <span>进入出库单据数</span>
+        <span>今日出库单据数</span>
       </div>
       <div>
         <h1 class="color5">{{ d.outOrderAmount }}</h1>
-        <span>进入出库总金额</span>
+        <span>今日出库总金额</span>
       </div>
       <div>
         <h1 class="color6">{{ d.inventoryAmount }}</h1>
@@ -43,18 +43,18 @@
           @change="GetDataBoradChart"/>
       </div>
 
-      <div class="echart1">
-        <div id="axismain1"/>
-        <!-- <span v-if="!echartHasData" class="empty-text">暂无数据</span> -->
+      <div class="echart1" style="    background: #fff;">
+        <div v-if="!echartHasData1" id="axismain1" />
+        <el-empty v-if="echartHasData1" :image-size="200"/>
       </div>
-      <div class="echart2">
+      <div class="echart2" style="    background: #fff;">
         <div>
-          <div id="axismain2"/>
-          <!-- <span v-if="!echartHasData" class="empty-text">暂无数据</span> -->
+          <div v-if="!echartHasData2" id="axismain2"/>
+          <el-empty v-if="echartHasData1" :image-size="200"/>
         </div>
         <div>
-          <div id="axismain3"/>
-          <!-- <span v-if="!echartHasData" class="empty-text">暂无数据</span> -->
+          <div v-if="!echartHasData3" id="axismain3"/>
+          <el-empty v-if="echartHasData1" :image-size="200"/>
         </div>
       </div>
     </div>
@@ -136,7 +136,7 @@ const option = {
         barBorderRadius: [12, 12, 0, 0]
       }
     },
-    data: [400, 400, 300, 300, 300, 400, 400, 400, 300]
+    data: []
   },
   {
     name: '入库',
@@ -149,7 +149,7 @@ const option = {
       }
 
     },
-    data: [400, 500, 500, 500, 500, 400, 400, 500, 500]
+    data: []
   },
 
   {
@@ -163,7 +163,7 @@ const option = {
         barBorderRadius: [12, 12, 0, 0]
       }
     },
-    data: [400, 600, 700, 700, 1000, 400, 400, 600, 700]
+    data: []
   }
   ]
 }
@@ -216,9 +216,13 @@ export default {
       },
       chartObj1: {},
       chartObj2: {},
-      chartObj3: {}
+      chartObj3: {},
+      echartHasData1: false,
+      echartHasData2: false,
+      echartHasData3: false
     }
   },
+
   created() {
     const start = new Date()
     start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
@@ -306,6 +310,9 @@ export default {
 
           this.chartObj1.setOption(option1, true)
         }
+        this.echartHasData1 = !(res.inventoryNumDto.length > 0)
+        this.echartHasData2 = !(res.expendNumDto.length > 0)
+        this.echartHasData3 = !(res.expendCostDto.length > 0)
         if (res.expendNumDto.length) {
           const arr1 = []; const arr2 = []; const time = []
           for (let i = 0; i < res.expendNumDto.length; i++) {
@@ -452,8 +459,9 @@ height: 100%;
     color:#999
 }
 .home-main {
-    padding: 20px;
-        height: calc(100% - 91px);
+    // padding: 20px;
+     height: calc(100% - 119px);
+    padding-top: 15px;
 }
 
 .tops {

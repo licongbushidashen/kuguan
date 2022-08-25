@@ -53,6 +53,10 @@
   height: 34px;
   line-height: 34px;
  }
+ .el-input .el-input__inner{
+  height: 34px !important;
+  line-height: 34px !important;
+ }
  .el-checkbox .el-checkbox__label {
    padding-left: 8px;
  }
@@ -81,6 +85,8 @@ table {
    background-color: #F7F8FA;
    border-top: 1px solid $xr-border-line-color;
    text-align: center !important;
+   position: sticky;
+    bottom: 0px;
  }
 
  .el-dialog__close {
@@ -94,6 +100,9 @@ table {
  }
  .el-dialog__header{
   border-bottom: 1px solid #e6e6e6 !important;
+  position: sticky;
+  top: 0px;
+  background: #fff;
  }
  // 消息框
  .el-message-box__title {
@@ -150,4 +159,28 @@ table {
 .el-upload--picture-card,.el-upload-list--picture-card .el-upload-list__item{
   width:120px !important;
   height: 120px !important;
+}
+.el-main{
+  padding: 0px 15px 10px 15px!important;
+  padding-bottom: 10px !important;
+
+}
+// .el-dialog .el-dialog__body{
+//   max-height: 600px;
+//   overflow-y: auto;
+// }
+.el-date-editor .el-range-separator{
+  width: 7% !important;
+  line-height: 34px !important;
+}
+.el-dialog{
+  max-height: calc(100% - 25vh) !important;
+    overflow: auto !important;
+}
+.el-input__inner{
+  height: 34px !important;
+    line-height: 34px !important;
+}
+.el-input__icon{
+  line-height: 34px !important;
 }

@@ -90,7 +90,7 @@
               size="small"
               @click="handleClick('edit', scope.row)">盘点明细</el-button>
             <el-button
-              v-if="scope.row.flag==2 ||scope.row.flag==3"
+              v-if="scope.row.flag==2 "
               type="text"
               size="small"
               @click="handleClick('copy', scope.row)">盈亏处理</el-button>
@@ -149,11 +149,11 @@ export default {
       if (value == 0) {
         return '未开始'
       } else if (value == 1) {
-        return '进行中'
+        return '盘点中'
       } else if (value == 2) {
-        return '已完成'
+        return '盘点完成'
       } else if (value == 3) {
-        return '已处理'
+        return '已完成'
       }
     }
   },

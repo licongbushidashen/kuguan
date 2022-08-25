@@ -395,6 +395,7 @@ export default {
       this.leaveing = true
     },
     opende2(row, idnex, name) {
+      debugger
       this.leaveing1 = true
     },
     treeCheckClick(data) {

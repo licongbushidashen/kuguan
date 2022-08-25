@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-if="showDialog" :visible.sync="showDialog" :title="info.id?'新增用户':'修改用户'" :close-on-click-modal="false" :destroy-on-close="true"	style="margin-top: 2vh;" >
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :title="info.id?'新增用户':'修改用户'" :close-on-click-modal="false" :destroy-on-close="true"	style="" >
     <create-sections title="基础信息">
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick"/>
     </create-sections>
@@ -199,9 +199,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog{
-    margin-top:2vh !important;
-}
+// /deep/.el-dialog{
+    // margin-top:2vh !important;
+// }
 /deep/.el-dialog__footer{
     text-align: center !important;
 }

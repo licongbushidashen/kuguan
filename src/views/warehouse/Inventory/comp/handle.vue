@@ -1,33 +1,32 @@
 <template>
-  <el-dialog :visible.sync="showDialog" title="盈亏处理" style="    margin-top: 2vh;">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" title="盈亏处理" style="    ">
     <el-table
       v-loading="loading"
       id="examine-table"
       :data="list"
-      :height="tableHeight"
       class="main-table"
       highlight-current-row
     >
       <el-table-column
         show-overflow-tooltip
         type="index"
-        width="150"
+        width="60"
         label="序号"
       >
         <template slot-scope="{ row, column, $index }">
           <span class="status-name">
             <span
               class="index"
-              style="text-align: center; display: block;"
+              style="margin-left: 10px; display: block;"
               @mouseenter="row.hover = true"
               @mouseleave="row.hover = false"
             >
-              <el-checkbox
+              <!-- <el-checkbox
                 v-show="row.hover || row.checked"
                 v-model="row.checked"
                 @change="onItemCheckboxChange"
-              />
-              <span v-show="!row.hover && !row.checked" class="text">{{
+              /> -->
+              <span class="text">{{
                 $index + 1
               }}</span>
             </span>
@@ -42,11 +41,11 @@
       <el-table-column prop="code" label="货品编码" />
       <el-table-column prop="brand" label="品牌" />
       <el-table-column prop="size" label="规格" />
-      <el-table-column prop="unitName" label="单位" />
-      <el-table-column prop="operatorName" label="库存数量" />
-      <el-table-column prop="startTime" label="盘点数量" />
-      <el-table-column prop="endTime" label="盘盈数量" />
-      <el-table-column prop="endTime" label="盘亏数量" />
+      <el-table-column prop="unit" label="单位" />
+      <el-table-column prop="inventoryNum" label="库存数量" />
+      <el-table-column prop="checkNum" label="盘点数量" />
+      <el-table-column prop="profitNum" label="盘盈数量" />
+      <el-table-column prop="lossNum" label="盘亏数量" />
     </el-table>
     <div class="p-contianer">
       <el-pagination
@@ -183,9 +182,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog{
-    margin-top:2vh !important;
-}
+// /deep/.el-dialog{
+    // margin-top:2vh !important;
+// }
 /deep/.el-dialog__footer{
     text-align: center !important;
 }

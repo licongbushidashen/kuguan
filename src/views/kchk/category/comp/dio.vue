@@ -1,9 +1,9 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;" title="货品管理">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" style="    " title="货品管理" >
     <create-sections title="基础信息">
       <mtForm :file-list="attachmentList" :treever-data="tree" :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
     </create-sections>
-    <create-sections title="单位管理" style="margin:0px">
+    <create-sections title="单位管理" style="margin:0px;" class="create-sections1">
       <el-button
         style="margin-top:10px"
         type="primary"
@@ -152,7 +152,8 @@ export default {
       isSave: false,
       mining: false,
       isDefault: false,
-      attachmentList: []
+      attachmentList: [],
+      disabled1: false
     }
   },
   watch: {
@@ -162,16 +163,20 @@ export default {
         this.mining = false
         this.showDialog = !this.showDialog
         if (this.info.goodsInfo) {
+          this.disabled1 = true
           this.aoiinfo = JSON.parse(JSON.stringify(this.info.goodsInfo))
           this.list = this.info.unitList.map(e => {
             return { ...e, hover: false, checked: false }
           })
+          this.getBaseField()
           this.minchange()
           this.defaultchang()
           this.attachmentList = this.info.attachmentList.map(e => {
             return { url: `/api/zjlab/Attachment/FileMsg?id=${e.id}` }
           })
         } else {
+          this.disabled1 = false
+          this.getBaseField()
           this.list = []
           this.addpush()
           this.attachmentList = []
@@ -349,6 +354,7 @@ export default {
         name: '货品编码',
         placeholder: '请输入货品编码',
         setting: [],
+        disabled: this.disabled1,
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.code : ''
       })
@@ -436,10 +442,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog{
-    margin-top:2vh !important;
-}
+// /deep/.el-dialog{
+    // margin-top:2vh !important;
+// }
 /deep/.el-dialog__footer{
     text-align: center !important;
+}
+</style>
+<style lang="less">
+.create-sections1{
+  .content{
+        padding: 0 25px;
+  }
 }
 </style>

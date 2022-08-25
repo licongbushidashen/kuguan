@@ -39,8 +39,9 @@ export default [
       permissions: ['account', 'system-project']
     }),
     meta: {
-      title: 'InventoryManager.CheckPlans',
-      icon: 's-seas'
+      title: '台账管理',
+      title1: 'InventoryManager.CheckPlans',
+      icon: 'iconfont icon-huaban39'
     },
     children: [
       {

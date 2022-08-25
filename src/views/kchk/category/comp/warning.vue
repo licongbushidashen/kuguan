@@ -291,6 +291,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.kuwaring{
+      padding-left: 16px;
+}
 .kuwaring /deep/.el-input{
     width:200px;
     margin:0px 20px;
@@ -298,7 +301,7 @@ export default {
         margin-left: 16px;
 }
 .ku-ap{
-    margin-left: 20px;
+    margin-left: 10px;
 }
 /deep/.el-dialog__body{
     padding-left:50px !important ;

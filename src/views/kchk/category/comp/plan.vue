@@ -1,10 +1,15 @@
 <template>
   <el-dialog :visible.sync="showDialog" title="计划管理" width="500px">
     <create-sections title="">
-      <div class="kuwaring"><span class="ku-ap">浮动比例</span><el-input v-model="slidingScales" placeholder="请输入"/></div>
-      <div>
-        说明：<span>每月初根据上月货品的消耗总量分别设置浮动比例作为本月货品计划用量</span>
-      </div>
+      <div class="kuwaring"><span class="ku-ap">浮动比例</span><el-tooltip
+        effect="dark"
+        placement="top">
+        <div slot="content" v-html="'每月初根据上月货品的消耗总量分别设置浮动比例作为本月货品计划用量'"/>
+        <i class="wk wk-help wk-help-tips" style="margin:0px;margin-left: 5px;"/>
+      </el-tooltip><el-input v-model="slidingScales" placeholder="请输入"/></div>
+      <!-- <div>
+        <span>每月初根据上月货品的消耗总量分别设置浮动比例作为本月货品计划用量</span>
+      </div> -->
     </create-sections>
     <span slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>
@@ -211,6 +216,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.kuwaring{
+      padding-left: 16px;
+}
 .kuwaring /deep/.el-input{
     width:200px;
     margin:0px 20px;
@@ -218,7 +226,7 @@ export default {
         margin-left: 16px;
 }
 .ku-ap{
-    margin-left: 20px;
+    margin-left: 10px;
 }
 /deep/.el-dialog__body{
     padding-left:50px !important ;

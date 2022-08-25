@@ -9,7 +9,7 @@
         <el-button
           class="main-table-header-button "
           type=""
-          icon="el-icon-plus"
+          icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
       </template>
     </xr-header>
@@ -32,23 +32,19 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="150"
+          width="60"
           label="序号">
 
           <template slot-scope="{ row, column, $index}">
             <span class="status-name">
               <span
                 class="index"
-                style="text-align: center; display: block;"
+                style="margin-left:10px;display: block;"
                 @mouseenter="row.hover = true"
                 @mouseleave="row.hover = false"
               >
-                <el-checkbox
-                  v-show="row.hover || row.checked"
-                  v-model="row.checked"
-                  @change="onItemCheckboxChange"
-                />
-                <span v-show="!row.hover && !row.checked" class="text">{{
+
+                <span class="text">{{
                   $index+1
                 }}</span>
               </span>

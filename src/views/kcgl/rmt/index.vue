@@ -77,13 +77,13 @@
                 <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
               </div>
               <div v-if="quanxian==1" style="margin-left:20px">
-                <div v-for="(item,index) in allrole" :key="index" style="margin-top:5px">
+                <div v-for="(item,index) in allrole" :key="index" style="">
                   <el-checkbox :indeterminate="item.indeterminate" v-model="item.isGranted" @change="handleCheckAllChange(item,index)">{{ item.displayName }}</el-checkbox>
-                  <br style="margin-bottom:20px;margin-top:20px">
-                  <div v-for="(item1, index1) in item.permissions" :key="index1" style="margin-left:20px;margin-top:5px">
+                  <br style="">
+                  <div v-for="(item1, index1) in item.permissions" :key="index1" style="    margin-bottom: 5px;">
                     <el-checkbox :indeterminate="item1.indeterminate" v-model="item1.isGranted" @change="handleCheckAllChange1(item1,index,index1)">{{ item1.displayName }}</el-checkbox>
 
-                    <div style="margin-left:40px;margin-top:5px">
+                    <div style="">
                       <el-checkbox v-for="(item2 ,index2) in item1.permissions" :key="index2" v-model="item2.isGranted" @change="handleCheckAllChange2(item2,index,index1,index2)" >{{ item2.displayName }}</el-checkbox>
                     </div>
 
@@ -1389,6 +1389,9 @@ export default {
       }
     }
   }
-
+.el-checkbox{
+      margin-bottom: 20px !important;
+      min-width:150px !important
+}
   @import '../styles/table.scss';
 </style>

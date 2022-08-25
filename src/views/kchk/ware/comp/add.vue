@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :title="title" style="    ">
     <create-sections title="基础信息">
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick"/>
     </create-sections>
@@ -51,7 +51,8 @@ export default {
       fields: {},
       isSave: false,
       mining: false,
-      isDefault: false
+      isDefault: false,
+      title: ''
 
     }
   },
@@ -65,11 +66,13 @@ export default {
       handler(val) {
         this.showDialog = !this.showDialog
         if (!this.info.id) {
+          this.title = '编辑仓库'
           this.aoiinfo = {
             flag: 1,
             remark: ''
           }
         } else {
+          this.title = '新增仓库'
           this.aoiinfo = this.info
         }
       },
@@ -184,9 +187,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-/deep/.el-dialog{
-    margin-top:2vh !important;
-}
+// /deep/.el-dialog{
+    // margin-top:2vh !important;
+// }
 /deep/.el-dialog__footer{
     text-align: center !important;
 }

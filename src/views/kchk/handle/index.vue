@@ -422,11 +422,13 @@ export default {
     background: #fff;
     width: 100%;
     border: 1px solid #e6e6e6;
-    display: flex;
+    // display: flex;
     padding: 20px;
     >div{
-      flex: 1;
+      // flex: 1;
+          display: inline-block;
           line-height: 44px;
+          margin-left: 20px;
       label{
         margin-right: 10px;
       }
@@ -457,8 +459,10 @@ export default {
   position: relative;
   .main-table-header-button {
     float: right;
-    margin-right: 20px;
-    margin-top: 10px;
+        margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 6px;
+    margin-left: 21px;
   }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="shows" append-to-body>
+  <el-dialog :visible.sync="shows" :title="p=='请输入姓名'?'负责人':'仓库'" append-to-body>
     <div style="margin-bottom :20px;">
       <el-input
         v-model="inputContent"
