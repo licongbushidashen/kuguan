@@ -58,6 +58,7 @@ const getters = {
   kchkRouters: state => state.permission.kchkRouters,
   kcglRouters: state => state.permission.kcglRouters,
   warehouseRouters: state => state.permission.warehouseRouters,
+  accountRouter: state => state.permission.accountRouter,
   // 客户管理信息
   messageNum: state => state.crm.messageNum,
   // 配置信息

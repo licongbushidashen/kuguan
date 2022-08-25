@@ -15,14 +15,14 @@
       <div style="    display: flex;    justify-content: end;">
         <div>
           <el-button
-            v-if="activeName==1"
+            v-if="activeName==1&&allAuth['OrderSetting.Orders.BatchAgree']"
             :disabled="!disable"
             style="margin:0px 0px 10px 0px"
             type="primary" @click="addJurisdiction(2)">批量同意</el-button>
         </div>
         <div>
           <el-button
-            v-if="activeName==2"
+            v-if="activeName==2&&allAuth['OrderSetting.Orders.BatchStorageIn']"
             :disabled="!disable"
             style="margin:0px 0px 10px 0px"
             type="primary" @click="addJurisdiction(5)">批量入库</el-button>
@@ -30,7 +30,7 @@
         </div>
         <div>
           <el-button
-            v-if="activeName==4"
+            v-if="activeName==4 &&allAuth['OrderSetting.Orders.BatchStorageOut']"
             :disabled="!disable"
             style="margin:0px 0px 10px 0px"
             type="primary" @click="addJurisdiction(4)">批量出库</el-button>
@@ -38,7 +38,7 @@
         </div>
         <div>
           <el-button
-            v-if="activeName==3"
+            v-if="activeName==3&&allAuth['OrderSetting.Orders.BatchSubmit']"
             :disabled="!disable"
             style="margin:0px 0px 10px 0px"
             type="primary" @click="addJurisdiction(1)">批量提交</el-button>
@@ -46,7 +46,7 @@
         </div>
         <div>
           <el-button
-            v-if="activeName==0"
+            v-if="activeName==0&&allAuth['OrderSetting.Orders.BatchSubmit']"
             :disabled="!disable"
             style="margin:0px 0px 10px 0px"
             type="primary" @click="addJurisdiction(1)">批量提交</el-button>
@@ -88,6 +88,11 @@
             </span>
           </template>
         </el-table-column>
+        <el-table-column prop="address" label="申请事项">
+          <template slot-scope="{ row, column, $index }">
+            <span>{{ row.orderCategory | ordername }}</span>
+          </template>
+        </el-table-column>
         <el-table-column show-overflow-tooltip prop="name" label="单据状态">
           <template slot-scope="{ row, column, $index }">
             <span>{{ row.flag | flagname }}</span>
@@ -95,14 +100,18 @@
         </el-table-column>
 
         <el-table-column prop="orderNo" label="单据号" />
-        <el-table-column prop="address" label="出库类型">
+        <el-table-column prop="address" label="类型">
           <template slot-scope="{ row, column, $index }">
-            <span>{{ row.orderCategory | ordername }}</span>
+            <span>{{ row.identification | ident }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column show-overflow-tooltip prop="name" label="单据状态">
+          <template slot-scope="{ row, column, $index }">
+            <span>{{ row.flag | flagname }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="goodsCategoryName" label="所属类目" />
         <el-table-column prop="wareHouseName" label="仓库" />
-        <el-table-column prop="memoryCardName" label="经费卡号" />
         <el-table-column prop="createUserName" label="申请人" />
         <el-table-column prop="creationTime" label="申请时间" />
         <!-- <el-table-column
@@ -133,6 +142,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { OrderPage, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchStorageOut } from '@/api/kchk/order'
 // import Ccware from './comp/add.vue'
@@ -149,6 +159,15 @@ export default {
     // Ccware
   },
   filters: {
+    ident: function(value) {
+      if (value == 0) {
+        return '入库'
+      } else if (value == 1) {
+        return '出库'
+      } else if (value == 2) {
+        return '盘点'
+      }
+    },
     ordername: function(value) {
       if (value == 21) {
         return '领用出库'
@@ -217,7 +236,9 @@ export default {
       disable: false
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['allAuth'])
+  },
   mounted() {
     var self = this
     /** 控制table的高度 */

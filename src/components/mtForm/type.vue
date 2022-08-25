@@ -3,7 +3,7 @@
     <div style="margin-bottom :20px;">
       <el-input
         v-model="inputContent"
-        placeholder="请输入仓库名称"
+        :placeholder="p"
         class="search-input"
         style="width:200px"
         @keyup.enter.native="Pagelist">
@@ -12,7 +12,7 @@
           icon="el-icon-search"
           @click.native="Pagelist" />
       </el-input>
-      <span style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    float: right;">新 增</span>
+      <!-- <span style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    float: right;">新 增</span> -->
     </div>
     <el-table
       id="examine-table"
@@ -82,6 +82,10 @@ export default {
       type: String
 
     },
+    p: {
+      type: String
+
+    },
     name: {
       type: String
     }
@@ -96,21 +100,18 @@ export default {
       pageSize: 15,
       total: 0,
       labelList: {
-        wldw: [
-          { name: '仓库名称', prop: 'name' },
-          { name: '仓库编码', prop: 'code' }
-        ]
+
       },
       label: {}
     }
   },
   watch: {
     typeling() {
+      this.inputContent = ''
       this.shows = true
       this.pageSize = 15
       this.currentPage = 0
-      this.label = [{ name: '仓库名称', prop: 'name' },
-        { name: '仓库编码', prop: 'code' }]
+      this.label = []
       this.Pagelist()
     }
   },
@@ -139,15 +140,16 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val ? val * 15 : val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.Pagelist()
     },
     changeParam(param) {
       return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
     },
     Pagelist() {
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputContent }
       if (this.url == '/api/identity/users') {
+        const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, Filter: this.inputContent }
         return request({
           url: `${this.url}${this.changeParam(data)}`,
           method: 'get',
@@ -167,6 +169,7 @@ export default {
           this.total = res.totalCount
         })
       } else {
+        const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
         return request({
           url: `${this.url}`,
           method: 'post',

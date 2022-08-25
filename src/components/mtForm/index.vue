@@ -22,6 +22,20 @@
       >
         {{ fieldFrom[item.field] }}
       </div>
+      <div
+        v-if="item.formType == 'leave'"
+        class="openif"
+        @click.stop="opende1(item,index,item.field)"
+      >
+        {{ fieldFrom[item.field] }}
+      </div>
+      <div
+        v-if="item.formType == 'leave1'"
+        class="openif"
+        @click.stop="opende2(item,index,item.field)"
+      >
+        {{ fieldFrom[item.field] }}
+      </div>
       <el-select
         v-else-if="item.formType == 'seleteload'"
         :multiple="item.multiple || false"
@@ -40,7 +54,16 @@
           :value="ite.id"/>
       </el-select>
       <el-input
-        v-if="item.formType == 'text' || item.formType == 'number'"
+        v-if="item.width1"
+        v-model="fieldFrom[item.field]"
+        :disabled="item.disabled"
+        :maxlength="item.maxLength || 100"
+        :placeholder="item.placeholder"
+        :type="item.formType"
+        class="input-width input-width1"
+        @input="commonChange(item, index, $event)"/>
+      <el-input
+        v-if="(item.formType == 'text' || item.formType == 'number') &&!item.width1"
         v-model="fieldFrom[item.field]"
         :disabled="item.disabled"
         :maxlength="item.maxLength || 100"
@@ -115,7 +138,6 @@
       <el-radio-group
         v-else-if="item.formType == 'radio'"
         v-model="fieldFrom[item.field]"
-        :disabled="item.disabled"
         @input="commonChange(item, index, $event)">
         <el-radio v-for="(ite,ind) in item.setting" :label="ite[item.optionV]" :key="ind">{{ ite[item.optionL] }}</el-radio>
       </el-radio-group>
@@ -168,7 +190,9 @@
       </template>
     </el-form-item>
     <slot name="bot"/>
-    <Type :typeling="typeling" :url="url" :name="urlname" @changev="typevalu"/>
+    <Type :typeling="typeling" :url="url" :name="urlname" :p="p" @changev="typevalu"/>
+    <changes :shows="leaveing" @onshow="leaveing=false" @changev="typevalu1"/>
+    <changes1 :shows="leaveing1" @onshow="leaveing1=false" @changev="typevalu1"/>
   </el-form>
 </template>
 
@@ -180,8 +204,10 @@
 import request from '@/utils/request'
 import { isEmpty } from '@/utils/types'
 import Type from './type.vue'
+import changes from './changes.vue'
+import changes1 from './changes1.vue'
 export default {
-  components: { Type },
+  components: { Type, changes, changes1 },
   props: {
     treeverData: {
       type: Array,
@@ -236,6 +262,7 @@ export default {
         label: 'name',
         id: 'id'
       },
+      p: '',
       id: '',
       name: '',
       types: [],
@@ -249,7 +276,9 @@ export default {
       flag: false,
       loading: false,
       dom: null,
-      urlname: ''
+      urlname: '',
+      leaveing: false,
+      leaveing1: false
     }
   },
   watch: {
@@ -336,20 +365,37 @@ export default {
         this.commonChange(row, 'wareHouseId')
       }
     },
+    typevalu1(row) {
+      this.fieldFrom['parentName'] = row.specificLocation
+      this.fieldFrom['parentId'] = row.id
+      this.fieldFrom['spacePointName'] = row.specificLocation
+      this.leaveing = false
+      this.leaveing1 = false
+      this.commonChange(row, 'parentName')
+    },
+
     opende(row, idnex, name) {
       if (name == 'dutyUserName') {
+        this.p = '请输入姓名'
         this.urlname = 'dutyUserName'
         this.row = row
         this.rindex = idnex
         this.typeling = !this.typeling
         this.url = '/api/identity/users'
       } else {
+        this.p = '请输入关键字'
         this.urlname = 'CompanyPage'
         this.row = row
         this.rindex = idnex
         this.typeling = !this.typeling
-        this.url = '/api/zjlab/Company/CompanyPage'
+        this.url = '/api/zjlab/Warehouse/WarehousePage'
       }
+    },
+    opende1(row, idnex, name) {
+      this.leaveing = true
+    },
+    opende2(row, idnex, name) {
+      this.leaveing1 = true
     },
     treeCheckClick(data) {
       if (this.id == data.id) {
@@ -376,7 +422,7 @@ export default {
     },
     handleRemove(res, val) {
       console.log(res, val)
-      this.$emit('change', res.id, 'phototp')
+      this.$emit('change', res, 'phototp')
     },
     /**
        * 常规组件change事件
@@ -385,10 +431,13 @@ export default {
       this.$emit('change', item, index, value, this.parentIndex)
     },
     onSubmit(ruleForm) {
+      console.log(this.rules)
       this.$refs[ruleForm].validate((valid) => {
         if (valid) {
+          console.log(this.parentIndex)
           this.$emit('save', true, this.parentIndex)
         } else {
+          console.log(this.parentIndex)
           this.$emit('save', false, this.parentIndex)
           return false
         }
@@ -419,7 +468,9 @@ export default {
   }
 </style>
 <style>
-
+.input-width1{
+  width:calc(48% - 15px) !important
+}
 .el-select-dropdown__item{
     height: 100%;
     /* padding: 0px; */

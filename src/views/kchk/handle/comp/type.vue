@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="shows" append-to-body>
+  <el-dialog v-loading="loading" :visible.sync="shows" append-to-body>
     <div style="margin-bottom :20px;display: flex;">
       <el-input
         :placeholder="placeholder"
@@ -145,6 +145,8 @@ export default {
   },
   data() {
     return {
+      flag: 0,
+      loading: false,
       startTime: null,
       company: '',
       orderCategory: '',
@@ -290,14 +292,16 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val ? val * 15 : val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.Pagelist()
     },
     changeParam(param) {
       return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
     },
     Pagelist() {
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputContent }
+      this.loading = true
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
       if (this.name == 'gldj1' || this.name == 'gldj2') {
         if (this.name == 'gldj1') {
           data.isOutbound = false
@@ -327,6 +331,8 @@ export default {
           })
           this.list = res.items
           this.total = res.totalCount
+          this.flag = 1
+          this.loading = false
         })
       } else {
         return request({
@@ -341,8 +347,12 @@ export default {
             element.hover = false
             element.checked = false
           })
+
+
           this.list = res.items
           this.total = res.totalCount
+          this.loading = false
+          this.flag = 1
         })
       }
     }

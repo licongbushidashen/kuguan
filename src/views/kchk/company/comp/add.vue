@@ -73,6 +73,7 @@ export default {
         } else {
           this.aoiinfo = this.info
         }
+        this.gettype()
       },
       deep: true,
       immediate: true

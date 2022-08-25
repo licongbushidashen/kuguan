@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :title="info.id?'新增用户':'修改用户'" :close-on-click-modal="false" :destroy-on-close="true"	style="margin-top: 2vh;" >
     <create-sections title="基础信息">
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick"/>
     </create-sections>

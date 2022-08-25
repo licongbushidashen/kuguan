@@ -1,8 +1,8 @@
 <template>
   <div class="main">
     <xr-header
-      icon-class="wk wk-project"
-      icon-color="#33D08F"
+      icon-class="iconfont icon-kucunguanli"
+      icon-color="#2362fb"
       label="库存查询" >
       <template v-slot:ft>
 
@@ -62,11 +62,11 @@
           label="货品名称"/>
 
         <el-table-column
-          prop="wareHouseName"
+          prop="goodsCategoryName"
           label="货品类目"
         />
         <el-table-column
-          prop="goodsCategoryName"
+          prop="wareHouseName"
           label="所属仓库"
         />
         <el-table-column
@@ -173,7 +173,7 @@ export default {
      */
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
       InventoryPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -193,7 +193,8 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getList()
     },
 

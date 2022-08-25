@@ -1,42 +1,18 @@
 <template>
-  <el-dialog :visible.sync="shows" append-to-body>
+  <el-dialog :visible.sync="shows" :close-on-click-modal="false" :destroy-on-close="true" append-to-body title="关联用户">
     <div style="margin-bottom :20px;display: flex;">
       <el-input
-        :placeholder="placeholder"
         v-model="inputContent"
+        placeholder="请输入姓名/账号"
         class="search-input"
-        style="width:110px"
-        @keyup.enter.native="Pagelist"/>
-      <div v-if="name=='gldj1'" style="margin: 0px 10px">
-        <label for="">出库日期</label>
-        <el-date-picker
-          v-model="startTime"
-          style="width:140px"
-          type="date"
-          placeholder="入库日期"/>
-      </div>
-      <div v-if="name=='gldj1'" style="margin: 0px 10px">
-        <label for="">入库类型</label>
-        <el-select v-model="orderCategory" style="width:130px">
-          <el-option
-            v-for="(item,index) in Category"
-            :key="index" :label="item.name"
-            :value="item.orderCategory"
-            class="wy-select"/>
-        </el-select>
-      </div>
-      <div v-if="name=='gldj1'" style="margin: 0px 10px">
-        <label for="">往来单位/仓库名称</label>
-        <el-input
-          v-model="company"
-          style="width:130px;"
-          placeholder="往来单位/仓库名称"
-        />
-      </div>
-      <el-button type="primary" style="float:right" @click="handleCurrentChange(0)"> 查询</el-button>
-      <span v-if="shows1" style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    position: absolute;    right: 30px;" @click="openurl">新 增</span>
+        style="width:200px"
+        @keyup.enter.native="Pagelist">
+        <el-button slot="append" type="primary" style="float:right" icon="el-icon-search" @click="handleCurrentChange(0)"/>
+      </el-input>
+
     </div>
     <el-table
+      v-if="flag"
       id="examine-table"
       :data="list"
       class="main-table"
@@ -92,13 +68,14 @@
 
     <span slot="footer" class="dialog-footer">
       <el-button @click="shows = false">取消</el-button>
-      <el-button type="primary" @click="dialogSure">确 定</el-button>
+      <el-button type="primary" @click="handleConfirm">确 定</el-button>
 
     </span>
   </el-dialog>
 
 </template>
 <script>
+import { usersIdroles } from '@/api/admin/rmt'
 import request from '@/utils/request'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { GetOrder } from '@/api/kchk/order'
@@ -127,6 +104,7 @@ export default {
 
   },
   props: {
+    roleId: [Number, String],
     placeholder: {
       type: String,
       default: '请输入'
@@ -210,7 +188,8 @@ export default {
         ]
 
       },
-      label: {}
+      label: {},
+      flag: 0
     }
   },
   computed: {
@@ -230,10 +209,31 @@ export default {
       this.pageSize = 15
       this.currentPage = 0
       this.label = this.labelList[this.name]
+      this.flag = 0
+      this.inputContent = ''
       this.Pagelist()
     }
   },
   methods: {
+    /**
+     * 点击确定
+     */
+    handleConfirm() {
+      debugger
+
+      const isCheckedItems = this.list.filter(d => d.checked)
+      if (isCheckedItems.length > 0) {
+        usersIdroles({ roleNames: [this.roleId] }, isCheckedItems[0].id)
+          .then(res => {
+            this.$message.success('操作成功')
+            this.$emit('change', '')
+            this.shows = false
+          })
+          .catch(() => {})
+      } else {
+        this.$message.error('请选择一条数据')
+      }
+    },
     openurl() {
       if (this.name == 'wldw') {
         this.$router.push('/kchk/kkcgj-company?add=1')
@@ -283,14 +283,15 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val ? val * 15 : val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.Pagelist()
     },
     changeParam(param) {
       return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
     },
     Pagelist() {
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputContent }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, Filter: this.inputContent }
       if (this.name == 'gldj1') {
         data.isOutbound = true
 
@@ -316,6 +317,7 @@ export default {
           })
           this.list = res.items
           this.total = res.totalCount
+          this.flag = 1
         })
       } else {
         return request({
@@ -332,6 +334,7 @@ export default {
           })
           this.list = res.items
           this.total = res.totalCount
+          this.flag = 1
         })
       }
     }

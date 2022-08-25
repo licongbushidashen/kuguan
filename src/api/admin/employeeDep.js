@@ -265,3 +265,17 @@ export function adminUserCountNumOfUserAPI() {
     method: 'post'
   })
 }
+
+
+
+// 导出日志
+export function ImportLogPageAysnc(data) {
+  return request({
+    url: `/api/zjlab/ImportLog/ImportLogPageAysnc`,
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

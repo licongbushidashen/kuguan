@@ -23,6 +23,10 @@
           <div class="section">
 
             <div class="section__content">
+              <el-input
+                v-model="keywords" style="padding:10px" >
+                <el-button slot="append" icon="el-icon-search" @click="changes"/>
+              </el-input>
               <el-tree
                 ref="tree"
                 :props="props"
@@ -37,8 +41,6 @@
                   :class="{ 'is-current': node.isCurrent }"
                   class="node-data"
                 >
-
-
                   <div class="node-data__label text-one-line ">
                     {{ data.name }}
                   </div>
@@ -66,10 +68,17 @@
           class="table-top"
         >
           <div class="table-top__title" />
+
+        </flexbox>
+        <div class="flex-box">
+          <create-sections >
+            <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
+          </create-sections>
           <div>
             <template>
               <el-button
                 v-if="allAuth['SystemSetting.GoodsCategorys.Create'] ||allAuth['SystemSetting.GoodsCategorys.Edit']"
+                style="margin-left: 26px;    margin-top: 10px;"
                 type="primary"
                 @click="savechange"
               >保存</el-button
@@ -77,12 +86,8 @@
             </template>
 
           </div>
-        </flexbox>
-        <div class="flex-box">
-          <create-sections >
-            <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
-          </create-sections>
         </div>
+
       </div>
     </div>
 
@@ -93,6 +98,7 @@
 
 import { objDeepCopy } from '@/utils'
 import {
+  CreateGoodsCategory1,
   GetGoodsCategoryTree,
   CreateGoodsCategory,
   UpdateGoodsCategory,
@@ -114,6 +120,7 @@ export default {
   mixins: [GenerateRulesMixin],
   data() {
     return {
+      keywords: '',
       props: {
         label: 'name',
         children: 'zones',
@@ -121,11 +128,12 @@ export default {
       },
       node_had: [],
       resolve_had: '',
+      resolve_had1: null,
       depLoading: false,
       showDepData: [],
       fieldsRules: {}, // 字段列表需要验证
       fields: [],
-      aoiinfo: {},
+      aoiinfo: { flag: 1, dutyUserName: '' },
       isSave: false,
       infos: {
         code: ''
@@ -148,6 +156,26 @@ export default {
     // this.getDepTreeList()
   },
   methods: {
+    changes() {
+      if (this.keywords != '') {
+        this.resolve_had1([])
+        CreateGoodsCategory1(this.keywords).then(response => {
+          response.forEach(e => {
+            e.hasChild = !e.hasChild
+          })
+          this.node_had.level = 0
+          this.node_had.childNodes = []
+          this.aoiinfo = response ? response[0] : { flag: 1 }
+          this.resolve_had1(response || [])
+          this.showDepData = response || []
+          this.depLoading = false
+        })
+      } else {
+        this.node_had.level = 0
+        this.node_had.childNodes = []
+        this.getDepTreeList(this.node_had, this.resolve_had)
+      }
+    },
     formChange(item, index, value) {
       if (index == 'dutyUserName') {
         this.aoiinfo.dutyUserId = item.id
@@ -186,11 +214,11 @@ export default {
       })
       field.push({
         field: 'parentName',
-        formType: 'text',
+        formType: 'leave',
         isNull: 0,
         name: '上级类目',
         placeholder: '',
-        disabled: true,
+        disabled: false,
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.parentName : ''
@@ -227,7 +255,7 @@ export default {
         optionL: 'name',
         optionV: 'id',
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.flag : 1
+        value: this.aoiinfo.flag ? this.aoiinfo.flag : 1
       })
       field.push({
         field: 'remark',
@@ -253,8 +281,10 @@ export default {
       const fieldForm = {}
       list.forEach(item => {
         fieldRules[item.field] = this.getRules(item)
+
         fieldForm[item.field] = item.value
       })
+      console.log(fieldForm)
       return {
         list: objDeepCopy(list),
         fieldRules: fieldRules
@@ -264,7 +294,7 @@ export default {
      * 选择部门
      */
     changeDepClick(data) {
-      this.aoiinfo = data || {}
+      this.aoiinfo = data || { flag: 1 }
       // this.structureValue = data.id
     },
     /**
@@ -272,7 +302,7 @@ export default {
      */
     appendStruc(data) {
       if (data.id) {
-        this.aoiinfo = { parentName: data.name, parentId: data.id, dutyUserName: null, dutyUserId: '' }
+        this.aoiinfo = { parentName: data.name, parentId: data.id, dutyUserName: null, dutyUserId: null, flag: 1 }
       }
     },
     deleteStruc(node, data) {
@@ -283,17 +313,24 @@ export default {
       })
         .then(() => {
           this.loading = true
-          Delete({ id: data.id })
+          const x = { [data.id]: data.code }
+          Delete(x)
             .then(res => {
-              this.$message.success('删除成功')
-              const parent = node.parent
-              console.log(parent, 'parent')
-              const children = parent.childNodes || parent.data
-              const index = children.findIndex(d => d.data.id === data.id)
-              this.aoiinfo = children[index + 1].data || {}
-              children.splice(index, 1)
-              this.loading = false
-              this.getDepTreeList(this.node_had, this.resolve_had)
+              if (res.data.failCount == 0) {
+                this.$message.success('删除成功')
+                this.loading = false
+                this.node_had.childNodes = []
+                this.getDepTreeList(this.node_had, this.resolve_had)
+              } else {
+                const arr = res.data.failMsg.map(e => {
+                  return e + '<br/>'
+                })
+                this.$message({
+                  type: 'error',
+                  dangerouslyUseHTMLString: true,
+                  message: `删除失败：<br/>${arr.length > 0 ? arr.toString() : ''}`
+                })
+              }
             })
             .catch(() => {
               this.loading = false
@@ -313,12 +350,16 @@ export default {
       GetGoodsCategoryTree(data)
         .then(response => {
           this.node_had = node
+          if (!this.resolve_had1) {
+            this.resolve_had1 = resolve
+          }
           this.resolve_had = resolve
           response.forEach(e => {
             e.hasChild = !e.hasChild
           })
+          console.log(this.aoiinfo)
           if (node.level === 0) {
-            this.aoiinfo = response ? response[0] : {}
+            this.aoiinfo == response ? response[0] : { flag: 1 }
           }
           if (node.level > 0) {
             resolve(response || [])

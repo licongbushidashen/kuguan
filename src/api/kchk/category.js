@@ -14,6 +14,17 @@ export function GetGoodsCategoryTree(data) {
     }
   })
 }
+// 类目树 关键字搜索
+export function CreateGoodsCategory1(data) {
+  return request({
+    url: `/api/zjlab/GoodsCategory/GetCategoryTree?keyWord=${data}`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function CreateGoodsCategory(data) {
   return request({
     url: '/api/zjlab/GoodsCategory/CreateGoodsCategory',
@@ -36,7 +47,7 @@ export function UpdateGoodsCategory(data) {
 }
 export function Delete(data) {
   return request({
-    url: `/api/zjlab/GoodsCategory/Delete?id=${data.id}`,
+    url: `/api/zjlab/GoodsCategory/DeleteMany`,
     method: 'delete',
     data: data,
     headers: {

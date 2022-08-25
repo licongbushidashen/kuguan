@@ -1,8 +1,8 @@
 <template>
   <div class="main">
     <xr-header
-      icon-class="wk wk-project"
-      icon-color="#33D08F"
+      icon-class="iconfont icon-yonghuguanli"
+      icon-color="#2362fb"
       label="用户管理" >
       <template v-slot:ft>
         <el-button
@@ -71,12 +71,12 @@
           prop="email"
           label="邮箱"
         />
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="200">
           <template slot-scope="{ row, column }">
             <el-button type="text" icon="el-icon-user" @click="handleRowpassword(row,column)"/>
             <el-button type="text" icon="el-icon-edit" @click="handleRowClick(row,column)" />
             <!-- <el-button type="text" icon="el-icon-help"></el-button> -->
-            <el-button type="text" icon="el-icon-delete" />
+            <el-button type="text" icon="el-icon-delete" @click="deleteclick(row,column)" />
           </template>
         </el-table-column>
         <!-- <el-table-column
@@ -103,9 +103,9 @@
       </div>
     </div>
     <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList"/>
-    <el-dialog :visible.sync="passwording" style="    margin-top: 2vh;width: 800px;left: 30%;   " title="重置密码">
+    <el-dialog :close-on-click-modal="false" :visible.sync="passwording" style="    margin-top: 2vh;width: 800px;left: 30%;   " title="重置密码">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm">
-        <el-form-item label="请输入新的密码：" prop="password">
+        <el-form-item label="新密码：" prop="password">
           <el-input v-model="ruleForm.password" show-password style="width:200px"/>
         </el-form-item>
       </el-form>
@@ -122,6 +122,9 @@ import {
   Pageusers,
   usersInfo, Updateusers
 } from '@/api/kcjl/user'
+import {
+  deleteusers
+} from '@/api/admin/rmt'
 import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
@@ -143,7 +146,7 @@ export default {
       if (test) {
         callback()
       } else {
-        callback(new Error('密码格式错误，至少有一位大写字母、小写字母、数字、特殊符号 '))
+        callback(new Error('至少有1位大写字母、小写字母、数字、特殊符号 '))
       }
     }
     return {
@@ -210,7 +213,7 @@ export default {
     },
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, Filter: this.inputs }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, Filter: this.inputs }
       Pageusers(this.changeParam(data))
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -230,7 +233,8 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getList()
     },
 
@@ -261,6 +265,31 @@ export default {
         this.$message.success('修改成功')
         this.passwording = false
       })
+    },
+    deleteclick(val) {
+      this.$confirm('此操作将永久删除是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.userLoading = true
+          deleteusers(
+            val.id,
+          ).then(res => {
+            this.userLoading = false
+            this.handleCurrentChange(0)
+            this.$message.success('删除成功')
+          }).catch(() => {
+            this.userLoading = false
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
     handleRowClick(row, column, event) {
       if (column.label == '序号') {

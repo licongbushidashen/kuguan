@@ -253,7 +253,7 @@ export default {
      */
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
       GoodsInfoPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -273,7 +273,8 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getList()
     },
 
@@ -332,13 +333,13 @@ export default {
                   this.$message({
                     type: 'success',
                     dangerouslyUseHTMLString: true,
-                    message: `删除成功${res.data.successCount}条`
+                    message: `成功删除${res.data.successCount}条`
                   })
                 } else {
                   this.$message({
                     type: 'error',
                     dangerouslyUseHTMLString: true,
-                    message: `删除成功${res.data.successCount}条，删除失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
+                    message: `成功删除${res.data.successCount}条，失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
                   })
                 }
                 this.getList()

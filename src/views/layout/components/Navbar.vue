@@ -105,7 +105,8 @@ export default {
       'collapse',
       'headerModule',
       'app',
-      'hrmUserInfo'
+      'hrmUserInfo',
+      'allAuth'
     ]),
     ...mapState({
       moduleAuth: (state) => state.app.moduleAuth
@@ -149,31 +150,57 @@ export default {
       //   icon: 'wk wk-address-book',
       //   fontSize: '17px'
       // }
-
-      tempsItems.kchk = {
-        title: '出入库管理',
+      tempsItems.home = {
+        title: '首页',
         type: 6,
-        module: 'kchk',
-        path: '/kchk',
-        icon: 'iconfont icon-tubiaozhizuomoban-154',
-        fontSize: '17px'
-      }
-      tempsItems.wareHouse = {
-        title: '库存管理',
-        type: 6,
-        module: 'warehouse',
-        path: '/warehouse',
+        module: 'home',
+        path: '/home',
         icon: 'iconfont icon-kucunguanli',
         fontSize: '17px'
       }
-      tempsItems.xtgl = {
-        title: '系统管理',
-        type: 6,
-        module: 'kcgl',
-        path: '/kcgl',
-        icon: 'iconfont icon-xitongguanli-',
-        fontSize: '17px'
+      if (JSON.stringify(this.allAuth).indexOf('SystemSetting') != -1) {
+        tempsItems.kchk = {
+          title: '出入库管理',
+          type: 6,
+          module: 'kchk',
+          path: '/kchk',
+          icon: 'iconfont icon-tubiaozhizuomoban-154',
+          fontSize: '17px'
+        }
       }
+
+      if (JSON.stringify(this.allAuth).indexOf('InventoryManager') != -1) {
+        tempsItems.wareHouse = {
+          title: '库存管理',
+          type: 6,
+          module: 'warehouse',
+          path: '/warehouse',
+          icon: 'iconfont icon-kucunguanli',
+          fontSize: '17px'
+        }
+      }
+      if (JSON.stringify(this.allAuth).indexOf('SystemSetting') != -1) {
+        tempsItems.account = {
+          title: '物业台账',
+          type: 6,
+          module: 'account',
+          path: '/account',
+          icon: 'iconfont icon-tubiaozhizuomoban-154',
+          fontSize: '17px'
+        }
+      }
+
+      if (JSON.stringify(this.allAuth).indexOf('AbpTenantManagement') != -1) {
+        tempsItems.xtgl = {
+          title: '系统管理',
+          type: 6,
+          module: 'kcgl',
+          path: '/kcgl',
+          icon: 'iconfont icon-xitongguanli-',
+          fontSize: '17px'
+        }
+      }
+
       // // if (this.crm) {
       // tempsItems.crm = {
       //   title: '客户管理',

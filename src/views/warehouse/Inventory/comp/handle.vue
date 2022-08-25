@@ -7,7 +7,6 @@
       :height="tableHeight"
       class="main-table"
       highlight-current-row
-      @row-click="handleRowClick"
     >
       <el-table-column
         show-overflow-tooltip
@@ -61,7 +60,7 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <span slot="footer" class="dialog-footer" style="text-align: center !important;">
+    <span v-if="flag!=3" slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>
       <el-button type="primary" @click="savechange">提 交</el-button>
     </span>
@@ -70,7 +69,9 @@
 <script>
 import {
   Create,
-  Update
+  Update,
+  GetProfitLoss,
+  UpdateInventoryNum
 } from '@/api/Inventory/kc'
 
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
@@ -80,6 +81,12 @@ export default {
   props: {
     showing: {
       type: Boolean
+    },
+    id: {
+      type: String
+    },
+    flag: {
+      type: Number
     },
     info: {
       type: Object,
@@ -93,13 +100,18 @@ export default {
       loading: false,
       currentPage: 0,
       pageSize: 15,
-      total: 0
+      total: 0,
+      showDialog: true
     }
   },
   watch: {
     showing: {
       handler(val) {
+        debugger
         this.showDialog = !this.showDialog
+        if (this.showDialog) {
+          this.handleCurrentChange(0)
+        }
       },
       deep: true,
       immediate: true
@@ -112,10 +124,21 @@ export default {
     /**
      * 获取列表数据
      */
+    savechange() {
+      UpdateInventoryNum(this.id).then(res => {
+        if (res == true) {
+          this.$emit('change', 0)
+          this.$message.success('盈亏处理完成')
+          this.showDialog = false
+        } else {
+          this.$message.success('接口异常')
+        }
+      })
+    },
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputs }
-      CheckPlanPage(data)
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage }
+      GetProfitLoss(data, this.id)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
@@ -134,7 +157,8 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getList()
     },
 

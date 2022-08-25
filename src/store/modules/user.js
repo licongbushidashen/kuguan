@@ -3,7 +3,6 @@ import { adminIndexAuthListAPI } from '@/api/common'
 import { resetRouter } from '@/router'
 // logoutAPI
 import { adminUsersReadAPI } from '@/api/user/personCenter'
-
 import { addAuth, removeAuth } from '@/utils/auth'
 import { request } from '@/utils'
 import Lockr from 'lockr'
@@ -36,7 +35,6 @@ const user = {
       localStorage.setItem('loginUserInfo', JSON.stringify(userInfo))
     },
     SET_ALLAUTH: (state, allAuth) => {
-      debugger
       state.allAuth = allAuth
     },
     SET_CRM: (state, crm) => {
@@ -95,28 +93,37 @@ const user = {
       return new Promise((resolve, reject) => {
         adminIndexAuthListAPI()
           .then(response => {
-            commit('SET_USERINFO', response.currentUser)
-            const data = response
-            Lockr.set('authList', data)
-            data.wkFirstModel = data.firstModel
-            commit('SET_language', data.localization.values.Module)
-            commit('SET_ALLAUTH', data.auth.grantedPolicies)
-            commit('SET_CRM', data.crm)
-            commit('SET_BI', data.bi)
-            commit('SET_MANAGE', data.manage)
-            commit('SET_OA', data.oa)
-            commit('SET_PROJECT', data.project)
-            commit('SET_HRM', data.hrm)
+            if (!response.currentUser.id) {
+              localStorage.removeItem('accessToken')
+              removeAuth()
+              resetRouter()
+            } else {
+              commit('SET_USERINFO', response.currentUser)
+              const data = response
+              Lockr.set('authList', data)
+              data.wkFirstModel = data.firstModel
+              commit('SET_language', data.localization.values.Module)
+              if (Object.getOwnPropertyNames(data.auth.grantedPolicies).length !== 0) {
+                commit('SET_ALLAUTH', data.auth.grantedPolicies)
+              }
 
-            // 获取 管理后台 员工和部门信息
-            dispatch('GetUserList')
-            // dispatch('GetDeptList')
-            if (data.hrm) {
-              dispatch('GetHrmUserList')
-              dispatch('GetHrmDeptList')
+              commit('SET_CRM', data.crm)
+              commit('SET_BI', data.bi)
+              commit('SET_MANAGE', data.manage)
+              commit('SET_OA', data.oa)
+              commit('SET_PROJECT', data.project)
+              commit('SET_HRM', data.hrm)
+
+              // 获取 管理后台 员工和部门信息
+              dispatch('GetUserList')
+              // dispatch('GetDeptList')
+              if (data.hrm) {
+                dispatch('GetHrmUserList')
+                dispatch('GetHrmDeptList')
+              }
+
+              resolve(data.auth.grantedPolicies)
             }
-
-            resolve(data.auth.grantedPolicies)
           })
           .catch(error => {
             reject(error)

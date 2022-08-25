@@ -5,11 +5,13 @@
         <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(1)"/>
       </el-input>
       <div style="float:right"><el-button
+        v-if="allAuth['SystemSetting.CompanyCategorys.Create']"
         class="main-table-header-button "
         type="primary"
         icon="el-icon-plus"
         @click="addtype(1)">新建</el-button>
         <el-button
+          v-if="allAuth['SystemSetting.CompanyCategorys.Delete']"
           :disabled="JSON.stringify(obj)=='{}'"
           class="main-table-header-button "
           type=""
@@ -76,7 +78,7 @@
         layout="total, prev, pager, next"
         @current-change="handleCurrentChange"/>
     </div>
-    <el-dialog :visible.sync="addshow" title="新建单位类型" append-to-body width="400px" style="margin-top: 18vh;">
+    <el-dialog :visible.sync="addshow" :title="titles" append-to-body width="400px" style="margin-top: 18vh;">
       <div>
         <label for="" style="margin-right:20px" >单位类型</label>
         <el-input v-model="name" style="width:200px" placeholder="请输入"/>
@@ -96,6 +98,7 @@ import {
   CompanyUpdate,
   CompanyDeleteMany
 } from '@/api/kchk/company'
+import { mapGetters } from 'vuex'
 export default {
   props: {
     showing: {
@@ -109,6 +112,7 @@ export default {
     }},
   data() {
     return {
+      titles: '新建单位类型',
       addshow: false,
       showDialog: false,
       list: [],
@@ -122,7 +126,9 @@ export default {
       info1: ''
     }
   },
-
+  computed: {
+    ...mapGetters(['allAuth'])
+  },
   watch: {
     showing: {
       handler(val) {
@@ -156,13 +162,13 @@ export default {
                   this.$message({
                     type: 'success',
                     dangerouslyUseHTMLString: true,
-                    message: `删除成功${res.data.successCount}条`
+                    message: `成功删除${res.data.successCount}条`
                   })
                 } else {
                   this.$message({
                     type: 'error',
                     dangerouslyUseHTMLString: true,
-                    message: `删除成功${res.data.successCount}条，删除失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
+                    message: `成功删除${res.data.successCount}条，失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
                   })
                 }
                 this.getList()
@@ -195,14 +201,18 @@ export default {
       }
     },
     addtype(val, item) {
-      this.addshow = true
       if (val) {
+        this.titles = '新增单位类型'
         this.name = ''
         this.info1 = false
       } else {
         this.info1 = item
         this.name = item.name
+        if (!this.allAuth['SystemSetting.CompanyCategorys.Edit']) {
+          this.$message.error('暂无当前权限')
+        }
       }
+      this.addshow = true
     },
     /** 列表操作 */
     /**
@@ -212,6 +222,7 @@ export default {
       if (column.label == '序号') {
         return
       } else {
+        this.titles = '编辑单位类型'
         this.addtype(0, row)
       }
     },
@@ -220,7 +231,8 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      val == 1 ? this.currentPage = 0 : this.currentPage = this.currentPage + 15
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getList()
     },
     /*
@@ -236,7 +248,7 @@ export default {
     },
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
       CompanyCategoryPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {

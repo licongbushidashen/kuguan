@@ -19,6 +19,7 @@ import calendarRouter from './modules/calendar'
 import hrmRouter from './modules/hrm'
 import kcglRouter from './modules/kcgl'
 import warehouseRouter from './modules/warehouse'
+import accountRouter from './modules/account'
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
 * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
@@ -90,12 +91,13 @@ export const asyncRouterMap = [
   { type: 'manage', router: adminRouter },
   { type: 'kcgl', router: kcglRouter },
   { type: 'warehouse', router: warehouseRouter },
+  { type: 'account', router: accountRouter },
   { type: 'handle', router: [{
     ...layout({
       permissions: ['handle', 'system-project']
     }),
     meta: {
-      title: '通讯录管理',
+      title: 'OrderSetting.Orders',
       icon: 's-seas'
     },
     children: [
@@ -105,6 +107,28 @@ export const asyncRouterMap = [
         component: () => import('@/views/kchk/handle'),
         meta: {
           title: '类目管理',
+          icon: 'iconfont icon-31leimu'
+        }
+      }
+
+
+    ]
+  }] },
+  { type: 'home', router: [{
+    ...layout({
+      permissions: ['home', 'system-project']
+    }),
+    meta: {
+      title: 'OrderSetting.Orders',
+      icon: 's-seas'
+    },
+    children: [
+      {
+        name: 'home',
+        path: 'home', // 类目
+        component: () => import('@/views/home'),
+        meta: {
+          title: '首页',
           icon: 'iconfont icon-31leimu'
         }
       }

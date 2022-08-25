@@ -85,6 +85,7 @@ export default {
           const percentage =
             ((progressEvent.loaded / progressEvent.total) * 100) | 0
           this.percentage = percentage
+          console.log(percentage)
         },
         cancelToken: new CancelToken(function executor(c) {
           self.cancel = c

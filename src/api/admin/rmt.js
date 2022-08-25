@@ -1,5 +1,31 @@
 import request from '@/utils/request'
 
+
+/**
+ *
+ * 角色增加用户  /api/identity/users/${id}/roles
+ *
+ */
+export function usersIdroles(params, id) {
+  return request({
+    url: `/api/identity/users/${id}/roles`,
+    method: 'put',
+    data: params,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function deleteusers(id) {
+  return request({
+    url: `/api/identity/users/${id}`,
+    method: 'delete',
+    data: id,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 /**
  *
  * 获取所有角色列表  /api/identity/roles/all
@@ -71,7 +97,7 @@ export function deteleIdentityRoles(params) {
 // 查询角色下的所有用户
 export function getRoleUsers(params) {
   return request({
-    url: `/api/identity/roles/${params.id}/users`,
+    url: `/api/identity/roles/${params.id}/users?Filter=${params.Filter || ''}`,
     method: 'get',
     params: params
   })

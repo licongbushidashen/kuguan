@@ -25,10 +25,8 @@ router.beforeEach((to, from, next) => {
       })
       NProgress.done()
     } else {
-      debugger
       if (!loadAsyncRouter) { // 判断当前用户是否获取权限
         loadAsyncRouter = true
-        debugger
         if (store.getters.allAuth) {
           store.dispatch('GenerateRoutes', store.getters.allAuth).then(() => { // 根据auths权限生成可访问的路由表
             router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表

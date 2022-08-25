@@ -20,6 +20,8 @@ const filterAsyncRouter = function(routers, authInfo) {
   for (let i = 0; i < routers.length; i++) {
     if (authInfo[routers[i].meta.title]) {
       arr.push(routers[i])
+    } else if (authInfo[routers[i].meta.title1]) {
+      arr.push(routers[i])
     }
   }
   return arr
@@ -50,11 +52,11 @@ const filterIgnoreRouter = function(routers) {
  * 路由重定向和角色路由完善
  */
 const perfectRouter = function(authInfo, result) {
-  console.log(authInfo)
   const routerObj = {}
   let addRouter = []
   let redirect = ''
   let topRedirect = '' // 置顶的第一个路由
+
   for (let index = 0; index < asyncRouterMap.length; index++) {
     const mainRouter = asyncRouterMap[index]
     const accessedRouters = filterAsyncRouter(mainRouter.router, authInfo)
@@ -63,6 +65,7 @@ const perfectRouter = function(authInfo, result) {
       childIndex < accessedRouters.length;
       childIndex++
     ) {
+      console.log(accessedRouters)
       const element = accessedRouters[childIndex]
       if (element.children && element.children.length > 0) {
         const firstChild = element.children[0]
@@ -135,14 +138,17 @@ const permission = {
     hrmRouters: [],
     kchkRouters: [],
     kcglRouters: [],
-    warehouseRouters: []
+    warehouseRouters: [],
+    accountRouter: []
   },
+
   mutations: {
     SET_ROUTERS: (state, data) => {
       state.addRouters = data.addRouter
       state.warehouseRouters = data.router.warehouse || []
       state.kcglRouters = data.router.kcgl || []
       state.kchkRouters = data.router.kchk || []
+      state.accountRouter = data.router.account || []
       // state.crmRouters = data.router.crm || []
       // state.workLogRouters = data.router.workLog || []
       // state.taskExamineRouters = data.router.taskExamine || []

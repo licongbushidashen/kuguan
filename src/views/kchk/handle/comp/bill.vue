@@ -138,7 +138,7 @@
             icon="el-icon-plus" @click="addpush">新建</el-button>
           <el-button
             :disabled="!isCheckedItems"
-            icon="el-icon-plus" style="margin-bottom:20px" @click="dellist">删除</el-button>
+            icon="wk wk-delete" style="margin-bottom:20px" @click="dellist">删除</el-button>
           <el-button
             type="primary"
             icon="el-icon-plus" @click="opende(objs.identification?'gldj1':'gldj2')">关联单据</el-button>
@@ -236,7 +236,7 @@
               <div v-if="butoom1">
                 {{ scope.row.unitPrice }}
               </div>
-              <el-input v-else v-model="scope.row.unitPrice" oninput="value=value.replace(/[^\d]/g,'')" @change="totalNum(scope.$index)"/>
+              <el-input v-else v-model="scope.row.unitPrice" oninput="value=value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')" @change="totalNum(scope.$index)"/>
             </template>
           </el-table-column>
 
@@ -344,20 +344,21 @@
     <span slot="footer" class="dialog-footer">
       <div
         v-if="typebutton==0 ">
-        <el-button type="primary" @click="dialogSure(1)">提 交</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchSubmit']" type="primary" @click="dialogSure(1)">提 交</el-button>
         <el-button @click="dialogSure(0)">暂 存</el-button>
       </div>
       <div v-if="typebutton==1">
-        <el-button v type="primary" @click="Batch('/api/zjlab/Order/BatchAgree')">同 意</el-button>
-        <el-button @click="Batch('/api/zjlab/Order/BatchRject')">驳 回</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchAgree']" type="primary" @click="Batch('/api/zjlab/Order/BatchAgree')">同 意</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchRject']" @click="Batch('/api/zjlab/Order/BatchRject')">驳 回</el-button>
       </div>
       <div v-if="typebutton==2">
-        <el-button type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认{{ objs.identification?'出库':'入库' }}</el-button>
-        <el-button @click="Batch('/api/zjlab/Order/BatchObsolete')">作废</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchStorageIn'] &&!objs.identification" type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认入库</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchStorageOut'] && objs.identification" type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认出库</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchObsolete']" @click="Batch('/api/zjlab/Order/BatchObsolete')">作废</el-button>
       </div>
       <div v-if="typebutton==3">
-        <el-button type="primary" @click="dialogSure(1)">提 交</el-button>
-        <el-button @click="Batch('/api/zjlab/Order/BatchObsolete')">作 废</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchSubmit']" type="primary" @click="dialogSure(1)">提 交</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchObsolete']" @click="Batch('/api/zjlab/Order/BatchObsolete')">作 废</el-button>
       </div>
     </span>
 
@@ -366,8 +367,8 @@
 
 </template>
 <script>
-import { filterTimestampToFormatTime } from '@/filters/index'
 import { mapGetters } from 'vuex'
+import { filterTimestampToFormatTime } from '@/filters/index'
 import {
   GetInfo,
   CreateOrder
@@ -499,7 +500,7 @@ export default{
   },
   computed: {
     ...mapGetters([
-      'userInfo'
+      'userInfo', 'allAuth'
     ])
   },
   watch: {
@@ -617,9 +618,11 @@ export default{
 
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
+            debugger
+
             const value = Number(curr)
             if (!isNaN(value)) {
-              return prev + curr
+              return Math.round((prev + curr) * 100) / 100
             } else {
               return prev
             }
@@ -640,7 +643,7 @@ export default{
       if (this.objs.identification) {
         return
       }
-      const amountMoney = this.list[index].unitPrice * this.list[index].quantity
+      const amountMoney = Math.round(this.list[index].unitPrice * this.list[index].quantity * 100) / 100
       this.$set(this.list[index], 'amountMoney', isNaN(amountMoney) ? 0 : amountMoney)
     },
     /**

@@ -47,6 +47,7 @@ export default {
         quarterup: '',
         quarterdown: ''
       },
+      flag: false,
       slidingScales: ''
     }
   },
@@ -54,6 +55,7 @@ export default {
     planing: {
       handler(val) {
         this.showDialog = !this.showDialog
+        this.slidingScales = ''
         this.getinfo()
       }
     }
@@ -105,7 +107,7 @@ export default {
             'upperLimit': this.ware.allup, // 上线
             'lowerLimit': this.ware.alldown, // 下限
             'slidingScales': 0,
-            'flag': this.alldata.filter(e => e.warningCategory == '11')[0].flag
+            'flag': this.alldata.length ? this.alldata.filter(e => e.warningCategory == '11')[0].flag : 0
 
           },
           {
@@ -115,7 +117,7 @@ export default {
             'upperLimit': this.ware.oneup, // 上线
             'lowerLimit': this.ware.onedown, // 下限
             'slidingScales': 0,
-            'flag': this.alldata.filter(e => e.warningCategory == '23')[0].flag
+            'flag': this.alldata.length ? this.alldata.filter(e => e.warningCategory == '23')[0].flag : 0
 
           },
           {
@@ -124,7 +126,7 @@ export default {
             'upperLimit': this.ware.mouthup, // 上线
             'lowerLimit': this.ware.mouthdown, // 下限
             'slidingScales': 0,
-            'flag': this.alldata.filter(e => e.warningCategory == '21')[0].flag
+            'flag': this.alldata.length ? this.alldata.filter(e => e.warningCategory == '21')[0].flag : 0
 
           },
           {
@@ -133,7 +135,7 @@ export default {
             'upperLimit': this.ware.quarterup, // 上线
             'lowerLimit': this.ware.quarterdown, // 下限
             'slidingScales': 0,
-            'flag': this.alldata.filter(e => e.warningCategory == '22')[0].flag
+            'flag': this.alldata.length ? this.alldata.filter(e => e.warningCategory == '22')[0].flag : 0
           },
           {
             'orderKind': 3,
@@ -141,7 +143,7 @@ export default {
             'upperLimit': 0, // 上线
             'lowerLimit': 0, // 下限
             'slidingScales': this.slidingScales,
-            'flag': this.alldata.filter(e => e.warningCategory == '31')[0].flag
+            'flag': this.alldata.length ? this.alldata.filter(e => e.warningCategory == '31')[0].flag : 0
           }
         ],
         ids: [this.info.id]

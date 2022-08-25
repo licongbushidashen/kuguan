@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;" width="1200px" class="bill" title="出库单">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :destroy-on-close="true" style="    margin-top: 2vh;" width="1200px" class="bill" title="出库单">
     <div class="wy-body">
       <div class="wy-body-info">
         <div class="wy-body-info-one">
@@ -138,7 +138,7 @@
             icon="el-icon-plus" @click="addpush">新建</el-button>
           <el-button
             :disabled="!isCheckedItems"
-            icon="el-icon-plus" style="margin-bottom:20px" @click="dellist">删除</el-button>
+            icon="wk wk-delete" style="margin-bottom:20px" @click="dellist">删除</el-button>
           <el-button
             type="primary"
             icon="el-icon-plus" @click="opende('gldj1')">关联单据</el-button>
@@ -341,11 +341,12 @@
     </div>
     <span slot="footer" class="dialog-footer">
       <el-checkbox
-        v-if="butoom1"
+        v-if="butoom1&&!info.order"
         v-model="save"
+
       />
       <span v-if="butoom1">继续创建时，保存本次提交内容</span>
-      <el-button v-if="butoom1" @click="dialogVisible = false">提交并继续创建</el-button>
+      <el-button v-if="butoom1 &&!info.order" @click="dialogSure(1,1)">提交并继续创建</el-button>
       <el-button v-if="butoom1" type="primary" @click="dialogSure(1)">提 交</el-button>
       <el-button v-if="butoom1" @click="dialogSure(0)">暂 存</el-button>
     </span>
@@ -583,7 +584,7 @@ export default{
       return sums
     },
     totalNum(index) {
-      const amountMoney = this.list[index].unitPrice * this.list[index].quantity
+      const amountMoney = Math.round(this.list[index].unitPrice * this.list[index].quantity * 100) / 100
       this.$set(this.list[index], 'amountMoney', isNaN(amountMoney) ? 0 : amountMoney)
     },
     /**
@@ -643,7 +644,7 @@ export default{
         this.objs[name + 'Id'] = row.id
       }
     },
-    dialogSure(val) {
+    dialogSure(val, f) {
       let flag = false
       for (const i in this.objs) {
         if (i != 'remark' && !this.objs[i]) {
@@ -683,13 +684,26 @@ export default{
         obj.order.orderNo = this.info.order.orderNo
         UpdateOrder(obj, this.info.order.id).then(res => {
           this.$message.success('修改成功')
-          this.showDialog = false
+          if (!f) {
+            this.showDialog = false
+            this.time = Date.now()
+          } else {
+            if (!this.save) {
+              this.objs = {}
+              this.orderCategory = ''
+              this.fileList = []
+              this.list = []
+              this.time = Date.now()
+            }
+          }
           this.$emit('change', 0)
         })
       } else {
         CreateOrder(obj).then(res => {
           this.$message.success('新增成功')
-          this.showDialog = false
+          if (!f) {
+            this.showDialog = false
+          }
           this.$emit('change', 0)
         })
       }

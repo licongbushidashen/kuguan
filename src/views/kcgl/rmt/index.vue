@@ -1,6 +1,6 @@
 <template>
   <div class="role-authorization">
-    <xr-header ref="xrHeader" label="角色管理" icon-class="iconfont icon-yonghu" icon-color="#19B5F6" font-color="#fff" />
+    <xr-header ref="xrHeader" label="权限管理" icon-class="iconfont icon-quanxianguanli1" icon-color="#2362fb" font-color="#fff" />
     <div :class="{'is-tabs' : roleTabShow}" class="role-box">
       <!-- 左边导航 -->
       <div v-loading="roleMenuLoading" class="nav">
@@ -42,6 +42,9 @@
                 <div class="content-table-header-reminder">
                   <reminder v-if="showReminder" :content="getReminderContent()" />
                 </div>
+                <!-- <el-input v-model="inputs" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入姓名/账号">
+                  <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
+                </el-input> -->
                 <el-button
                   :disabled="roleList.length === 0" size="medium" class="xr-btn--orange" type="primary"
                   @click="addEmployees"> 关联用户 </el-button>
@@ -50,8 +53,8 @@
                 <el-table-column v-for="(item, index) in tableList" :prop="item.field" :label="item.label" :key="index" show-overflow-tooltip />
                 <el-table-column label="操作">
                   <template slot-scope="scope">
-                    <i class="wk wk-edit content-table-span" title="编辑角色" @click="editUserRole(scope.row)" />
-                    <!-- <i class="wk wk-delete content-table-span" title="删除" @click="employeeHandleClick('delete',scope.row)" /> -->
+                    <!-- <i class="wk wk-edit content-table-span" title="编辑角色" @click="editUserRole(scope.row)" /> -->
+                    <i class="wk wk-delete content-table-span" title="删除" @click="employeeHandleClick('delete',scope.row)" />
                   </template>
                 </el-table-column>
               </el-table>
@@ -105,7 +108,7 @@
     </div>
     <!-- 关联员工 -->
     <!-- <relate-empoyee :visible.sync="relateEmpoyeeShow" :role-id="roleId" :show-dep-data="showDepData" @save="employeesSave" /> -->
-    <Type :placeholder="placeholder" :typeling="typeling" :url="url" :name="name" @change="typevalu"/>
+    <Type :role-id="roleActive.name" :typeling="typeling" :url="url" :name="name" @change="typevalu"/>
     <!-- 字段授权 -->
     <field-set-dialog :visible.sync="setFieldShow" :role-id="roleId" :label="setFieldLabel" />
     <!-- 角色编辑 -->
@@ -120,10 +123,13 @@ import { mapGetters } from 'vuex'
 import {
   roleCopyAPI,
 
-  unbindingUserAPI,
+  // unbindingUserAPI,
   permissions,
   updatapermissions
 } from '@/api/admin/role'
+import {
+  usersIdroles
+} from '@/api/admin/rmt'
 import { GetTree, GetGoodsCategoryIds, EditDataPerMission } from '@/api/kchk/goods'
 import RelateEmpoyee from './components/RelateEmpoyee'
 import FieldSetDialog from './components/FieldSetDialog'
@@ -171,8 +177,7 @@ export default {
       data: [],
       defaultProps: {
         label: 'name',
-        children: 'childen',
-        isLeaf: 'hasChild'
+        children: 'childen'
       },
       quanxian: 1,
       pid: '',
@@ -187,8 +192,8 @@ export default {
       total: 0,
       tableList: [
         { label: '姓名', field: 'name' },
-        { label: '账号', field: 'userName' },
-        { label: '角色', field: 'post' }
+        { label: '账号', field: 'userName' }
+        // { label: '角色', field: 'post' }
       ],
       // 新建角色
       newRoleVisible: false,
@@ -296,7 +301,7 @@ export default {
 
   methods: {
     typevalu() {
-
+      this.getUserList()
     },
     GetTree() {
       GetTree().then(res => {
@@ -346,7 +351,6 @@ export default {
           num++
           this.allrole[index].indeterminate = true
         }
-        debugger
         for (let j = 0; j < this.allrole[index].permissions[index1].permissions.length; j++) { // 第二层全选反选
           arr.push({ name: this.allrole[index].permissions[index1].permissions[j].name, isGranted: flag })
           this.allrole[index].permissions[index1].permissions[j].isGranted = flag
@@ -388,15 +392,15 @@ export default {
 
       const len1 = this.allrole[index].permissions.length
       for (let i = 0; i < len1; i++) {
-        if (this.allrole[index].permissions[i].isGranted)tickCount1++
         if (!this.allrole[index].permissions[i].indeterminate)unTickCount1++
+        else if (this.allrole[index].permissions[i].isGranted)tickCount1++
       }
       if (len1 == tickCount1) {
-        this.allrole[index].indeterminate = false
+        this.allrole[index].indeterminate = true
         this.allrole[index].isGranted = true
       } else if (len1 == unTickCount1) {
         this.allrole[index].indeterminate = false
-        this.allrole[index].isGranted = false
+        this.allrole[index].isGranted = true
       } else {
         this.allrole[index].indeterminate = true
         this.allrole[index].isGranted = true
@@ -405,33 +409,61 @@ export default {
     },
     handleCheckAllChange4() {
       for (let i = 0; i < this.allrole.length; i++) {
+        let flag = 0
         for (let j = 0; j < this.allrole[i].permissions.length; j++) { // 第二层全选反选
           if (this.allrole[i].permissions[j].permissions.length > 0) {
             const obj = this.GrantedArray(this.allrole[i].permissions[j].permissions)
+            if (obj.isGranted) {
+              flag = 1
+            }
             this.allrole[i].permissions[j] = { ...this.allrole[i].permissions[j], ...obj }
+          } else {
+            if (this.allrole[i].permissions[j].isGranted) {
+              flag = 1
+            }
           }
         }
-        const obj = this.GrantedArray(this.allrole[i].permissions, 1)
+        const obj = this.GrantedArray(this.allrole[i].permissions, 1, flag)
+        debugger
         this.allrole[i] = { ...this.allrole[i], ...obj }
       }
     },
-    GrantedArray(arr, index) {
+    GrantedArray(arr, index, flag) {
       let tickCount = 0
       let unTickCount = 0
       const len = arr.length
-      for (var i = 0; i < arr.length; i++) {
-        if (arr[i].isGranted)tickCount++
-        if (!arr[i].isGranted)unTickCount++
-      }
-      if (len == tickCount) {
-        return { indeterminate: false, isGranted: true }
-      } else if (len == unTickCount) {
-        return { indeterminate: false, isGranted: false }
-      } else {
-        if (index == 1) {
+
+      if (index == 1) {
+        for (var i = 0; i < arr.length; i++) {
+          if (!arr[i].indeterminate)unTickCount++
+          else if (arr[i].isGranted)tickCount++
+        }
+        if (len == tickCount) {
           return { indeterminate: true, isGranted: true }
+        } else if (len == unTickCount) {
+          if (flag == 0) {
+            return { indeterminate: false, isGranted: false }
+          } else {
+            return { indeterminate: false, isGranted: true }
+          }
         } else {
-          return { indeterminate: true, isGranted: true }
+          return { indeterminate: true, isGranted: false }
+        }
+      } else {
+        for (var i = 0; i < arr.length; i++) {
+          if (arr[i].isGranted)tickCount++
+          if (!arr[i].isGranted)unTickCount++
+        }
+        if (len == tickCount) {
+          return { indeterminate: false, isGranted: true }
+        } else if (len == unTickCount) {
+          return { indeterminate: false, isGranted: false }
+        } else {
+          if (index == 1) {
+            return { indeterminate: true, isGranted: true }
+          } else {
+            return { indeterminate: true, isGranted: true }
+          }
         }
       }
     },
@@ -636,10 +668,9 @@ export default {
        * 关联员工
        */
     addEmployees() {
-      this.placeholder = '请输入负责人名称'
       this.typeling = !this.typeling
       this.url = '/api/identity/users'
-      this.name = 't'
+      this.name = 'dutyUser'
     },
 
     /**
@@ -793,10 +824,10 @@ export default {
         })
           .then(() => {
             this.userLoading = true
-            unbindingUserAPI({
-              userId: val.userId,
-              roleId: this.roleActive.roleId
-            }).then(res => {
+            usersIdroles(
+              { roleNames: [] },
+              val.id,
+            ).then(res => {
               this.userLoading = false
               this.getUserList()
               this.$message.success('删除成功')
@@ -987,7 +1018,7 @@ export default {
        * 刷新员工列表
        */
     refreshUserList() {
-      this.currentPage = 1
+      this.currentPage = 0
       this.getUserList()
     },
 
@@ -1003,7 +1034,8 @@ export default {
        * 更改当前页数
        */
     handleCurrentChange(val) {
-      this.currentPage = val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getUserList()
     },
 
@@ -1215,7 +1247,7 @@ export default {
   }
 
   .role-authorization /deep/ .el-tree-node__expand-icon {
-    display: none;
+    // display: none;
   }
 
   .data-radio {

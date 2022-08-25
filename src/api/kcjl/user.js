@@ -1,5 +1,47 @@
 import request from '@/utils/request'
 
+
+export function ParameterDeleteMany(data) {
+  return request({
+    url: `/api/zjlab/Parameter/DeleteMany${data}`,
+    method: 'delete',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function CreateParameter(data) {
+  return request({
+    url: '/api/zjlab/Parameter/CreateParameter',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function OrderPage(data) {
+  return request({
+    url: `/api/zjlab/Parameter/OrderPage`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+export function GetMessageType(data) {
+  return request({
+    url: `/api/zjlab/Parameter/GetMessageType`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
 export function Pageusers(data) {
   return request({
     url: `/api/identity/users${data}`,

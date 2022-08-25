@@ -24,10 +24,10 @@ export default [
       {
         name: 'xtsz',
         path: 'xtsz-cssz', // 类目
-        component: () => import('@/views/kchk/goods'),
+        component: () => import('@/views/kcgl/notice'),
         meta: {
-          title: '参数设置',
-          icon: 'project'
+          title: '通知管理',
+          icon: 'iconfont  icon-navicon-zdcs'
         }
       }
 
@@ -48,8 +48,8 @@ export default [
         path: 'xtsz-user', // 类目
         component: () => import('@/views/kcgl/user'),
         meta: {
-          title: '用户设置',
-          icon: 'project'
+          title: '用户管理',
+          icon: 'iconfont icon-yonghuguanli'
         }
       }
 
@@ -70,8 +70,8 @@ export default [
         path: 'xtsz-jurisdiction', // 类目
         component: () => import('@/views/kcgl/rmt'),
         meta: {
-          title: '权限设置',
-          icon: 'project'
+          title: '权限管理',
+          icon: 'iconfont icon-quanxianguanli1'
         }
       }
 

@@ -1,10 +1,11 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;">
+  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;" title="货品管理">
     <create-sections title="基础信息">
       <mtForm :file-list="attachmentList" :treever-data="tree" :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
     </create-sections>
-    <create-sections title="单位管理">
+    <create-sections title="单位管理" style="margin:0px">
       <el-button
+        style="margin-top:10px"
         type="primary"
         icon="el-icon-plus" @click="addpush">新建</el-button>
       <el-button
@@ -168,10 +169,11 @@ export default {
           this.minchange()
           this.defaultchang()
           this.attachmentList = this.info.attachmentList.map(e => {
-            return { url: `/file/api/zjlab/Attachment/FileMsg?id=${e.id}` }
+            return { url: `/api/zjlab/Attachment/FileMsg?id=${e.id}` }
           })
         } else {
           this.list = []
+          this.addpush()
           this.attachmentList = []
           this.aoiinfo = {
             flag: 1,
@@ -197,10 +199,12 @@ export default {
     },
     formChange(id, type) {
       if (type == 'photo') {
-        this.attachmentList.push({ url: `/file/api/zjlab/Attachment/FileMsg?id=${id}` })
+        this.attachmentList.push({ url: `/api/zjlab/Attachment/FileMsg?id=${id}` })
       } else if (type == 'phototp') {
+        debugger
+        // const ids = id.url.substring(id.url.indexOf('=') + 1, id.url.length)
         for (let index = 0; index < this.attachmentList.length; index++) {
-          if (this.attachmentList[index].url === id) {
+          if (this.attachmentList[index].url === id.url) {
             this.attachmentList.splice(index, 1)
             index--
           }
@@ -244,6 +248,13 @@ export default {
       this.list.forEach((e) => {
         if (!e.checked) {
           arr.push(e)
+        } else {
+          if (e.isDefault) {
+            this.isDefault = false
+          }
+          if (e.isMin) {
+            this.isMin = false
+          }
         }
       })
       this.list = arr
@@ -282,7 +293,6 @@ export default {
       })
     },
     saveClick(data) {
-      console.log(data, 'test')
       if (!data) return
       let fl = false
       this.list.forEach(e => {
@@ -307,11 +317,11 @@ export default {
       this.list.forEach(e => {
         list.push({ id: e.id, unit: e })
       })
-      const obj = {
+      const obj = JSON.parse(JSON.stringify({
         goodsInfo: this.aoiinfo,
         attachmentList: attachmentList,
         unitList: list
-      }
+      }))
       obj.goodsInfo.categoryId = obj.goodsInfo.categoryName
       if (this.aoiinfo.id) {
         UpdateGoodsInfo(obj).then(res => {
@@ -337,7 +347,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '货品编码',
-        placeholder: '请输入',
+        placeholder: '请输入货品编码',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.code : ''
@@ -358,7 +368,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '商品名称',
-        placeholder: '请输入',
+        placeholder: '请输入商品名称',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.name : ''
@@ -368,7 +378,7 @@ export default {
         formType: 'text',
         isNull: 0,
         name: '品牌',
-        placeholder: '',
+        placeholder: '请输入品牌',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.brand : ''
@@ -378,6 +388,7 @@ export default {
         formType: 'text',
         isNull: 0,
         name: '商品条码',
+        placeholder: '请输入商品条码',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.ean13 : ''
@@ -388,6 +399,7 @@ export default {
         isNull: 0,
         name: '规格',
         setting: [],
+        placeholder: '请输入货品规格',
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.size : ''
       })

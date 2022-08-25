@@ -1,8 +1,9 @@
 <template>
   <div class="main">
-    <xr-header icon-class="wk wk-project" icon-color="#33D08F" label="库存查询">
+    <xr-header icon-class="iconfont icon-kucunchaxun1" icon-color="#2362fb" label="库存盘点">
       <template v-slot:ft>
         <el-button
+          v-if="allAuth['InventoryManager.CheckPlans.Create']"
           class="main-table-header-button "
           type=""
           icon="el-icon-plus"
@@ -32,7 +33,6 @@
         :height="tableHeight"
         class="main-table"
         highlight-current-row
-        @row-click="handleRowClick"
       >
         <el-table-column
           show-overflow-tooltip
@@ -88,11 +88,12 @@
             <el-button
               type="text"
               size="small"
-              @click="handleClick('edit', scope)">盘点明细</el-button>
+              @click="handleClick('edit', scope.row)">盘点明细</el-button>
             <el-button
+              v-if="scope.row.flag==2 ||scope.row.flag==3"
               type="text"
               size="small"
-              @click="handleClick('copy', scope)">盈亏处理</el-button>
+              @click="handleClick('copy', scope.row)">盈亏处理</el-button>
 
           </template>
         </el-table-column>
@@ -111,14 +112,19 @@
       </div>
     </div>
     <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList" />
+    <Inventory :showing="Inventoryshow" :id="Inventoryid" :flag="flag" @change="handleCurrentChange"/>
+    <Handle :showing="lossShow" :id="Inventoryid" :flag="flag" @change="handleCurrentChange"/>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
   CheckPlanPage
 } from '@/api/Inventory/kc'
+import Inventory from './comp/Inventory'
 import Ccware from './comp/add.vue'
+import Handle from './comp/handle.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 export default {
@@ -127,7 +133,9 @@ export default {
   components: {
     XrHeader,
     CreateSections,
-    Ccware
+    Ccware,
+    Inventory,
+    Handle
   },
   filters: {
     checkWay: function(value) {
@@ -144,12 +152,18 @@ export default {
         return '进行中'
       } else if (value == 2) {
         return '已完成'
+      } else if (value == 3) {
+        return '已处理'
       }
     }
   },
   mixins: [],
   data() {
     return {
+      flag: 0,
+      Inventoryid: '',
+      lossShow: false,
+      Inventoryshow: false,
       showing: false,
       planing: true,
       warningshow: true,
@@ -168,7 +182,9 @@ export default {
       info: {}
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['allAuth'])
+  },
   mounted() {
     var self = this
     /** 控制table的高度 */
@@ -181,8 +197,18 @@ export default {
     this.getList()
   },
   methods: {
-    handleClick() {
+    handleClick(type, row) {
+      debugger
 
+      if (type == 'edit') {
+        this.Inventoryid = row.id
+        this.flag = row.flag
+        this.Inventoryshow = !this.Inventoryshow
+      } else {
+        this.Inventoryid = row.id
+        this.flag = row.flag
+        this.lossShow = !this.lossShow
+      }
     },
     /**
      *  添加权限
@@ -207,7 +233,7 @@ export default {
      */
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
       CheckPlanPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -227,7 +253,8 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getList()
     },
 

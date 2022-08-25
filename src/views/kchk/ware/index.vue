@@ -16,7 +16,7 @@
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
-          @click="addJurisdiction">导入</el-button>
+          @click="bulkImportClick">导入</el-button>
         <el-button
           class="main-table-header-button "
           type=""
@@ -115,6 +115,13 @@
       </div>
     </div>
     <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList"/>
+    <!-- 批量导入 -->
+    <bulk-import-user
+      :show="bulkImportShow"
+      url="/api/zjlab/Warehouse/Upload"
+      @close="bulkImportShow = false"
+      @success="handleCurrentChange(0)"
+    />
   </div>
 </template>
 
@@ -128,6 +135,7 @@ import {
 } from '@/api/kchk/warn'
 import { mapGetters } from 'vuex'
 import Ccware from './comp/add.vue'
+import BulkImportUser from '../import.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 export default {
@@ -136,11 +144,13 @@ export default {
   components: {
     XrHeader,
     CreateSections,
-    Ccware
+    Ccware,
+    BulkImportUser
   },
   mixins: [],
   data() {
     return {
+      bulkImportShow: false,
       showing: false,
       planing: true,
       warningshow: true,
@@ -174,6 +184,12 @@ export default {
     this.getList()
   },
   methods: {
+    /**
+     * 批量导入
+     */
+    bulkImportClick(val) {
+      this.bulkImportShow = true
+    },
     openplan(row) {
       this.planing = !this.planing
     },
@@ -196,7 +212,7 @@ export default {
      */
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
       WarehousePage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -216,7 +232,8 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getList()
     },
 
@@ -233,11 +250,11 @@ export default {
      * 当某一行被点击时会触发该事件
      */
     handleRowClick(row, column, event) {
-      if (!this.allAuth['SystemSetting.Warehouses.Edit']) {
-        this.$message.error('无详情权限')
+      if (column.label == '序号') {
         return
       }
-      if (column.label == '序号') {
+      if (!this.allAuth['SystemSetting.Warehouses.Edit']) {
+        this.$message.error('无详情权限')
         return
       }
       GetInfo(row.id).then(res => {
@@ -280,7 +297,7 @@ export default {
                   this.$message({
                     type: 'error',
                     dangerouslyUseHTMLString: true,
-                    message: `删除成功${res.data.successCount}条，删除失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
+                    message: `删除成功${res.data.successCount}条，失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
                   })
                 }
                 this.getList()

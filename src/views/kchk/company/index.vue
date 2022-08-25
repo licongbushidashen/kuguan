@@ -6,21 +6,24 @@
       label="往来单位" >
       <template v-slot:ft>
         <el-button
+          v-if="allAuth['SystemSetting.Companys.Create']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
           @click="addJurisdiction">新建</el-button>
         <el-button
+          v-if="allAuth['SystemSetting.Companys.Import']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
-          @click="addJurisdiction">导入</el-button>
+          @click="bulkImportClick">导入</el-button>
         <el-button
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
         <el-button
+          v-if="allAuth['SystemSetting.Companys.Delete']"
           :disabled="JSON.stringify(obj)=='{}'"
           class="main-table-header-button "
           type=""
@@ -34,6 +37,7 @@
           <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
         </el-input>
         <el-button
+          v-if="allAuth['SystemSetting.CompanyCategorys']"
           class="main-table-header-button xr-btn--orange  "
           type="primary"
           @click="addtype">单位类型管理</el-button>
@@ -124,6 +128,13 @@
     </div>
     <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList"/>
     <Cctype :showing="typeShow"/>
+    <!-- 批量导入 -->
+    <bulk-import-user
+      :show="bulkImportShow"
+      url="/api/zjlab/Company/Upload"
+      @close="bulkImportShow = false"
+      @success="handleCurrentChange(0)"
+    />
   </div>
 </template>
 
@@ -138,6 +149,8 @@ import Ccware from './comp/add.vue'
 import Cctype from './comp/type.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
+import { mapGetters } from 'vuex'
+import BulkImportUser from '../import.vue'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -145,11 +158,14 @@ export default {
     XrHeader,
     CreateSections,
     Ccware,
-    Cctype
+    Cctype,
+    BulkImportUser
   },
   mixins: [],
   data() {
     return {
+      // 批量导入
+      bulkImportShow: false,
       typeShow: false,
       showing: false,
       planing: true,
@@ -169,7 +185,9 @@ export default {
       info: {}
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['allAuth'])
+  },
   mounted() {
     var self = this
     /** 控制table的高度 */
@@ -182,6 +200,12 @@ export default {
     this.getList()
   },
   methods: {
+    /**
+     * 批量导入
+     */
+    bulkImportClick(val) {
+      this.bulkImportShow = true
+    },
     openplan(row) {
       this.planing = !this.planing
     },
@@ -204,7 +228,7 @@ export default {
      */
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
       CompanyPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -224,7 +248,8 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getList()
     },
 
@@ -247,6 +272,10 @@ export default {
      * 当某一行被点击时会触发该事件
      */
     handleRowClick(row, column, event) {
+      if (!this.allAuth['SystemSetting.Companys.Edit']) {
+        this.$message.error('暂无当前权限')
+        return
+      }
       if (column.label == '序号') {
         return
       }
@@ -284,13 +313,13 @@ export default {
                   this.$message({
                     type: 'success',
                     dangerouslyUseHTMLString: true,
-                    message: `删除成功${res.data.successCount}条`
+                    message: `成功删除${res.data.successCount}条`
                   })
                 } else {
                   this.$message({
                     type: 'error',
                     dangerouslyUseHTMLString: true,
-                    message: `删除成功${res.data.successCount}条，删除失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
+                    message: `成功删除${res.data.successCount}条，失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
                   })
                 }
                 this.getList()

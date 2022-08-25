@@ -248,7 +248,7 @@ export default {
 
 .section-title {
   color: #333;
-  font-weight: bold;
+  // font-weight: bold;
   font-size: 14px;
   margin-bottom: 30px;
 }

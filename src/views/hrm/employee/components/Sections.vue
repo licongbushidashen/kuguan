@@ -166,7 +166,7 @@ export default {
 .section-title {
   font-size: 14px;
   color: #333;
-  font-weight: 600;
+  // font-weight: 600;
   margin-left: 8px;
   flex-shrink: 0;
   flex: 1;

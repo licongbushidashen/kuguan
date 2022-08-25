@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="shows" append-to-body>
+  <el-dialog v-loading="loading" :visible.sync="shows" append-to-body>
     <div style="margin-bottom :20px;display: flex;">
       <el-input
         :placeholder="placeholder"
@@ -37,6 +37,7 @@
       <span v-if="shows1" style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    position: absolute;    right: 30px;" @click="openurl">新 增</span>
     </div>
     <el-table
+      v-if="flag"
       id="examine-table"
       :data="list"
       class="main-table"
@@ -144,6 +145,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       startTime: null,
       company: '',
       orderCategory: '',
@@ -206,7 +208,8 @@ export default {
         ]
 
       },
-      label: {}
+      label: {},
+      flag: 0
     }
   },
   computed: {
@@ -225,7 +228,7 @@ export default {
       this.shows = true
       this.pageSize = 15
       this.currentPage = 0
-      this.label = this.labelList[this.name]
+      this.flag = 0
       this.Pagelist()
     }
   },
@@ -279,14 +282,16 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      this.currentPage = val ? val * 15 : val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.Pagelist()
     },
     changeParam(param) {
       return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
     },
     Pagelist() {
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, searchKey: this.inputContent }
+      this.loading = true
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
       if (this.name == 'gldj1') {
         data.isOutbound = false
         if (this.orderCategory) {
@@ -309,7 +314,14 @@ export default {
             element.hover = false
             element.checked = false
           })
-          this.list = res.items
+          this.loading = false
+          this.$nextTick(() => {
+            this.label = this.labelList[this.name]
+            this.list = res.items
+            console.log(this.label)
+            this.flag = 1
+          })
+
           this.total = res.totalCount
         })
       } else {
@@ -325,7 +337,16 @@ export default {
             element.hover = false
             element.checked = false
           })
-          this.list = res.items
+          debugger
+
+          this.loading = false
+          this.$nextTick(() => {
+            this.label = this.labelList[this.name]
+            this.list = res.items
+            console.log(this.label)
+            this.flag = 1
+          })
+
           this.total = res.totalCount
         })
       }

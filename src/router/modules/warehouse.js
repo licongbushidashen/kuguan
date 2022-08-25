@@ -18,7 +18,7 @@ export default [
     }),
     meta: {
       title: 'InventoryManager.Inventorys',
-      icon: 's-seas'
+      icon: 'iconfont icon-kucunguanli'
     },
     children: [
       {
@@ -27,7 +27,7 @@ export default [
         component: () => import('@/views/warehouse/stock'),
         meta: {
           title: '库存查询',
-          icon: 'project'
+          icon: 'iconfont icon-kucunguanli'
         }
       }
 
@@ -49,13 +49,65 @@ export default [
         component: () => import('@/views/warehouse/Inventory'),
         meta: {
           title: '库存盘点',
-          icon: 'project'
+          icon: 'iconfont icon-kucunchaxun1'
         }
       }
 
 
     ]
+  },
+  {
+    ...layout({
+      permissions: ['warehouse', 'system-project']
+    }),
+    meta: {
+      title: '库存报表',
+      icon: 'iconfont icon-baobiao',
+      title1: 'InventoryManager.CheckPlans'
+    },
+    children: [
+      {
+        name: 'warehouse',
+        path: 'Inventory-report', // 类目
+        component: () => import('@/views/warehouse/InventoryReport'),
+        meta: {
+          title: '总库存报表'
+        }
+      },
+      {
+        meta: {
+          title: '货品库存表'
+
+        },
+        name: 'warehouse',
+        path: 'Inventory-Goods', // 类目
+        component: () => import('@/views/warehouse/InventoryGoods')
+      },
+      {
+        meta: {
+          title: '出入库明细表'
+        },
+        name: 'warehouse',
+        path: 'Inventory-GoodsInOutDetail', // 类目
+        component: () => import('@/views/warehouse/GoodsInOutDetail')
+      },
+      {
+
+
+        name: 'warehouse',
+        path: 'Inventory-InventoryBalance', // 类目
+        component: () => import('@/views/warehouse/InventoryBalance'),
+        meta: {
+          title: '库存余额表'
+        }
+
+
+      }
+
+
+    ]
   }
+
 //   {
 //     ...layout({
 //       permissions: ['warehouse', 'system-project']

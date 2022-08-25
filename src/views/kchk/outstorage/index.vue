@@ -5,6 +5,7 @@
       icon-color="#2362FB" label="出库管理">
       <template v-slot:ft>
         <el-button
+          v-if="allAuth['OrderSetting.Orders.Create']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
@@ -152,6 +153,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { OrderPage, GetOrder } from '@/api/kchk/order'
 // import Ccware from './comp/add.vue'
@@ -244,7 +246,9 @@ export default {
       info: {}
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters(['allAuth'])
+  },
   mounted() {
     var self = this
     /** 控制table的高度 */
@@ -281,13 +285,13 @@ export default {
     getList() {
       this.loading = true
       const data = {
-        maxResultCount: this.pageSize,
+        maxResultCount: this.pageSize + this.currentPage,
         skipCount: this.currentPage,
         isOutbound: true,
         createName: this.inputs,
         searchKey: this.company
       }
-      if (this.flag != '') {
+      if (this.flag !== '') {
         data.flag = this.flag
       }
       if (this.orderCategory) {
@@ -316,7 +320,8 @@ export default {
      */
     handleCurrentChange(val) {
       this.morecondition = false
-      this.currentPage = val
+      const x = val > 0 ? val - 1 : 0
+      this.currentPage = x ? x * 15 : x
       this.getList()
     },
 
@@ -334,6 +339,10 @@ export default {
      */
     handleRowClick(row, column, event) {
       if (column.label == '序号') {
+        return
+      }
+      if (!this.allAuth['OrderSetting.Orders.Edit']) {
+        this.$message.error('无详情权限')
         return
       }
       GetOrder(row.id).then(res => {

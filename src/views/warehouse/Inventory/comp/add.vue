@@ -98,8 +98,12 @@ export default {
     saveClick(data) {
       if (!data) return
       // this.aoiinfo.dutyUserId = '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-      this.aoiinfo.startTime = this.aoiinfo.startTime + ' 00:00:00'
-      this.aoiinfo.endTime = this.aoiinfo.endTime + ' 00:00:00'
+      if (this.aoiinfo.startTime.indexOf('00:00:00') == -1) {
+        this.aoiinfo.startTime = this.aoiinfo.startTime + ' 00:00:00'
+      }
+      if (this.aoiinfo.endTime.indexOf('00:00:00') == -1) {
+        this.aoiinfo.endTime = this.aoiinfo.endTime + ' 00:00:00'
+      }
       this.aoiinfo.goodsCategoryId = this.aoiinfo.goodsCategoryName
       delete this.aoiinfo.goodsCategoryName
       if (this.aoiinfo.id) {

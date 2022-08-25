@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    margin-top: 2vh;" width="1200px" class="bill" title="入库单">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :destroy-on-close="true" style="    margin-top: 2vh;" width="1200px" class="bill" title="入库单">
     <div class="wy-body">
       <div class="wy-body-info">
         <div class="wy-body-info-one">
@@ -138,7 +138,7 @@
             icon="el-icon-plus" @click="addpush">新建</el-button>
           <el-button
             :disabled="!isCheckedItems"
-            icon="el-icon-plus" style="margin-bottom:20px" @click="dellist">删除</el-button>
+            icon="wk wk-delete" style="margin-bottom:20px" @click="dellist">删除</el-button>
           <el-button
             type="primary"
             icon="el-icon-plus" @click="opende('gldj1')">关联单据</el-button>
@@ -235,7 +235,7 @@
               <div v-if="!butoom1">
                 {{ scope.row.unitPrice }}
               </div>
-              <el-input v-else v-model="scope.row.unitPrice" oninput="value=value.replace(/[^\d+(\.\d{0,2})]/,'')" @change="totalNum(scope.$index)"/>
+              <el-input v-else v-model="scope.row.unitPrice" oninput="value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')" @change="totalNum(scope.$index)"/>
             </template>
           </el-table-column>
 
@@ -566,7 +566,7 @@ export default{
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
-              return prev + curr
+              return Math.round((prev + curr) * 100) / 100
             } else {
               return prev
             }
@@ -584,7 +584,7 @@ export default{
       return sums
     },
     totalNum(index) {
-      const amountMoney = this.list[index].unitPrice * this.list[index].quantity
+      const amountMoney = Math.round(this.list[index].unitPrice * this.list[index].quantity * 100) / 100
       this.$set(this.list[index], 'amountMoney', isNaN(amountMoney) ? 0 : amountMoney)
     },
     /**
@@ -667,7 +667,8 @@ export default{
           this.$message.error('数量，单价未填写')
           return
         }
-        arr.push({ goodsId: d.id, goodsCode: d.code || d.goodsCode, unitId: d.unitId, unitPrice: d.unitPrice, quantity: d.quantity, amountMoney: d.amountMoney, DefaultUnitId: d.DefaultUnitId })
+        debugger
+        arr.push({ goodsId: d.goodsId || d.id, goodsCode: d.code || d.goodsCode, unitId: d.unitId, unitPrice: d.unitPrice, quantity: d.quantity, amountMoney: d.amountMoney, DefaultUnitId: d.DefaultUnitId })
       }
       const obj = {
         order: {

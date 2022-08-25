@@ -59,6 +59,9 @@
 .xr-header__ft .el-button{
   padding: 8px 12px;
 }
+.el-button{
+  padding: 8px 12px !important;
+}
  // 参考 https://blog.csdn.net/HZKang/article/details/90447373
 // body .el-table th.gutter {
 //   display: table-cell !important;
@@ -77,6 +80,7 @@ table {
    padding: 10px !important;
    background-color: #F7F8FA;
    border-top: 1px solid $xr-border-line-color;
+   text-align: center !important;
  }
 
  .el-dialog__close {
@@ -85,9 +89,12 @@ table {
  }
 
  .el-dialog__title {
-   font-weight: 600 !important;
+  font-size: 16px !important;
+  color: #333 !important;
  }
-
+ .el-dialog__header{
+  border-bottom: 1px solid #e6e6e6 !important;
+ }
  // 消息框
  .el-message-box__title {
    font-weight: 600 !important;
@@ -129,4 +136,18 @@ table {
   .el-menu-item + .el-menu-item {
     margin-top: 10px;
   }
+}
+.dialog-footer {
+  text-align: center;
+}
+.el-button--primary{
+  border: 0px !important;
+}
+.el-table th > .cell,.el-table td > .cell{
+  font-size: 14px !important;
+  // font-weight:100 !important;
+}
+.el-upload--picture-card,.el-upload-list--picture-card .el-upload-list__item{
+  width:120px !important;
+  height: 120px !important;
 }
