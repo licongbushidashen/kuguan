@@ -11,6 +11,14 @@
           @click="addJurisdiction"
         >新建</el-button
         >
+        <el-button
+          v-if="allAuth['OrderSetting.Orders.Create']"
+          type="primary"
+          icon="iconfont icon-piliangtianjia"
+          class="xr-btn--orange"
+          @click="addJurisdiction1"
+        >批量入库</el-button
+        >
       </template>
     </xr-header>
     <div class="main-body">
@@ -84,7 +92,7 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="150"
+          width="50"
           label="序号"
         >
           <template slot-scope="{ row, column, $index }">
@@ -95,12 +103,12 @@
                 @mouseenter="row.hover = true"
                 @mouseleave="row.hover = false"
               >
-                <el-checkbox
+                <!-- <el-checkbox
                   v-show="row.hover || row.checked"
                   v-model="row.checked"
                   @change="onItemCheckboxChange"
-                />
-                <span v-show="!row.hover && !row.checked" class="text">{{
+                /> -->
+                <span class="text">{{
                   $index + 1
                 }}</span>
               </span>
@@ -147,7 +155,8 @@
         />
       </div>
     </div>
-    <Bill :showing="jurisdictionCreateShow" :info="info" @change="handleCurrentChange(0)" />
+    <Bill :showing="jurisdictionCreateShow" :info="info" :ffts="ffts" @change="handleCurrentChange(0)"/>
+    <Type :placeholder="placeholder" :typeling="typeling" :p="p" :url="url" :name="name" @change="typevalu"/>
   </div>
 </template>
 
@@ -158,6 +167,7 @@ import { OrderPage, GetOrder } from '@/api/kchk/order'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 import Bill from './comp/bill'
+import Type from './comp/type'
 import { mapGetters } from 'vuex'
 export default {
   /** 系统管理 的 项目管理 */
@@ -165,7 +175,8 @@ export default {
   components: {
     XrHeader,
     CreateSections,
-    Bill
+    Bill,
+    Type
     // Ccware
   },
   filters: {
@@ -238,7 +249,13 @@ export default {
       pageSize: 15,
       total: 0,
       obj: {},
-      info: {}
+      info: {},
+      p: '',
+      placeholder: '',
+      typeling: false,
+      url: '',
+      name: '',
+      ffts: false
     }
   },
   computed: {
@@ -254,6 +271,14 @@ export default {
     this.getList()
   },
   methods: {
+    addJurisdiction1() {
+      this.p = '关联单据'
+      this.placeholder = '请输入单据号'
+      this.typeling = !this.typeling
+      this.url = '/api/zjlab/Order/OrderPage'
+      this.name = 'gldj1'
+      this.ffts = true
+    },
     openplan(row) {
       this.planing = !this.planing
     },
@@ -286,7 +311,6 @@ export default {
         createName: this.inputs,
         searchKey: this.company
       }
-      debugger
       if (this.flag !== '') {
         data.flag = this.flag
       }
@@ -326,9 +350,14 @@ export default {
      */
     addJurisdiction() {
       this.info = {}
+      this.ffts = false
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
     },
-
+    typevalu(row) {
+      this.info = row
+      this.info.pl = true
+      this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+    },
     /** 列表操作 */
     /**
      * 当某一行被点击时会触发该事件
@@ -424,5 +453,6 @@ export default {
 @import '../styles/table.scss';
 .buttonc {
   color: #4f81fc;
+   cursor: pointer;
 }
 </style>

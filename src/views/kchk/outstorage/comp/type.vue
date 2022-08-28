@@ -1,21 +1,38 @@
 <template>
-  <el-dialog v-loading="loading" :visible.sync="shows" :title="p" append-to-body>
-    <div style="margin-bottom :20px;display: flex;">
-      <el-input
-        :placeholder="placeholder"
-        v-model="inputContent"
-        class="search-input"
-        style="width:120px"
-        @keyup.enter.native="Pagelist"/>
-      <div v-if="name=='gldj1'" style="margin: 0px 10px">
-        <label for="">入库日期</label>
-        <el-date-picker
-          v-model="startTime"
+  <el-dialog :visible.sync="shows" :title="p" append-to-body>
+    <div v-loading="loading">
+      <div style="margin-bottom :20px;display: flex;     align-items: baseline;">
+        <el-input
+          :placeholder="placeholder"
+          v-model="inputContent"
+          class="search-input"
           style="width:140px"
-          type="date"
-          placeholder="入库日期"/>
-      </div>
-      <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
+          @keyup.enter.native="Pagelist"/>
+        <!-- <div v-if="p=='货品'" style="margin: 0px 10px">
+          <label for="">仓库名称</label>
+          <el-input
+            v-model="warehouseName"
+            style="width:130px;"
+            placeholder="仓库名称"
+          />
+        </div>
+        <div v-if="p=='货品'" style="margin: 0px 10px">
+          <label for="">类目名称</label>
+          <el-input
+            v-model="catetoryName"
+            style="width:130px;"
+            placeholder="类目名称"
+          />
+        </div> -->
+        <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
+          <label for="">入库日期</label>
+          <el-date-picker
+            v-model="startTime"
+            style="width:140px"
+            type="date"
+            placeholder="入库日期"/>
+        </div> -->
+        <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
         <label for="">入库类型</label>
         <el-select v-model="orderCategory" style="width:130px">
           <el-option
@@ -33,62 +50,64 @@
           placeholder="往来单位/仓库名称"
         />
       </div> -->
-      <el-button type="primary" @click="handleCurrentChange(0)"> 查询</el-button>
-      <span v-if="shows1" style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    position: absolute;    right: 30px;" @click="openurl">新 增</span>
-    </div>
-    <el-table
-      v-if="flag"
-      id="examine-table"
-      :data="list"
-      class="main-table"
-      highlight-current-row
-    >
-      <el-table-column
-        show-overflow-tooltip
-        type="index"
-        width="80"
-        label="序号">
+        <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)"> 查询</el-button>
+        <!-- <span v-if="shows1" style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    position: absolute;    right: 30px;" @click="openurl">新 增</span> -->
+      </div>
+      <el-table
 
-        <template slot-scope="{ row, column, $index}">
-          <span class="status-name">
-            <span
-              class="index"
-              style=" display: block;"
-              @mouseenter="row.hover = true"
-              @mouseleave="row.hover = false"
-            >
-              <el-checkbox
-                v-show="row.hover || row.checked"
-                v-model="row.checked"
-                @change="onItemCheckboxChange(row)"
-              />
-              <span v-show="!row.hover && !row.checked" class="text">{{
-                $index+1
-              }}</span>
+        v-if="flag"
+        id="examine-table"
+        :data="list"
+        class="main-table"
+        highlight-current-row
+      >
+        <el-table-column
+          show-overflow-tooltip
+          type="index"
+          width="80"
+          label="序号">
+
+          <template slot-scope="{ row, column, $index}">
+            <span class="status-name">
+              <span
+                class="index"
+                style=" display: block;"
+                @mouseenter="row.hover = true"
+                @mouseleave="row.hover = false"
+              >
+                <el-checkbox
+
+                  v-model="row.checked"
+                  @change="onItemCheckboxChange(row)"
+                />
+                <span class="text">{{
+                  $index+1
+                }}</span>
+              </span>
+
             </span>
+          </template>
+        </el-table-column>
 
-          </span>
-        </template>
-      </el-table-column>
-
-      <el-table-column v-for="(item,index) in label" :prop="item.prop" :label="item.name" :key="index">
-        <template slot-scope="{ row, column, $index}">
-          <span v-if="item.prop=='orderCategory'">{{ row[item.prop]|ordername }}</span>
-          <span v-else-if="item.prop=='flag'">已入库</span>
-          <span v-else>{{ row[item.prop] }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="p-contianer">
-      <el-pagination
-        :current-page="currentPage"
-        :total="total"
-        :page-size="pageSize"
-        :pager-count="5"
-        class="p-bar"
-        background
-        layout="total, prev, pager, next"
-        @current-change="handleCurrentChange"/>
+        <el-table-column v-for="(item,index) in label" :prop="item.prop" :label="item.name" :key="index">
+          <template slot-scope="{ row, column, $index}">
+            <span v-if="item.prop=='orderCategory'">{{ row[item.prop]|ordername }}</span>
+            <span v-else-if="item.prop=='flag'">已入库</span>
+            <span v-else>{{ row[item.prop] }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="p-contianer">
+        <el-pagination
+          :current-page="currentPage"
+          :total="total"
+          :page-size="pageSize"
+          :pager-count="5"
+          class="p-bar"
+          background
+          layout="total, prev, pager, next"
+          @current-change="handleCurrentChange"/>
+      </div>
     </div>
 
     <span slot="footer" class="dialog-footer">
@@ -104,7 +123,7 @@ import request from '@/utils/request'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { GetOrder } from '@/api/kchk/order'
 import {
-  GetInfo
+// GetInfo
 } from '@/api/kchk/goods'
 export default {
   filters: {
@@ -144,6 +163,9 @@ export default {
     },
     name: {
       type: String
+    },
+    objs: {
+      type: Object
     }
   },
   data() {
@@ -199,7 +221,8 @@ export default {
           { name: '品牌', prop: 'brand' },
           { name: '所属类目', prop: 'categoryName' },
           { name: '货品条码', prop: 'ean13' },
-          { name: '规格', prop: 'size' }
+          { name: '规格', prop: 'size' },
+          { name: '剩余库存', prop: 'residueNum' }
         ],
         gldj1: [
           { name: '单据状态', prop: 'flag' },
@@ -212,7 +235,9 @@ export default {
 
       },
       label: {},
-      flag: 0
+      flag: 0,
+      warehouseName: '',
+      catetoryName: ''
     }
   },
   computed: {
@@ -248,18 +273,20 @@ export default {
       }
     },
     dialogSure() {
+      debugger
       const isCheckedItems = this.list.filter(d => d.checked)
       if (isCheckedItems.length > 0) {
         if (this.name == 'gldj1') {
           GetOrder(this.row.id).then(res => {
-            const arr = res.detailList
-            for (let i = 0; i < arr.length; i++) {
-              GetInfo(arr[i].goodsId).then(res1 => {
-                arr[i].ean13List = res1.unitList
-                arr[i].checked = false
-                this.$emit('change', arr[i], this.name)
-              })
-            }
+            this.$emit('change', res, this.name)
+            // const arr = res.detailList
+            // for (let i = 0; i < arr.length; i++) {
+            //   // GetInfo(arr[i].goodsId).then(res1 => {
+            //   //   arr[i].ean13List = res1.unitList
+            //   //   arr[i].checked = false
+            //   //   this.$emit('change', arr[i], this.name)
+            //   // })
+            // }
           })
         } else {
           this.$emit('change', this.row, this.name)
@@ -328,6 +355,14 @@ export default {
           this.total = res.totalCount
         })
       } else {
+        if (this.p == '货品') {
+          data.warehouseId = this.objs.ckId
+          data.catetoryId = this.objs.typeId
+          data.isBigThenZero = true
+          // data.warehouseName = this.warehouseName
+          // data.catetoryName = this.catetoryName
+        }
+        data.isBigThenZero = true
         return request({
           url: this.url,
           method: 'post',
@@ -340,8 +375,6 @@ export default {
             element.hover = false
             element.checked = false
           })
-          debugger
-
           this.loading = false
           this.$nextTick(() => {
             this.label = this.labelList[this.name]

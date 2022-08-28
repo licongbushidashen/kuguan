@@ -71,7 +71,7 @@
 
             <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box" style="padding-left:17px;overflow-y: scroll;">
 
-              <div style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;x">
+              <div style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
                 <span :class="quanxian==1?'active':''" class="quanxian" @click="quanxian=1">功能权限</span>
                 <span :class="quanxian==2?'active':''" class="quanxian" @click="quanxian=2">数据权限</span>
                 <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>

@@ -331,6 +331,7 @@ export default {
 }
 @import '../styles/table.scss';
 .buttonc{
-  color:#4f81fc
+  color:#4f81fc;
+   cursor: pointer;
 }
 </style>

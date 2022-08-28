@@ -50,9 +50,17 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="150"
+          width="50"
           label="序号">
-
+          <template slot="header" slot-scope="scope">
+            <div style="text-align: center; display: block;">
+              <el-checkbox
+                v-model="checkedAll"
+                :disabled="!list || !list.length"
+                @change="selectAll"
+              />
+            </div>
+          </template>
           <template slot-scope="{ row, column, $index}">
             <span class="status-name">
               <span
@@ -150,6 +158,7 @@ export default {
   mixins: [],
   data() {
     return {
+      checkedAll: [],
       bulkImportShow: false,
       showing: false,
       planing: true,
@@ -196,10 +205,36 @@ export default {
     openwarn(row) {
       this.warningshow = !this.warningshow
     },
+
+    /**
+   * 全选
+   */
+    selectAll(e) {
+      const isChecked = e
+      if (isChecked) {
+        this.list.forEach((item) => {
+          item.checked = true
+          this.isCheckedItems = 1
+        })
+      } else {
+        this.list.forEach((item) => {
+          item.checked = false
+          this.isCheckedItems = 0
+        })
+      }
+    },
     /*
    * 当checkbox选择change时事件
    */
+
     onItemCheckboxChange() {
+      const isCheckedItems = this.list.filter(d => d.checked)
+      this.isCheckedItems = isCheckedItems.length
+      if (isCheckedItems.length < this.list.length) {
+        this.checkedAll = false
+      } else {
+        this.checkedAll = true
+      }
       this.obj = {}
       this.list.filter((d) => d.checked).map(e => {
         const key = e.id; const val = e.code
@@ -361,6 +396,7 @@ export default {
 }
 @import '../styles/table.scss';
 .buttonc{
-  color:#4f81fc
+  color:#4f81fc;
+   cursor: pointer;
 }
 </style>

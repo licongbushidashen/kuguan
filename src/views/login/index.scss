@@ -75,8 +75,8 @@
       // border-radius: 10px;
 
       /deep/ .el-input__inner {
-        height: 50px;
-        line-height: 50px;
+        height: 50px !important;
+        line-height: 50px !important;
         padding: 0 10px;
       }
 

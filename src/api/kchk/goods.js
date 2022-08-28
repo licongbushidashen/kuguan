@@ -91,6 +91,16 @@ export function GetTree(data) {
     }
   })
 }
+export function GetGoodsCategoryTreeHasRole(data) {
+  return request({
+    url: '/api/zjlab/GoodsCategory/GetGoodsCategoryTreeHasRole',
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function GetGoodsCategoryIds(data) {
   return request({
     url: `/api/zjlab/DataPermission/GetGoodsCategoryIds?RoleName=${data}`,

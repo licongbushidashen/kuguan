@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" style="    " title="货品管理" >
     <create-sections title="基础信息">
-      <mtForm :file-list="attachmentList" :treever-data="tree" :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
+      <mtForm :file-list="attachmentList" :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
     </create-sections>
     <create-sections title="单位管理" style="margin:0px;" class="create-sections1">
       <el-button
@@ -114,7 +114,7 @@ import {
   CreateGoodsInfo,
   UpdateGoodsInfo
 } from '@/api/kchk/goods'
-import { GetTree } from '@/api/kchk/goods'
+import { GetGoodsCategoryTreeHasRole } from '@/api/kchk/goods'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
@@ -197,7 +197,7 @@ export default {
   },
   methods: {
     gettree() {
-      GetTree().then(res => {
+      GetGoodsCategoryTreeHasRole().then(res => {
         this.tree = res
         this.getBaseField()
       })
@@ -327,7 +327,6 @@ export default {
         attachmentList: attachmentList,
         unitList: list
       }))
-      obj.goodsInfo.categoryId = obj.goodsInfo.categoryName
       if (this.aoiinfo.id) {
         UpdateGoodsInfo(obj).then(res => {
           this.$message.success('修改成功')
@@ -360,14 +359,15 @@ export default {
       })
       field.push({
         field: 'categoryId',
-        formType: 'tree',
+        formType: 'selete',
         isNull: 1,
         name: '所属类目',
         placeholder: '',
-        setting: [],
+        setting: this.tree,
         inputTips: '',
-        ids: this.aoiinfo ? [this.aoiinfo.categoryId] : [],
-        value: this.aoiinfo ? this.aoiinfo.categoryId : ''
+        optionL: 'name',
+        optionV: 'id',
+        value: this.aoiinfo ? this.aoiinfo.goodsCategoryId : ''
       })
       field.push({
         field: 'name',

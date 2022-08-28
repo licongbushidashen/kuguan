@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7964503",
+      "name": "批量添加",
+      "font_class": "piliangtianjia",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "17289494",
+      "name": "EXCEL",
+      "font_class": "EXCEL",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "23016918",
+      "name": "excel-1",
+      "font_class": "excel-1",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "26815647",
+      "name": "excel",
+      "font_class": "excel",
+      "unicode": "e6e2",
+      "unicode_decimal": 59106
+    },
+    {
       "icon_id": "6488992",
       "name": "线性-导入",
       "font_class": "xianxing-daoru",

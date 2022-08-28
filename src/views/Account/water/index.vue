@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <xr-header icon-class="iconfont icon-kucunchaxun1" icon-color="#2362fb" label="直饮水台账">
+    <xr-header icon-class="iconfont icon-huaban39" icon-color="#2362fb" label="直饮水台账">
       <template v-slot:ft>
         <el-button
           v-if="allAuth['InventoryManager.CheckPlans.Create']"
@@ -25,16 +25,15 @@
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
-        <div class="main-table-header">
-          <label>填写日期</label>
-          <el-date-picker
-            v-model="time"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"/>
-          <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)">搜索</el-button>
-        </div>
+        <label>填写日期</label>
+        <el-date-picker
+          v-model="time"
+          type="datetimerange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"/>
+        <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)">搜索</el-button>
+
       </div>
       <el-table
         v-loading="loading"
@@ -48,7 +47,7 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="150"
+          width="50"
           label="序号"
         >
           <template slot-scope="{ row, column, $index }">
@@ -102,7 +101,7 @@
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
-      url="api/zjlab/Disinfection/DisinfectionDownload"
+      url="api/zjlab/WaterDispenser/Upload"
       @close="bulkImportShow = false"
       @success="handleCurrentChange(0)"
     />
@@ -116,7 +115,7 @@ import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 import {
   WaterDispenserGetPage,
-  DownloadWaterDispenserExcel
+  DownloadWaterDispenserPage
 } from '@/api/account'
 import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
@@ -179,7 +178,7 @@ export default {
      * 导出
      */
     downs() {
-      DownloadWaterDispenserExcel({ 'maxResultCount': 1000, 'skipCount': 0, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }).then(res => {
+      DownloadWaterDispenserPage({ 'maxResultCount': 1000, 'skipCount': 0, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }).then(res => {
         const blob = new Blob([res], {
           type: ''
         })
@@ -285,7 +284,7 @@ export default {
 
 <style lang="scss" scoped>
 /deep/.el-range-editor.el-input__inner{
-  padding: 0px 10px !important;
+  // padding: 0px 10px !important;
 }
 .main {
   height: 100%;
@@ -326,6 +325,7 @@ export default {
 @import '../styles/table.scss';
 .buttonc {
   color: #4f81fc;
+   cursor: pointer;
 }
 </style>
 

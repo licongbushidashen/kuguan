@@ -53,9 +53,17 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="80"
+          width="50"
           label="序号">
-
+          <template slot="header" slot-scope="scope">
+            <div style="text-align: center; display: block;">
+              <el-checkbox
+                v-model="checkedAll"
+                :disabled="!list || !list.length"
+                @change="selectAll"
+              />
+            </div>
+          </template>
           <template slot-scope="{ row, column, $index}">
             <span class="status-name">
               <span
@@ -149,6 +157,7 @@ import Warning from './comp/warning.vue'
 import Plan from './comp/plan.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
+import TemplateManageDialog from '../../hrm/salary/archives/components/TemplateManageDialog.vue'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -158,11 +167,14 @@ export default {
     Dio,
     Warning,
     Plan,
-    BulkImportUser
+    BulkImportUser,
+    TemplateManageDialog
   },
   mixins: [],
   data() {
     return {
+
+      checkedAll: [],
       // 批量导入
       bulkImportShow: false,
       planing: true,
@@ -234,10 +246,35 @@ export default {
         })
       }
     },
+
+    /**
+   * 全选
+   */
+    selectAll(e) {
+      const isChecked = e
+      if (isChecked) {
+        this.list.forEach((item) => {
+          item.checked = true
+          this.isCheckedItems = 1
+        })
+      } else {
+        this.list.forEach((item) => {
+          item.checked = false
+          this.isCheckedItems = 0
+        })
+      }
+    },
     /*
    * 当checkbox选择change时事件
    */
     onItemCheckboxChange() {
+      const isCheckedItems = this.list.filter(d => d.checked)
+      this.isCheckedItems = isCheckedItems.length
+      if (isCheckedItems.length < this.list.length) {
+        this.checkedAll = false
+      } else {
+        this.checkedAll = true
+      }
       this.obj = {}
       this.ids = this.list.filter((d) => d.checked).map(e => {
         return e.id
@@ -411,6 +448,7 @@ export default {
 }
 @import '../styles/table.scss';
 .buttonc{
-  color:#4f81fc
+  color:#4f81fc;
+   cursor: pointer;
 }
 </style>

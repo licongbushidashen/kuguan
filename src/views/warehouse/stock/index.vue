@@ -73,14 +73,23 @@
           prop="size"
           label="规格"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="unitName"
           label="单位"
+        /> -->
+        <el-table-column
+          prop="occupyNum"
+          label="占用库存"
         />
         <el-table-column
           prop="residueNum"
           label="剩余库存"
-        />
+        >
+          <template slot-scope="{ row, column, $index}">
+
+            <span>{{ row.residueNum }} {{ row.unitName }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="totalAmount"
           label="总金额"
@@ -270,6 +279,7 @@ export default {
 }
 @import '../styles/table.scss';
 .buttonc{
-  color:#4f81fc
+  color:#4f81fc;
+   cursor: pointer;
 }
 </style>

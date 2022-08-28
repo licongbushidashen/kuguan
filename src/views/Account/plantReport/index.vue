@@ -1,15 +1,12 @@
 <template>
   <div class="main">
-    <xr-header icon-class="iconfont icon-kucunchaxun1" icon-color="#2362fb" label="绿植台账">
+    <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="绿植台账">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['InventoryManager.CheckPlans.Create']"
           class="main-table-header-button "
           type=""
-          icon="el-icon-plus"
-          @click="addJurisdiction"
-        >新建</el-button
-        >
+          icon="iconfont icon-daochu1"
+          @click="downs">导出</el-button>
       </template>
     </xr-header>
     <div class="main-body">
@@ -44,9 +41,10 @@
 import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 import {
-  GetBooks
+  GetBooks,
+  DownloadGreenPlantPage
 } from '@/api/account'
-
+import { downloadFileWithBuffer } from '@/utils'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 export default {
@@ -99,6 +97,17 @@ export default {
     this.getList()
   },
   methods: {
+    /**
+     * 导出
+     */
+    downs() {
+      DownloadGreenPlantPage({ 'maxResultCount': 1000, 'skipCount': 0, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }).then(res => {
+        const blob = new Blob([res], {
+          type: ''
+        })
+        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+      })
+    },
     handleClick(type, row) {
       if (type == 'edit') {
         this.Inventoryid = row.id
@@ -139,6 +148,7 @@ export default {
         .then(res => {
           const list = []
           const tableH = []
+          this.tableH = []
           const tableHName = new Set()
           for (let i = 0; i < res.length; i++) {
             if (!tableHName.has(res[i].spacePointName)) {
@@ -210,7 +220,7 @@ export default {
 
 <style lang="scss" scoped>
 /deep/.el-range-editor.el-input__inner{
-  padding: 0px 10px !important;
+  // padding: 0px 10px !important;
 }
 .main {
   height: 100%;
@@ -251,6 +261,7 @@ export default {
 @import '../styles/table.scss';
 .buttonc {
   color: #4f81fc;
+   cursor: pointer;
 }
 </style>
 

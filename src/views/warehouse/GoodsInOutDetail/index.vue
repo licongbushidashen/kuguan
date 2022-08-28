@@ -147,11 +147,11 @@
             <div style="    text-align: center;">结存</div>
           </template>
           <el-table-column
-            prop="residueNum"
+            prop="residueQuantity"
             label="剩余数量"
           />
           <el-table-column
-            prop="balanceAmount"
+            prop="residuePrice"
             label="结存金额"
           />
         </el-table-column>
@@ -353,6 +353,7 @@ export default {
 }
 @import '../styles/table.scss';
 .buttonc{
-  color:#4f81fc
+  color:#4f81fc;
+   cursor: pointer;
 }
 </style>

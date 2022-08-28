@@ -47,7 +47,7 @@
                   </div>
                   <div class="node-label-set">
 
-                    <i v-if="allAuth['SystemSetting.GoodsCategorys.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" />
+                    <!-- <i v-if="allAuth['SystemSetting.GoodsCategorys.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" /> -->
                     <i
                       v-if="allAuth['SystemSetting.GoodsCategorys.Delete']"
                       class="el-icon-delete"
@@ -194,6 +194,7 @@ export default {
           this.$message.success('修改成功')
         })
       } else {
+        this.aoiinfo.code = Date.now() + '' + Math.floor(Math.random() * 10)
         CreateGoodsCategory(this.aoiinfo).then(res => {
           this.$message.success('新增成功')
           this.node_had.childNodes = []
@@ -203,27 +204,27 @@ export default {
     },
     getBaseField() {
       const field = []
-      field.push({
-        field: 'code',
-        formType: 'text',
-        isNull: 1,
-        name: '类目编码',
-        placeholder: '请输入',
-        setting: [],
-        inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.code : ''
-      })
-      field.push({
-        field: 'parentName',
-        formType: 'leave',
-        isNull: 0,
-        name: '上级类目',
-        placeholder: '',
-        disabled: false,
-        setting: [],
-        inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.parentName : ''
-      })
+      // field.push({
+      //   field: 'code',
+      //   formType: 'text',
+      //   isNull: 1,
+      //   name: '类目编码',
+      //   placeholder: '请输入',
+      //   setting: [],
+      //   inputTips: '',
+      //   value: this.aoiinfo ? this.aoiinfo.code : ''
+      // })
+      // field.push({
+      //   field: 'parentName',
+      //   formType: 'leave',
+      //   isNull: 0,
+      //   name: '上级类目',
+      //   placeholder: '',
+      //   disabled: false,
+      //   setting: [],
+      //   inputTips: '',
+      //   value: this.aoiinfo ? this.aoiinfo.parentName : ''
+      // })
       field.push({
         field: 'name',
         formType: 'text',

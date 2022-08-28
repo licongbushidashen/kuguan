@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="消杀台账">
+    <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="直饮水台账">
       <template v-slot:ft>
         <el-button
           class="main-table-header-button "
@@ -11,7 +11,7 @@
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
-        <label>消杀日期</label>
+        <label>填写日期</label>
         <el-date-picker
           v-model="time"
           type="datetimerange"
@@ -29,6 +29,7 @@
         highlight-current-row
         @row-click="handleRowClick"
       >
+
         <el-table-column v-for="(item,index) in tableH" :prop="item.props" :label="item.name" :key="index"/>
 
       </el-table>
@@ -40,11 +41,10 @@
 import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 import {
-  DisinfectionGetBooks,
-  DisinfectionGetDataTable
+  WaterDispenserGetBooks,
+  DownloadWaterDispenserExcel
 } from '@/api/account'
 import { downloadFileWithBuffer } from '@/utils'
-
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 export default {
@@ -57,7 +57,7 @@ export default {
   mixins: [],
   data() {
     return {
-      tableH: [{ name: '虫害类型', props: 'pestCategories' }],
+      tableH: [{ name: '规格', props: 'size' }],
       flag: 0,
       Inventoryid: '',
       lossShow: false,
@@ -101,7 +101,7 @@ export default {
      * 导出
      */
     downs() {
-      DisinfectionGetDataTable({ 'maxResultCount': 1000, 'skipCount': 0, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }).then(res => {
+      DownloadWaterDispenserExcel({ 'maxResultCount': 1000, 'skipCount': 0, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }).then(res => {
         const blob = new Blob([res], {
           type: ''
         })
@@ -144,7 +144,7 @@ export default {
       debugger
       this.loading = true
       const data = `?beginTime=${parseTime(this.time[0])}&endTime=${parseTime(this.time[1])}`
-      DisinfectionGetBooks(data)
+      WaterDispenserGetBooks(data)
         .then(res => {
           const list = []
           const tableH = []
@@ -158,7 +158,7 @@ export default {
           }
           tableH.push({ name: '总计', props: '总计' })
           for (let i = 0; i < res.length; i++) {
-            const obj = { pestCategories: res[i].pestCategories }
+            const obj = { size: res[i].size }
             let num = 0
             tableHName.forEach(e => {
               if (e == res[i].spacePointName) {

@@ -16,7 +16,6 @@ import {
   WaterDispenserCreate,
   WaterDispenserUpdate
 } from '@/api/account'
-import { GetTree } from '@/api/kchk/goods'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
@@ -77,15 +76,12 @@ export default {
     }
   },
   created() {
-    this.gettree()
+    this.getBaseField()
   },
   methods: {
-    gettree() {
-      GetTree().then(res => {
-        this.tree = res
-        this.getBaseField()
-      })
-    },
+
+
+
     saveClick(data) {
       console.log(this.aoiinfo, 666)
       if (!data) return

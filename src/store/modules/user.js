@@ -93,7 +93,7 @@ const user = {
       return new Promise((resolve, reject) => {
         adminIndexAuthListAPI()
           .then(response => {
-            if (!response.currentUser.id) {
+            if (!response.currentUser.isAuthenticated) {
               localStorage.removeItem('accessToken')
               removeAuth()
               resetRouter()
@@ -102,25 +102,25 @@ const user = {
               const data = response
               Lockr.set('authList', data)
               data.wkFirstModel = data.firstModel
-              commit('SET_language', data.localization.values.Module)
+              commit('SET_language', data.localization.languages)
               if (Object.getOwnPropertyNames(data.auth.grantedPolicies).length !== 0) {
                 commit('SET_ALLAUTH', data.auth.grantedPolicies)
               }
 
-              commit('SET_CRM', data.crm)
-              commit('SET_BI', data.bi)
-              commit('SET_MANAGE', data.manage)
-              commit('SET_OA', data.oa)
-              commit('SET_PROJECT', data.project)
-              commit('SET_HRM', data.hrm)
+              // commit('SET_CRM', data.crm)
+              // commit('SET_BI', data.bi)
+              // commit('SET_MANAGE', data.manage)
+              // commit('SET_OA', data.oa)
+              // commit('SET_PROJECT', data.project)
+              // commit('SET_HRM', data.hrm)
 
               // 获取 管理后台 员工和部门信息
-              dispatch('GetUserList')
-              // dispatch('GetDeptList')
-              if (data.hrm) {
-                dispatch('GetHrmUserList')
-                dispatch('GetHrmDeptList')
-              }
+              // dispatch('GetUserList')
+              // // dispatch('GetDeptList')
+              // if (data.hrm) {
+              //   dispatch('GetHrmUserList')
+              //   dispatch('GetHrmDeptList')
+              // }
 
               resolve(data.auth.grantedPolicies)
             }

@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" style="    " title="新建盘点">
     <create-sections title="基础信息">
-      <mtForm :rules="fieldsRules" :treever-data="tree" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
+      <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
     </create-sections>
     <span slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>
@@ -16,7 +16,7 @@ import {
   Create,
   Update
 } from '@/api/Inventory/kc'
-import { GetTree } from '@/api/kchk/goods'
+import { GetGoodsCategoryTreeHasRole } from '@/api/kchk/goods'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     gettree() {
-      GetTree().then(res => {
+      GetGoodsCategoryTreeHasRole().then(res => {
         this.tree = res
         this.getBaseField()
       })
@@ -104,7 +104,7 @@ export default {
       // if (this.aoiinfo.endTime.indexOf('00:00:00') == -1) {
       //   this.aoiinfo.endTime = this.aoiinfo.endTime + ' 00:00:00'
       // }
-      this.aoiinfo.goodsCategoryId = this.aoiinfo.goodsCategoryName
+      // this.aoiinfo.goodsCategoryId = this.aoiinfo.goodsCategoryName
       delete this.aoiinfo.goodsCategoryName
       if (this.aoiinfo.id) {
         Update(this.aoiinfo).then(res => {
@@ -180,13 +180,14 @@ export default {
       })
       field.push({
         field: 'goodsCategoryId',
-        formType: 'tree',
+        formType: 'selete',
         isNull: 1,
         name: '所属类目',
         placeholder: '',
-        setting: [],
+        setting: this.tree,
         inputTips: '',
-        ids: this.aoiinfo ? [this.aoiinfo.goodsCategoryId] : [],
+        optionL: 'name',
+        optionV: 'id',
         value: this.aoiinfo ? this.aoiinfo.goodsCategoryId : ''
       })
       field.push({

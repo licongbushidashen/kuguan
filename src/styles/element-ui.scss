@@ -65,6 +65,7 @@
 }
 .el-button{
   padding: 8px 12px !important;
+  height: 30px !important;
 }
  // 参考 https://blog.csdn.net/HZKang/article/details/90447373
 // body .el-table th.gutter {
@@ -87,6 +88,7 @@ table {
    text-align: center !important;
    position: sticky;
     bottom: 0px;
+    z-index: 999;
  }
 
  .el-dialog__close {
@@ -103,6 +105,7 @@ table {
   position: sticky;
   top: 0px;
   background: #fff;
+  z-index: 999;
  }
  // 消息框
  .el-message-box__title {
@@ -165,22 +168,22 @@ table {
   padding-bottom: 10px !important;
 
 }
-// .el-dialog .el-dialog__body{
-//   max-height: 600px;
-//   overflow-y: auto;
-// }
+ .el-dialog__body{
+  min-height: 300px;
+}
 .el-date-editor .el-range-separator{
   width: 7% !important;
-  line-height: 34px !important;
+  line-height: 28px !important;
 }
 .el-dialog{
   max-height: calc(100% - 25vh) !important;
     overflow: auto !important;
+    
 }
 .el-input__inner{
   height: 34px !important;
     line-height: 34px !important;
 }
 .el-input__icon{
-  line-height: 34px !important;
+  line-height: 28px !important;
 }

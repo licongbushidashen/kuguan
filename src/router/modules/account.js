@@ -37,7 +37,8 @@ export default [
   {
     ...layout({
       permissions: ['account', 'system-project']
-    }),
+    }
+      , '/views/Account/germicidal'),
     meta: {
       title: '台账管理',
       title1: 'InventoryManager.CheckPlans',
@@ -74,7 +75,7 @@ export default [
   },
   {
     ...layout({
-      permissions: ['account', 'system-project']
+      permissions: ['account1', 'system-project1']
     }),
     meta: {
       title: '台账报表',
@@ -100,25 +101,20 @@ export default [
       },
       {
         meta: {
-          title: '货品出入库明细表'
+          title: '直饮水台账'
         },
-        name: 'warehouse',
-        path: 'Inventory-GoodsInOutDetail', // 类目
-        component: () => import('@/views/warehouse/GoodsInOutDetail')
-      },
-      {
-
-
-        name: 'warehouse',
-        path: 'Inventory-InventoryBalance', // 类目
-        component: () => import('@/views/warehouse/InventoryBalance'),
-        meta: {
-          title: '商品收发明细表',
-          icon: 'iconfont icon-baobiao'
-        }
-
-
+        name: 'waterReport',
+        path: 'Account-waterReport', // 类目
+        component: () => import('@/views/Account/waterReport')
       }
+      // {
+      //   meta: {
+      //     title: '货品出入库明细表'
+      //   },
+      //   name: 'warehouse',
+      //   path: 'Inventory-GoodsInOutDetail', // 类目
+      //   component: () => import('@/views/warehouse/GoodsInOutDetail')
+      // },
 
 
     ]

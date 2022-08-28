@@ -1,25 +1,42 @@
 @font-face {
   font-family: 'iconfont'; /* Project id 3576966 */
-  src: url('iconfont.woff2?t=1660038679268') format('woff2'),
-    url('iconfont.woff?t=1660038679268') format('woff'),
-    url('iconfont.ttf?t=1660038679268') format('truetype');
+  src: url('iconfont.woff2?t=1661563006849') format('woff2'),
+    url('iconfont.woff?t=1661563006849') format('woff'),
+    url('iconfont.ttf?t=1661563006849') format('truetype');
 }
-
+.el-button [class*='iconfont'] + span {
+  margin-left: 5px;
+}
 .iconfont {
   font-family: 'iconfont' !important;
-  font-size: 16px;
+  font-size: 14px;
+
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-piliangtianjia:before {
+  content: '\e62f';
+}
+
+.icon-EXCEL:before {
+  content: '\e602';
+}
+
+.icon-excel-1:before {
+  content: '\e604';
+}
+
+.icon-excel:before {
+  content: '\e6e2';
+}
+
 .icon-xianxing-daoru:before {
-  margin-right: 5px;
   content: '\e631';
 }
 
 .icon-daochu1:before {
-  margin-right: 5px;
   content: '\e616';
 }
 

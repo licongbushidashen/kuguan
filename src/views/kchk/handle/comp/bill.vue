@@ -14,7 +14,7 @@
             <div v-else :class="erroring?orderCategory?'':'errorshow':''" class=" wy-body-info-one-left-val wy-body-info-one-left-puts">
               <el-select v-model="orderCategory">
                 <el-option
-                  v-for="(item,index) in Category[ objs.identification]"
+                  v-for="(item,index) in Category[objs.identification]"
                   :key="index" :label="item.name"
                   :value="item.orderCategory"
                   class="wy-select"/>
@@ -39,33 +39,13 @@
             <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ objs.typeName }}
             </div>
-            <div v-else :class="erroring?objs.typeName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" >
-              <el-select v-model="objs.typeName">
-                <el-option :value="objs.typeName" class="wy-select1">
-                  <el-tree
-                    ref="tree"
-                    :props="props"
-                    :load="getDepTreeList"
-                    lazy
-                    node-key="id"
-                    highlight-current
-                    @node-click="changeDepClick"
-                  >
-                    <flexbox
-                      slot-scope="{ node, data }"
-                      :class="{ 'is-current': node.isCurrent }"
-                      class="node-data"
-                    >
-
-
-                      <div class="node-data__label text-one-line ">
-                        {{ data.name }}
-                      </div>
-
-
-                    </flexbox>
-                  </el-tree>
-                </el-option>
+            <div v-else :class="erroring?objs.typeId?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" >
+              <el-select v-model="objs.typeId" @change="listn">
+                <el-option
+                  v-for="(item,index) in showDepData"
+                  :key="index" :label="item.name"
+                  :value="item.id"
+                  class="wy-select"/>
               </el-select>
             </div>
           </div>
@@ -77,7 +57,7 @@
               {{ objs.dutyUserName }}
             </div>
             <div v-else :class="erroring?objs.dutyUserName?'':'errorshow':''" class="wy-body-info-one-left-val  wk changers" @click="opende('dutyUser')">
-              <div style="    font-size: 13px;    color: #cccfd6;"> {{ objs.dutyUserName ||'请选择' }}</div>
+              <div :style="objs.dutyUserName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;"> {{ objs.dutyUserName ||'请选择' }}</div>
             </div>
           </div>
         </div>
@@ -90,7 +70,7 @@
               {{ objs.ckName }}
             </div>
             <div v-else :class="erroring?objs.ckName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('ck')">
-              <div style="    font-size: 13px;    color: #cccfd6;"> {{ objs.ckName ||'请选择' }}</div>
+              <div :style="objs.ckName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;"> {{ objs.ckName ||'请选择' }}</div>
             </div>
           </div>
           <div class="wy-body-info-one-right">
@@ -101,7 +81,7 @@
               {{ objs.wldwName }}
             </div>
             <div v-else :class="erroring?objs.wldwName?'':'errorshow':''" class="wy-body-info-one-left-val  wk changers" @click="opende('wldw')">
-              <div style="    font-size: 13px;    color: #cccfd6;">
+              <div :style="objs.wldwName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">
                 {{ objs.wldwName ||'请选择' }}
               </div>
             </div>
@@ -115,8 +95,8 @@
             <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ objs.jfkhName }}
             </div>
-            <div v-else :class="erroring?objs.jfkhName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('jfkh')">
-              <div style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择' }}</div>
+            <div v-else :class="erroring?objs.jfkhNumber?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('jfkh')">
+              <div :style="objs.jfkhNumber?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择' }}</div>
             </div>
           </div>
           <div class="wy-body-info-one-right">
@@ -124,7 +104,7 @@
               经费名称
             </div>
             <div class="wy-body-info-one-left-val ">
-              <div style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhName ||'' }}</div>
+              <div :style="objs.jfkhName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhName ||'' }}</div>
 
             </div>
           </div>
@@ -139,9 +119,9 @@
           <el-button
             :disabled="!isCheckedItems"
             icon="wk wk-delete" style="margin-bottom:20px" @click="dellist">删除</el-button>
-          <el-button
+            <!-- <el-button
             type="primary"
-            icon="el-icon-plus" @click="opende(objs.identification?'gldj1':'gldj2')">关联单据</el-button>
+            icon="el-icon-plus" @click="opende(objs.identification?'gldj1':'gldj2')">关联单据</el-button> -->
         </div>
         <el-table
           id="examine-table"
@@ -303,14 +283,14 @@
               <div>
                 <ul>
                   <li v-for="(item,index) in fileList" :key="index" class="fileList-order">
-
                     <div class="fileList-order-content">     <i class="el-icon-document"/> {{ item.fileName }}</div>
                     <div>
-                      <span><i aria-label="图标: eye" class="anticon anticon-eye"><svg viewBox="64 64 896 896" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class=""><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 0 0 0 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"/></svg></i>
+                      <span style="    cursor: pointer;"><i aria-label="图标: eye" class="anticon anticon-eye"><svg viewBox="64 64 896 896" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class=""><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 0 0 0 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"/></svg></i>
                         预览
-                      </span><span @click="download(item)"><i aria-label="图标: download" class="anticon anticon-download"><svg viewBox="64 64 896 896" data-icon="download" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class=""><path d="M505.7 661a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"/></svg></i>
+                      </span><span style="    cursor: pointer;" @click="download(item)"><i aria-label="图标: download" class="anticon anticon-download"><svg viewBox="64 64 896 896" data-icon="download" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class=""><path d="M505.7 661a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"/></svg></i>
                         下载
                       </span>
+                      <span style="    cursor: pointer;" @click="delfilelist(index)"><i style="    font-size: 14px !important;    margin-right: 5px !important;" class="el-dialog__close el-icon el-icon-close"/>删除</span>
                     </div>
                   </li>
                 </ul>
@@ -362,7 +342,7 @@
       </div>
     </span>
 
-    <Type :placeholder="placeholder" :p="p" :typeling="typeling" :url="url" :name="name" @change="typevalu"/>
+    <Type :objs="objs" :placeholder="placeholder" :p="p" :typeling="typeling" :url="url" :name="name" @change="typevalu"/>
   </el-dialog>
 
 </template>
@@ -371,21 +351,21 @@ import { mapGetters } from 'vuex'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import {
   GetInfo,
-  CreateOrder
-
+  CreateOrder,
+  GetGoodsCategoryTreeHasRole
 } from '@/api/kchk/goods'
 import {
   BatchALL
 } from '@/api/kchk/order'
+
 import { downloadFileWithBuffer } from '@/utils'
 import {
   UpdateOrder,
   DownLoadFile
 } from '@/api/kchk/order'
+
 import Type from './type.vue'
-import {
-  GetGoodsCategoryTree
-} from '@/api/kchk/category'
+
 export default{
   components: { Type },
   filters: {
@@ -428,6 +408,7 @@ export default{
   },
   data() {
     return {
+      showDepData: [],
       p: '',
       erroring: false,
       props: {
@@ -544,8 +525,8 @@ export default{
             wldwId: this.info.order.companyId,
             ckName: this.info.order.wareHouseName,
             ckId: this.info.order.wareHouseId,
-            typeName: this.info.order.goodsCategoryName,
             typeId: this.info.order.goodsCategoryId,
+            typeName: this.info.order.goodsCategoryName,
             jfkhName: this.info.order.memoryCardName,
             jfkhNumber: this.info.order.memoryCardNumber,
             jfkhId: this.info.order.memoryCardId,
@@ -571,11 +552,16 @@ export default{
           }
 
           this.fileList = this.info.attachmentList
+        } else {
+          this.addpush()
         }
       }
     }
   },
   methods: {
+    delfilelist(index) {
+      this.fileList.splice(index, 1)
+    },
     Batch(url) {
       const id = [this.info.order.id]
       BatchALL(id, url).then(res => {
@@ -619,8 +605,6 @@ export default{
 
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
-            debugger
-
             const value = Number(curr)
             if (!isNaN(value)) {
               return Math.round((prev + curr) * 100) / 100
@@ -658,25 +642,10 @@ export default{
       // this.structureValue = data.id
     },
     // 获取树形列表
-    getDepTreeList(node, resolve) {
+    getDepTreeList() {
       this.depLoading = true
-      const data = node.level === 0 ? {} : { parentId: node.data.id }
-      GetGoodsCategoryTree(data)
+      GetGoodsCategoryTreeHasRole()
         .then(response => {
-          this.node_had = node
-          this.resolve_had = resolve
-          response.forEach(e => {
-            e.hasChild = !e.hasChild
-          })
-          if (node.level === 0) {
-            this.aoiinfo = response ? response[0] : {}
-          }
-          if (node.level > 0) {
-            resolve(response || [])
-          } else {
-            resolve(response || [])
-          }
-
           this.showDepData = response || []
           this.depLoading = false
         })
@@ -684,7 +653,14 @@ export default{
           this.depLoading = false
         })
     },
+    listn() {
+      this.list = []
+      this.list.push({ hover: false, checked: false })
+    },
     typevalu(row, name) {
+      if (name == 'ck' && this.objs.identification) {
+        this.listn()
+      }
       if (name == 'gldj1' || name == 'gldj2') {
         this.list.push(row)
       } else
@@ -706,7 +682,6 @@ export default{
     },
     dialogSure(val) {
       let flag = false
-
       for (const i in this.objs) {
         if (i != 'remark' && !this.objs[i]) {
           if (i != 'identification') {
@@ -796,10 +771,19 @@ export default{
         this.url = '/api/identity/users'
         this.name = val
       } else if (val == 'goods') {
+        if ((!this.objs.typeId || !this.objs.ckName) && this.objs.identification) {
+          this.$message.error('请先选择商品和类目')
+          return
+        }
+        if (this.objs.identification) {
+          this.url = '/api/zjlab/Inventory/InventoryPage'
+        } else {
+          this.url = '/api/zjlab/GoodsInfo/GoodsInfoPage'
+        }
         this.p = '货品'
         this.placeholder = '请输入货品名称'
         this.typeling = !this.typeling
-        this.url = '/api/zjlab/GoodsInfo/GoodsInfoPage'
+
         this.name = val
         this.goodsIndex = item
       } else if (val == 'gldj1' || val == 'gldj2') {

@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <xr-header icon-class="iconfont icon-kucunchaxun1" icon-color="#2362fb" label="消杀台账">
+    <xr-header icon-class="iconfont icon-huaban39" icon-color="#2362fb" label="消杀台账">
       <template v-slot:ft>
         <el-button
           v-if="allAuth['InventoryManager.CheckPlans.Create']"
@@ -47,7 +47,7 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="150"
+          width="50"
           label="序号"
         >
           <template slot-scope="{ row, column, $index }">
@@ -101,7 +101,7 @@
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
-      url="api/zjlab/Disinfection/DisinfectionDownload"
+      url="api/zjlab/Disinfection/Upload"
       @close="bulkImportShow = false"
       @success="handleCurrentChange(0)"
     />
@@ -283,7 +283,7 @@ export default {
 
 <style lang="scss" scoped>
 /deep/.el-range-editor.el-input__inner{
-  padding: 0px 10px !important;
+  // padding: 0px 10px !important;
 }
 .main {
   height: 100%;
@@ -324,5 +324,6 @@ export default {
 @import '../styles/table.scss';
 .buttonc {
   color: #4f81fc;
+  cursor: pointer;
 }
 </style>

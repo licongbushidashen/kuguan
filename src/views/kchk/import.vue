@@ -19,13 +19,13 @@
         multiple>
         <i class="wk wk-icon-upload upload-icon" />
         <div class="upload-name">点击或拖拽上传</div>
-        <div class="content content-tips">
+        <!-- <div class="content content-tips">
           <div>1、支持.xlsx格式，单次最多500条数据</div>
           <div>
             2、为确保上传数据与列表内容匹配，请先下载<span class="download" @click.stop="download">实例文件</span>
           </div>
           <div>3、数据标题单据号仅支持覆盖导入</div>
-        </div>
+        </div> -->
       </el-upload>
       <div v-if="flag==false" style="border:1px dashed #d9d9d9;    width: 100%;   padding-top: 60px;height: 260px;    text-align: center;">
         <img src="../../assets/img/excel.png" alt="">
@@ -419,7 +419,7 @@ font-size: 13px;
 }
 /deep/.el-upload-dragger{
   width: 100%;
-  padding-top: 20px;
+  padding-top: 87px;
   height: 260px;
 .upload-icon{
 

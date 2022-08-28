@@ -23,8 +23,8 @@
           <div class="section">
 
             <div class="section__content">
-              <el-input v-model="keywords">
-                <el-button slot="append" icon="el-icon-search" style="padding:10px" @click="changes"/>
+              <el-input v-model="keywords" style="padding:10px">
+                <el-button slot="append" icon="el-icon-search" @click="changes"/>
               </el-input>
               <el-tree
                 ref="tree"

@@ -61,14 +61,14 @@ export default {
       fields: {},
       isSave: false,
       ware: {
-        allup: '',
-        alldown: '',
-        oneup: '',
-        onedown: '',
-        mouthup: '',
-        mouthdown: '',
-        quarterup: '',
-        quarterdown: ''
+        allup: null,
+        alldown: null,
+        oneup: null,
+        onedown: null,
+        mouthup: null,
+        mouthdown: null,
+        quarterup: null,
+        quarterdown: null
       },
       alldata: [],
       slidingScales: ''

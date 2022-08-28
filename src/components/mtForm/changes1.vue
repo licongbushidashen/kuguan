@@ -1,10 +1,134 @@
 <template>
-  <el-dialog :visible.sync="shows" :close-on-click-modal="false" title="上级目录" append-to-body>
-    <div>
-      <el-input v-model="keywords" style="margin-bottom:20px">
-        <el-button slot="append" icon="el-icon-search" @click="changes"/>
-      </el-input>
-      <el-tree
+  <el-dialog :visible.sync="shows" :close-on-click-modal="false" :append-to-body="true" title="上级类目">
+    <div class="grounds">
+      <div >
+        <el-input v-model="keywords" style="margin-bottom:20px">
+          <el-button slot="append" icon="el-icon-search" @click="changes"/>
+        </el-input>
+        <div class="left-grounds">
+          <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item v-for="(item,index) in listName" :key="index"><a href="javascript:;" @click="getDepTreeList(item.id==''?null:item,index)">{{ item.specificLocation }}</a></el-breadcrumb-item>
+          </el-breadcrumb>
+          <div class="wk-user-select__list">
+            <flexbox
+              v-for="(item, index) in showDataList"
+              :key="index"
+              class="wk-user-select__item">
+              <div>
+                <el-checkbox
+                  v-model="item.checked"
+                  @change="onchecked(index)"
+                />
+                <div class="dep-name text-one-line">{{ item.specificLocation }}</div>
+              </div>
+              <template >
+
+                <el-button
+                  v-if="item.hasChild"
+                  type="text"
+                  icon="wk wk-icon-structure"
+                  @click="getDepTreeList(item)">下级</el-button>
+              </template>
+            </flexbox>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="right-grounds">
+          <el-tag v-if="item.id" style="margin-left:20px">{{ item.specificLocation }}</el-tag>
+        </div>
+      </div>
+    </div>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="$emit('onshow')">取消</el-button>
+      <el-button type="primary" @click="dialogSure">确 定</el-button>
+    </span>
+  </el-dialog>
+</template>
+<script>
+import {
+  GetKeySpacePointTree,
+  GetSpacePointTree
+
+} from '@/api/account'
+export default {
+  props: {
+    shows: {
+      type: Boolean
+    }
+  },
+  data() {
+    return {
+      listName: [{ specificLocation: '全部', id: '' }],
+      depLoading: false,
+      keywords: '',
+      showDataList: '',
+      item: ''
+    }
+  },
+  mounted() {
+    this.getDepTreeList()
+  },
+  methods: {
+    onchecked(val) {
+      this.showDataList.forEach((e, index) => {
+        if (e.checked && val != index) {
+          e.checked = false
+        }
+        if (val == undefined) {
+          e.checked = false
+        }
+      })
+      const item = this.showDataList.filter(e => e.checked)
+      this.item = this.showDataList.filter(e => e.checked).length > 0 ? item[0] : {}
+    },
+    dialogSure() {
+      if (this.item.id) {
+        this.$emit('changev', this.item)
+      } else {
+        this.$message.error('未选择上级类目')
+      }
+    },
+    changes() {
+      if (this.keywords != '') {
+        GetKeySpacePointTree(this.keywords).then(response => {
+          this.listName = [{ specificLocation: '全部', id: '' }]
+          this.showDataList = response || []
+          this.depLoading = false
+        })
+      } else {
+        this.getDepTreeList()
+      }
+    },
+
+    // 获取树形列表
+    getDepTreeList(item, index) {
+      if (!item) {
+        this.listName = [{ specificLocation: '全部', id: '' }]
+      } else if (index != 0) {
+        if (this.listName.length > index) {
+          this.listName.splice(index + 1, this.listName.length - index + 1)
+        } else {
+          this.listName.push({ specificLocation: item.specificLocation, id: item.id })
+        }
+      }
+      this.depLoading = true
+      const data = item ? { parentId: item.id } : {}
+      GetSpacePointTree(data)
+        .then(response => {
+          this.showDataList = response || []
+          this.depLoading = false
+          this.onchecked()
+        })
+        .catch(() => {
+          this.depLoading = false
+        })
+    }
+
+  }
+}
+</script>
+  <!-- <el-tree
         v-loading="depLoading"
         ref="ntree"
         :props="props"
@@ -23,105 +147,38 @@
           class="node-data"
         >
           <div class="node-data__label text-one-line ">
-            {{ data.specificLocation }}
+            {{ data.name }}
           </div>
 
         </flexbox>
-      </el-tree>
-    </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="$emit('onshow')">取消</el-button>
-      <el-button type="primary" @click="dialogSure">确 定</el-button>
-    </span>
-  </el-dialog>
-</template>
-<script>
-import {
-  GetKeySpacePointTree,
-  GetSpacePointTree
-} from '@/api/account'
-export default {
-  props: {
-    shows: {
-      type: Boolean
-    }
-  },
-  data() {
-    return {
-      props: {
-        label: 'name',
-        children: 'zones',
-        isLeaf: 'hasChild'
-      },
-      node_had: [],
-      resolve_had: '',
-      depLoading: false,
-      keywords: '',
-      checkedNodes: {}
-    }
-  },
-  methods: {
-    dialogSure() {
-      if (this.checkedKeys) {
-        this.$emit('changev', this.checkedKeys)
-      } else {
-        this.$message.error('未选择上级目录')
+      </el-tree> -->
+<style lang="scss" scoped>
+/deep/.el-breadcrumb{
+  margin-bottom: 10px;
+}
+.grounds{
+  display: flex;
+  >div{
+    flex: 1;
+  }
+  .vux-flex-row{
+        min-height: 30px;
+    >div{
+      flex:1;
+      .text-one-line{
+        display: inline-block;
+    vertical-align: sub;
       }
-    },
-    changes() {
-      if (this.keywords != '') {
-        GetKeySpacePointTree(this.keywords).then(response => {
-          response.forEach(e => {
-            e.hasChild = !e.hasChild
-          })
-          this.node_had.childNodes = []
-          this.resolve_had(response || [])
-          this.showDepData = response || []
-          this.depLoading = false
-        })
-      } else {
-        this.node_had.level = 0
-        this.node_had.childNodes = []
-        this.getDepTreeList(this.node_had, this.resolve_had)
-      }
-    },
-    changcheck(checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys) {
-      this.$refs.ntree.setCheckedKeys([])
-      this.$nextTick(() => {
-        this.$refs.ntree.setCheckedKeys([checkedNodes.id])
-      })
-      this.checkedKeys = checkedNodes
-      console.log(this.checkedKeys)
-    },
-    // 获取树形列表
-    getDepTreeList(node, resolve) {
-      this.depLoading = true
-      const data = node.level === 0 ? {} : { parentId: node.data.id }
-      GetSpacePointTree(data)
-        .then(response => {
-          this.node_had = node
-          this.resolve_had = resolve
-          response.forEach(e => {
-            e.hasChild = !e.hasChild
-          })
-          console.log(this.aoiinfo)
-          if (node.level === 0) {
-            this.aoiinfo == response ? response[0] : { flag: 1 }
-          }
-          if (node.level > 0) {
-            resolve(response || [])
-          } else {
-            resolve(response || [])
-          }
-
-          this.showDepData = response || []
-          this.depLoading = false
-        })
-        .catch(() => {
-          this.depLoading = false
-        })
     }
-
   }
 }
-</script>
+.right-grounds{
+     border-left: 1px solid #e6e6e6 !important;
+    margin: 0px 40px;
+    height: 100%;
+}
+.left-grounds{
+      height: 350px;
+    overflow: auto;
+}
+</style>

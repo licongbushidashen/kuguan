@@ -39,33 +39,13 @@
             <div v-if="!butoom1" class="wy-body-info-one-left-val ">
               {{ objs.typeName }}
             </div>
-            <div v-else :class="erroring?objs.typeName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" >
-              <el-select v-model="objs.typeName">
-                <el-option :value="objs.typeName" class="wy-select1">
-                  <el-tree
-                    ref="tree"
-                    :props="props"
-                    :load="getDepTreeList"
-                    lazy
-                    node-key="id"
-                    highlight-current
-                    @node-click="changeDepClick"
-                  >
-                    <flexbox
-                      slot-scope="{ node, data }"
-                      :class="{ 'is-current': node.isCurrent }"
-                      class="node-data"
-                    >
-
-
-                      <div class="node-data__label text-one-line ">
-                        {{ data.name }}
-                      </div>
-
-
-                    </flexbox>
-                  </el-tree>
-                </el-option>
+            <div v-else :class="erroring?objs.typeId?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" >
+              <el-select v-model="objs.typeId">
+                <el-option
+                  v-for="(item,index) in showDepData"
+                  :key="index" :label="item.name"
+                  :value="item.id"
+                  class="wy-select"/>
               </el-select>
             </div>
           </div>
@@ -116,7 +96,7 @@
               {{ objs.jfkhName }}
             </div>
             <div v-else :class="erroring?objs.jfkhName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('jfkh')">
-              <div style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择' }}</div>
+              <div :style="objs.jfkhNumber?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择' }}</div>
             </div>
           </div>
           <div class="wy-body-info-one-right">
@@ -139,9 +119,9 @@
           <el-button
             :disabled="!isCheckedItems"
             icon="wk wk-delete" style="margin-bottom:20px" @click="dellist">删除</el-button>
-          <el-button
+            <!-- <el-button
             type="primary"
-            icon="el-icon-plus" @click="opende('gldj1')">关联单据</el-button>
+            icon="el-icon-plus" @click="opende('gldj1')">关联单据</el-button> -->
         </div>
         <el-table
           id="examine-table"
@@ -309,6 +289,7 @@
                       </span><span @click="download(item)"><i aria-label="图标: download" class="anticon anticon-download"><svg viewBox="64 64 896 896" data-icon="download" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class=""><path d="M505.7 661a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"/></svg></i>
                         下载
                       </span>
+                      <span style="    cursor: pointer;" @click="delfilelist(index)"><i style="    font-size: 14px !important;    margin-right: 5px !important;" class="el-dialog__close el-icon el-icon-close"/>删除</span>
                     </div>
                   </li>
                 </ul>
@@ -346,8 +327,8 @@
       />
       <span v-if="butoom1">继续创建时，保存本次提交内容</span>
       <el-button v-if="butoom1" @click="dialogVisible = false">提交并继续创建</el-button>
-      <el-button v-if="butoom1" type="primary" @click="dialogSure(1)">提 交</el-button>
-      <el-button v-if="butoom1" @click="dialogSure(0)">暂 存</el-button>
+      <el-button v-if="butoom1" type="primary" @click="debouncedHandleLogin(1)">提 交</el-button>
+      <el-button v-if="butoom1" @click="debouncedHandleLogin(0)">暂 存</el-button>
     </span>
 
     <Type :placeholder="placeholder" :typeling="typeling" :p="p" :url="url" :name="name" @change="typevalu"/>
@@ -355,22 +336,21 @@
 
 </template>
 <script>
+import { debounce } from 'throttle-debounce'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { mapGetters } from 'vuex'
 import {
   GetInfo,
-  CreateOrder
-
+  CreateOrder,
+  GetGoodsCategoryTreeHasRole
 } from '@/api/kchk/goods'
+
 import { downloadFileWithBuffer } from '@/utils'
 import {
   UpdateOrder,
   DownLoadFile
 } from '@/api/kchk/order'
 import Type from './type.vue'
-import {
-  GetGoodsCategoryTree
-} from '@/api/kchk/category'
 export default{
   components: { Type },
   filters: {
@@ -400,6 +380,10 @@ export default{
     }
   },
   props: {
+    ffts: {
+      type: Boolean,
+      default: false
+    },
     showing: {
       type: Boolean,
       default: false
@@ -462,10 +446,12 @@ export default{
           name: '借用还库'
         }
       ],
+      showDepData: [],
       list: [
       ]
     }
   },
+
   computed: {
     ...mapGetters([
       'userInfo'
@@ -499,8 +485,16 @@ export default{
         }
         this.showDialog = !this.showDialog
         if (this.info.order) {
-          this.info.order.flag ? this.butoom1 = false : this.butoom1 = true
-          this.orderCategory = this.info.order ? this.info.order.orderCategory + '' : ''
+          debugger
+          if (this.info.pl) {
+            this.butoom1 = true
+            this.orderCategory = ''
+          } else {
+            this.info.order.flag ? this.butoom1 = false : this.butoom1 = true
+            this.orderCategory = this.info.order ? this.info.order.orderCategory + '' : ''
+          }
+
+
           this.objs = {
             wldwName: this.info.order.companyName,
             wldwId: this.info.order.companyId,
@@ -532,11 +526,22 @@ export default{
           }
 
           this.fileList = this.info.attachmentList
+        } else {
+          this.addpush()
         }
       }
     }
   },
+  created() {
+    this.debouncedHandleLogin = debounce(300, this.dialogSure)
+  },
+  mounted() {
+    this.getDepTreeList()
+  },
   methods: {
+    delfilelist(index) {
+      this.fileList.splice(index, 1)
+    },
     download(row) {
       DownLoadFile(row.id).then(res => {
         const blob = new Blob([res], {
@@ -599,25 +604,10 @@ export default{
       // this.structureValue = data.id
     },
     // 获取树形列表
-    getDepTreeList(node, resolve) {
+    getDepTreeList() {
       this.depLoading = true
-      const data = node.level === 0 ? {} : { parentId: node.data.id }
-      GetGoodsCategoryTree(data)
+      GetGoodsCategoryTreeHasRole()
         .then(response => {
-          this.node_had = node
-          this.resolve_had = resolve
-          response.forEach(e => {
-            e.hasChild = !e.hasChild
-          })
-          if (node.level === 0) {
-            this.aoiinfo = response ? response[0] : {}
-          }
-          if (node.level > 0) {
-            resolve(response || [])
-          } else {
-            resolve(response || [])
-          }
-
           this.showDepData = response || []
           this.depLoading = false
         })
@@ -647,7 +637,6 @@ export default{
     },
     dialogSure(val) {
       let flag = false
-
       for (const i in this.objs) {
         if (i != 'remark' && !this.objs[i]) {
           flag = true
@@ -668,7 +657,6 @@ export default{
           this.$message.error('数量，单价未填写')
           return
         }
-        debugger
         arr.push({ goodsId: d.goodsId || d.id, goodsCode: d.code || d.goodsCode, unitId: d.unitId, unitPrice: d.unitPrice, quantity: d.quantity, amountMoney: d.amountMoney, DefaultUnitId: d.DefaultUnitId })
       }
       const obj = {
@@ -687,7 +675,7 @@ export default{
         detaiList: arr,
         attachmentList: this.fileList.map(e => e.id)
       }
-      if (this.info.order) {
+      if (this.info.order && !this.ffts) {
         obj.order.orderNo = this.info.order.orderNo
         UpdateOrder(obj, this.info.order.id).then(res => {
           this.$message.success('修改成功')
@@ -921,3 +909,26 @@ height: 42px;
         margin-top: 7px;
 }
 </style>
+
+<!--
+<el-option :value="objs.typeName" class="wy-select1">
+                  <el-tree
+                    ref="tree"
+                    :props="props"
+                    :load="getDepTreeList"
+                    lazy
+                    node-key="id"
+                    highlight-current
+                    @node-click="changeDepClick"
+                  >
+                    <flexbox
+                      slot-scope="{ node, data }"
+                      :class="{ 'is-current': node.isCurrent }"
+                      class="node-data"
+                    >
+                      <div class="node-data__label text-one-line ">
+                        {{ data.name }}
+                      </div>
+                    </flexbox>
+                  </el-tree>
+                </el-option> -->

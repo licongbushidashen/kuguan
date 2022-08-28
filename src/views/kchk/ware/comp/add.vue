@@ -112,7 +112,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '仓库编码',
-        placeholder: '请输入',
+        placeholder: '请输入仓库编码',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.code : ''
@@ -122,7 +122,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '仓库名称',
-        placeholder: '',
+        placeholder: '请输入仓库名称',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.name : ''
@@ -133,7 +133,7 @@ export default {
         isNull: 1,
         width: 1,
         name: '仓库地址',
-        placeholder: '请输入',
+        placeholder: '请输入仓库地址',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.address : ''
@@ -157,7 +157,7 @@ export default {
         formType: 'textarea',
         isNull: 0,
         name: '说明',
-        placeholder: '请输入',
+        placeholder: '请输入说明',
         row: 3,
         maxLength: 200,
         setting: [],

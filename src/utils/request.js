@@ -76,15 +76,14 @@ const service = axios.create({
 // request拦截器
 service.interceptors.request.use(
   config => {
+    config.headers['accept-language'] = 'zh-Hans'
     if (process.env.NODE_ENV === 'production') {
-      config.headers['accept-language'] = 'zh-Hans'
       if (config.url == '/connect/token') {
         config.baseURL = httpAuto
       } else {
         config.baseURL = https
       }
     } else {
-      config.headers['accept-language'] = 'zh-Hans'
       if (config.url == '/connect/token') {
         config.baseURL = '/file1'
       } else if (config.url.indexOf('/api/identity/') != -1) {
@@ -96,8 +95,6 @@ service.interceptors.request.use(
       }
     }
     config.headers['Authorization'] = `Bearer ${Lockr.get('accessToken')}`
-
-
     const flag =
       config.headers['Content-Type'] &&
       config.headers['Content-Type'].indexOf('application/json') !== -1
@@ -190,6 +187,8 @@ service.interceptors.response.use(
         router.push('/login')
       } else if (response.status == 500) {
         errorMessage('网络错误，请检查您的网络')
+      } else if (response.status == 400) {
+        errorMessage(response.data.error.details)
       } else if (response.data && response.data.error.message) {
         errorMessage(response.data.error.message)
       } else if (response.error && response.error.details) {

@@ -1,21 +1,22 @@
 <template>
-  <el-dialog v-loading="loading" :visible.sync="shows" :title="p" append-to-body>
-    <div style="margin-bottom :20px;display: flex;">
-      <el-input
-        :placeholder="placeholder"
-        v-model="inputContent"
-        class="search-input"
-        style="width:120px"
-        @keyup.enter.native="Pagelist"/>
-      <div v-if="name=='gldj1'" style="margin: 0px 10px">
-        <label for="">出库日期</label>
-        <el-date-picker
-          v-model="startTime"
+  <el-dialog :visible.sync="shows" :title="p" append-to-body>
+    <div v-loading="loading">
+      <div style="margin-bottom :20px;display: flex;     align-items: baseline;">
+        <el-input
+          :placeholder="placeholder"
+          v-model="inputContent"
+          class="search-input"
           style="width:140px"
-          type="date"
-          placeholder="入库日期"/>
-      </div>
-      <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
+          @keyup.enter.native="Pagelist"/>
+        <div v-if="name=='gldj1'" style="margin: 0px 10px">
+          <label for="">出库日期</label>
+          <el-date-picker
+            v-model="startTime"
+            style="width:140px"
+            type="date"
+            placeholder="入库日期"/>
+        </div>
+        <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
         <label for="">入库类型</label>
         <el-select v-model="orderCategory" style="width:130px">
           <el-option
@@ -25,7 +26,7 @@
             class="wy-select"/>
         </el-select>
       </div> -->
-      <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
+        <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
         <label for="">往来单位/仓库名称</label>
         <el-input
           v-model="company"
@@ -33,62 +34,63 @@
           placeholder="往来单位/仓库名称"
         />
       </div> -->
-      <el-button type="primary" @click="handleCurrentChange(0)"> 查询</el-button>
-      <span v-if="shows1" style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    position: absolute;    right: 30px;" @click="openurl">新 增</span>
-    </div>
-    <el-table
-      v-if="flag"
-      id="examine-table"
-      :data="list"
-      class="main-table"
-      highlight-current-row
-    >
-      <el-table-column
-        show-overflow-tooltip
-        type="index"
-        width="80"
-        label="序号">
+        <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)"> 查询</el-button>
+        <!-- <span v-if="shows1" style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    position: absolute;    right: 30px;" @click="openurl">新 增</span> -->
+      </div>
+      <el-table
+        v-if="flag"
+        id="examine-table"
+        :data="list"
+        class="main-table"
+        highlight-current-row
+      >
+        <el-table-column
+          show-overflow-tooltip
+          type="index"
+          width="80"
+          label="序号">
 
-        <template slot-scope="{ row, column, $index}">
-          <span class="status-name">
-            <span
-              class="index"
-              style=" display: block;"
-              @mouseenter="row.hover = true"
-              @mouseleave="row.hover = false"
-            >
-              <el-checkbox
-                v-show="row.hover || row.checked"
-                v-model="row.checked"
-                @change="onItemCheckboxChange(row)"
-              />
-              <span v-show="!row.hover && !row.checked" class="text">{{
-                $index+1
-              }}</span>
+          <template slot-scope="{ row, column, $index}">
+            <span class="status-name">
+              <span
+                class="index"
+                style=" display: block;"
+                @mouseenter="row.hover = true"
+                @mouseleave="row.hover = false"
+              >
+                <el-checkbox
+
+                  v-model="row.checked"
+                  @change="onItemCheckboxChange(row)"
+                />
+                <span class="text">{{
+                  $index+1
+                }}</span>
+              </span>
+
             </span>
+          </template>
+        </el-table-column>
 
-          </span>
-        </template>
-      </el-table-column>
-
-      <el-table-column v-for="(item,index) in label" :prop="item.prop" :label="item.name" :key="index">
-        <template slot-scope="{ row, column, $index}">
-          <span v-if="item.prop=='orderCategory'">{{ row[item.prop]|ordername }}</span>
-          <span v-else-if="item.prop=='flag'">已出库</span>
-          <span v-else>{{ row[item.prop] }}</span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="p-contianer">
-      <el-pagination
-        :current-page="currentPage"
-        :total="total"
-        :page-size="pageSize"
-        :pager-count="5"
-        class="p-bar"
-        background
-        layout="total, prev, pager, next"
-        @current-change="handleCurrentChange"/>
+        <el-table-column v-for="(item,index) in label" :prop="item.prop" :label="item.name" :key="index">
+          <template slot-scope="{ row, column, $index}">
+            <span v-if="item.prop=='orderCategory'">{{ row[item.prop]|ordername }}</span>
+            <span v-else-if="item.prop=='flag'">已出库</span>
+            <span v-else>{{ row[item.prop] }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="p-contianer">
+        <el-pagination
+          :current-page="currentPage"
+          :total="total"
+          :page-size="pageSize"
+          :pager-count="5"
+          class="p-bar"
+          background
+          layout="total, prev, pager, next"
+          @current-change="handleCurrentChange"/>
+      </div>
     </div>
 
     <span slot="footer" class="dialog-footer">
@@ -104,7 +106,7 @@ import request from '@/utils/request'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { GetOrder } from '@/api/kchk/order'
 import {
-  GetInfo
+// GetInfo
 } from '@/api/kchk/goods'
 export default {
   filters: {
@@ -235,7 +237,13 @@ export default {
       this.shows = true
       this.pageSize = 15
       this.currentPage = 0
-      this.label = this.labelList[this.name]
+      this.label = []
+      if (this.name == 'gldj1') {
+        this.label = JSON.parse(JSON.stringify(this.labelList[this.name]))
+        // this.label.push({ name: '剩余库存', prop: 'residueNum' })
+      } else {
+        this.label = this.labelList[this.name]
+      }
       this.flag = 0
       this.Pagelist()
     }
@@ -256,15 +264,17 @@ export default {
       const isCheckedItems = this.list.filter(d => d.checked)
       if (isCheckedItems.length > 0) {
         if (this.name == 'gldj1') {
-          GetOrder(this.row.id).then(res => {
-            const arr = res.detailList
-            for (let i = 0; i < arr.length; i++) {
-              GetInfo(arr[i].goodsId).then(res1 => {
-                arr[i].ean13List = res1.unitList
-                arr[i].checked = false
-                this.$emit('change', arr[i], this.name)
-              })
-            }
+          debugger
+          GetOrder(this.row.goodsId).then(res => {
+            // const arr = res.detailList
+            this.$emit('change', res, this.name)
+            // for (let i = 0; i < arr.length; i++) {
+            //   GetInfo(arr[i].goodsId).then(res1 => {
+            //     arr[i].ean13List = res1.unitList
+            //     arr[i].checked = false
+            //     this.$emit('change', arr[i], this.name)
+            //   })
+            // }
           })
         } else {
           this.$emit('change', this.row, this.name)

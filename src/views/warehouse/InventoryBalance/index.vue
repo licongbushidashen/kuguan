@@ -85,11 +85,6 @@
           label="单位"
         />
         <el-table-column
-          prop="warehouseName"
-          label="仓库名称"
-        />
-
-        <el-table-column
           prop="ean13"
           label="商品条码"
         />
@@ -98,38 +93,24 @@
           label="商品规格"
         />
         <el-table-column
-          prop="remark"
-          label="商品规格"
-        />
+          v-for="(item,index) in tableHader"
+          :key="index"
+          :label="item"
+          prop="size"
 
-        <el-table-column
-          prop="inNum"
-          label="总入库数量"
-        />
-        <el-table-column
-          prop="inPrice"
-          label="总入库金额"
-        />
-        <el-table-column
-          prop="outNum"
-          label="总出库数量"
-        />
-        <el-table-column
-          prop="outPrice"
-          label="总出库金额"
-        />
-        <el-table-column
-          prop="totalAmount"
-          label="总金额"
-        />
-        <el-table-column
-          prop="occupyNum"
-          label="占用数量"
-        />
-        <el-table-column
-          prop="residueNum"
-          label="剩余数量"
-        />
+        >
+          <el-table-column
+            :prop="item+'1'"
+            label="数量"
+          >
+            <template slot-scope="{ row, column, $index}">
+              <span>{{ row[item+'1'] }} {{ row.unitName }}</span>
+            </template>
+          </el-table-column>
+        </el-table-column>
+
+
+
       </el-table>
       <div class="p-contianer">
         <el-pagination
@@ -184,7 +165,8 @@ export default {
       total: 0,
       obj: {},
       info: {},
-      time: []
+      time: [],
+      tableHader: []
     }
   },
   computed: {},
@@ -225,6 +207,17 @@ export default {
       console.log(data, 666)
       InventoryBalance(data)
         .then(res => {
+          debugger
+          this.tableHader = []
+          for (let i = 0; i < res.items.length; i++) {
+            res.items[i].warehouseData.forEach(e => {
+              res.items[i][e.warehouseName + '1'] = e.num
+              // res.items[i][e.warehouseData + '2'] = e.wfactoryName
+              debugger
+              this.tableHader.push(e.warehouseName)
+            })
+          }
+          console.log(this.tableHader)
           this.list = res.items
           this.total = res.totalCount
           this.loading = false
@@ -331,6 +324,7 @@ export default {
 }
 @import '../styles/table.scss';
 .buttonc{
-  color:#4f81fc
+  color:#4f81fc;
+   cursor: pointer;
 }
 </style>

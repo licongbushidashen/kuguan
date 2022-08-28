@@ -95,6 +95,16 @@ export function GreenPlantGetPage(data) {
     }
   })
 }
+export function WaterDispenserGetBooks(data) {
+  return request({
+    url: '/api/zjlab/WaterDispenser/GetBooks',
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function GreenPlantCreate(data) {
   return request({
     url: '/api/zjlab/GreenPlant/Create',
@@ -194,6 +204,30 @@ export function DisinfectionGetBooks(data) {
     url: `/api/zjlab/Disinfection/GetBooks${data}`,
     method: 'post',
     data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+
+export function DisinfectionGetDataTable(data) {
+  return request({
+    url: '/api/zjlab/Disinfection/GetDataTable',
+    method: 'post',
+    data: data,
+    responseType: 'arraybuffer',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function DownloadGreenPlantPage(data) {
+  return request({
+    url: '/api/zjlab/GreenPlant/DownloadGreenPlantPage',
+    method: 'post',
+    data: data,
+    responseType: 'arraybuffer',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }

@@ -191,8 +191,8 @@
     </el-form-item>
     <slot name="bot"/>
     <Type :typeling="typeling" :url="url" :name="urlname" :p="p" @changev="typevalu"/>
-    <changes :shows="leaveing" @onshow="leaveing=false" @changev="typevalu1"/>
-    <changes1 :shows="leaveing1" @onshow="leaveing1=false" @changev="typevalu1"/>
+    <changes v-if="leaveing" :shows="leaveing" @onshow="leaveing=false" @changev="typevalu1"/>
+    <changes1 v-if="leaveing1" :shows="leaveing1" @onshow="leaveing1=false" @changev="typevalu1"/>
   </el-form>
 </template>
 
@@ -285,15 +285,15 @@ export default {
     fieldFrom: {
       handler() {
         this.$nextTick(() => {
-          if (this.fieldFrom.categoryId) {
-            const categoryId = this.fieldFrom.categoryId
-            this.$refs.treeVerNew[0].setCheckedKeys([categoryId])
-            const data = this.$refs.treeVerNew[0].getCheckedNodes()[0] || {}
-            if (data.name) {
-              this.fieldFrom['categoryId'] = data.name || ''
-              this.fieldFrom['categoryName'] = data.id || ''
-            }
-          }
+          // if (this.fieldFrom.categoryId) {
+          //   const categoryId = this.fieldFrom.categoryId
+          //   this.$refs.treeVerNew[0].setCheckedKeys([categoryId])
+          //   const data = this.$refs.treeVerNew[0].getCheckedNodes()[0] || {}
+          //   if (data.name) {
+          //     this.fieldFrom['categoryId'] = data.name || ''
+          //     this.fieldFrom['categoryName'] = data.id || ''
+          //   }
+          // }
         })
       },
       immediate: true

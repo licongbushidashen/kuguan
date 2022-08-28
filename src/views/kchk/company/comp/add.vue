@@ -129,7 +129,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '单位编码',
-        placeholder: '请输入',
+        placeholder: '请输入单位编码',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? (this.aoiinfo.code || '') : ''
@@ -139,7 +139,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '单位名称',
-        placeholder: '',
+        placeholder: '请输入单位名称',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.name : ''
@@ -149,7 +149,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '联系人',
-        placeholder: '请输入',
+        placeholder: '请输入联系人',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.linkman : ''
@@ -159,7 +159,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '联系方式',
-        placeholder: '请输入',
+        placeholder: '请输入联系方式',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.phone : ''
@@ -169,7 +169,7 @@ export default {
         formType: 'selete',
         isNull: 1,
         name: '类别',
-        placeholder: '请输入',
+        placeholder: '请输入类别',
         setting: this.typeList,
         optionL: 'name',
         optionV: 'id',
@@ -196,7 +196,7 @@ export default {
         formType: 'textarea',
         isNull: 0,
         name: '说明',
-        placeholder: '请输入',
+        placeholder: '请输入说明',
         row: 3,
         maxLength: 200,
         setting: [],

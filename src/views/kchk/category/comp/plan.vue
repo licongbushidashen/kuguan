@@ -69,14 +69,14 @@ export default {
     getinfo() {
       Getrole(this.info.id).then(res => {
         this.ware = {
-          allup: '',
-          alldown: '',
-          oneup: '',
-          onedown: '',
-          mouthup: '',
-          mouthdown: '',
-          quarterup: '',
-          quarterdown: ''
+          allup: null,
+          alldown: null,
+          oneup: null,
+          onedown: null,
+          mouthup: null,
+          mouthdown: null,
+          quarterup: null,
+          quarterdown: null
         }
         res.length > 0 ? this.flag = true : this.flag = false
         this.alldata = res

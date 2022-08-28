@@ -23,7 +23,7 @@
       <el-table-column
         show-overflow-tooltip
         type="index"
-        width="150"
+        width="50"
         label="序号">
 
         <template slot-scope="{ row, column, $index}">

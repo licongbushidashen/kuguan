@@ -1,13 +1,13 @@
 <template>
   <el-dialog :visible.sync="shows" :close-on-click-modal="false" :destroy-on-close="true" append-to-body title="关联用户">
-    <div style="margin-bottom :20px;display: flex;">
+    <div style="margin-bottom :20px;display: flex;    align-items: baseline;">
       <el-input
         v-model="inputContent"
         placeholder="请输入姓名/账号"
         class="search-input"
         style="width:200px"
         @keyup.enter.native="Pagelist">
-        <el-button slot="append" type="primary" style="float:right" icon="el-icon-search" @click="handleCurrentChange(0)"/>
+        <el-button slot="append" type="primary" style="float:right" icon="el-icon-search" @click="handleCurrentChange(0)" />
       </el-input>
 
     </div>
