@@ -159,6 +159,16 @@ export default {
         fontSize: '17px'
       }
       if (JSON.stringify(this.allAuth).indexOf('SystemSetting') != -1) {
+        tempsItems.handle = {
+          title: '任务/审批',
+          type: 6,
+          module: 'handle',
+          path: '/handle',
+          icon: 'wk wk-office',
+          fontSize: '17px'
+        }
+      }
+      if (JSON.stringify(this.allAuth).indexOf('SystemSetting') != -1) {
         tempsItems.kchk = {
           title: '出入库管理',
           type: 6,

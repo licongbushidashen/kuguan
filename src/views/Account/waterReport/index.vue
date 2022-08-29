@@ -24,7 +24,7 @@
         v-loading="loading"
         id="examine-table"
         :data="list"
-        show-summary
+
         class="main-table"
         highlight-current-row
         @row-click="handleRowClick"
@@ -57,7 +57,7 @@ export default {
   mixins: [],
   data() {
     return {
-      tableH: [{ name: '规格', props: 'size' }],
+      tableH: [{ name: '空间点位', props: 'size' }],
       flag: 0,
       Inventoryid: '',
       lossShow: false,
@@ -148,7 +148,7 @@ export default {
         .then(res => {
           const list = []
           const tableH = []
-          this.tableH = []
+          this.tableH = [{ name: '空间点位', props: 'size' }]
           const tableHName = new Set()
           for (let i = 0; i < res.length; i++) {
             if (!tableHName.has(res[i].spacePointName)) {
@@ -156,17 +156,15 @@ export default {
               tableHName.add(res[i].spacePointName)
             }
           }
-          tableH.push({ name: '总计', props: '总计' })
           for (let i = 0; i < res.length; i++) {
             const obj = { size: res[i].size }
-            let num = 0
+
             tableHName.forEach(e => {
               if (e == res[i].spacePointName) {
                 obj[res[i].spacePointName] = res[i].totalQuantiy
-                num += !!res[i].totalQuantiy
               }
             })
-            obj['总计'] = num
+            obj.size = '总计'
             list.push(obj)
           }
           this.tableH = [...this.tableH, ...tableH]

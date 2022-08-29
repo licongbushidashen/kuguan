@@ -1,4 +1,14 @@
 import request from '@/utils/request'
+export function TaskCenter(data) {
+  return request({
+    url: '/api/zjlab/Order/TaskCenter',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function OrderPage(data) {
   return request({
     url: '/api/zjlab/Order/OrderPage',

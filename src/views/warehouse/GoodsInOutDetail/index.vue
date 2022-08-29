@@ -94,10 +94,10 @@
           prop="orderNo"
           label="单据编号"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="unitName"
           label="单位"
-        />
+        /> -->
         <el-table-column
           prop="companyName"
           label="往来单位"
@@ -117,7 +117,11 @@
           <el-table-column
             prop="inNum"
             label="入库数量"
-          />
+          >
+            <template slot-scope="{ row, column, $index}">
+              {{ row.inNum }} {{ row.unitName }}
+            </template>
+          </el-table-column>
           <el-table-column
             prop="inPrice"
             label="入库金额"
@@ -133,7 +137,11 @@
           <el-table-column
             prop="outNum"
             label="出库数量"
-          />
+          >
+            <template slot-scope="{ row, column, $index}">
+              {{ row.outNum }} {{ row.unitName }}
+            </template>
+          </el-table-column>
           <el-table-column
             prop="outPrice"
             label="出库金额"
@@ -149,7 +157,11 @@
           <el-table-column
             prop="residueQuantity"
             label="剩余数量"
-          />
+          >
+            <template slot-scope="{ row, column, $index}">
+              {{ row.residueQuantity }} {{ row.unitName }}
+            </template>
+          </el-table-column>
           <el-table-column
             prop="residuePrice"
             label="结存金额"

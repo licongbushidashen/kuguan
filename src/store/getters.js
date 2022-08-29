@@ -56,6 +56,7 @@ const getters = {
   manageRouters: state => state.permission.manageRouters,
   hrmRouters: state => state.permission.hrmRouters,
   kchkRouters: state => state.permission.kchkRouters,
+  handleRouters: state => state.permission.handleRouters,
   kcglRouters: state => state.permission.kcglRouters,
   warehouseRouters: state => state.permission.warehouseRouters,
   accountRouter: state => state.permission.accountRouter,

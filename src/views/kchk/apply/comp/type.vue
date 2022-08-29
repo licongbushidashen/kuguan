@@ -8,7 +8,7 @@
           class="search-input"
           style="width:140px"
           @keyup.enter.native="Pagelist"/>
-        <!-- <div v-if="p=='货品'" style="margin: 0px 10px">
+        <!-- <div v-if="objs.identification &&p=='货品'" style="margin: 0px 10px">
           <label for="">仓库名称</label>
           <el-input
             v-model="warehouseName"
@@ -16,21 +16,13 @@
             placeholder="仓库名称"
           />
         </div>
-        <div v-if="p=='货品'" style="margin: 0px 10px">
+        <div v-if="name=='gldj1' &&p=='货品'" style="margin: 0px 10px">
           <label for="">类目名称</label>
           <el-input
             v-model="catetoryName"
             style="width:130px;"
             placeholder="类目名称"
           />
-        </div> -->
-        <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
-          <label for="">入库日期</label>
-          <el-date-picker
-            v-model="startTime"
-            style="width:140px"
-            type="date"
-            placeholder="入库日期"/>
         </div> -->
         <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
         <label for="">入库类型</label>
@@ -41,21 +33,13 @@
             :value="item.orderCategory"
             class="wy-select"/>
         </el-select>
-      </div>
-      <div v-if="name=='gldj1'" style="margin: 0px 10px">
-        <label for="">往来单位/仓库名称</label>
-        <el-input
-          v-model="company"
-          style="width:130px;"
-          placeholder="往来单位/仓库名称"
-        />
       </div> -->
+
         <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)"> 查询</el-button>
         <!-- <span v-if="shows1" style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    position: absolute;    right: 30px;" @click="openurl">新 增</span> -->
       </div>
       <el-table
 
-        v-if="flag"
         id="examine-table"
         :data="list"
         class="main-table"
@@ -76,7 +60,6 @@
                 @mouseleave="row.hover = false"
               >
                 <el-checkbox
-
                   v-model="row.checked"
                   @change="onItemCheckboxChange(row)"
                 />
@@ -92,7 +75,7 @@
         <el-table-column v-for="(item,index) in label" :prop="item.prop" :label="item.name" :key="index">
           <template slot-scope="{ row, column, $index}">
             <span v-if="item.prop=='orderCategory'">{{ row[item.prop]|ordername }}</span>
-            <span v-else-if="item.prop=='flag'">已入库</span>
+            <span v-else-if="item.prop=='flag'">{{ name=='gldj1'?'已出库':'入出库' }}</span>
             <span v-else>{{ row[item.prop] }}</span>
           </template>
         </el-table-column>
@@ -109,7 +92,6 @@
           @current-change="handleCurrentChange"/>
       </div>
     </div>
-
     <span slot="footer" class="dialog-footer">
       <el-button @click="shows = false">取消</el-button>
       <el-button type="primary" @click="dialogSure">确 定</el-button>
@@ -123,7 +105,7 @@ import request from '@/utils/request'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { GetOrder } from '@/api/kchk/order'
 import {
-// GetInfo
+  GetInfo
 } from '@/api/kchk/goods'
 export default {
   filters: {
@@ -144,6 +126,7 @@ export default {
         return '借用还库'
       }
     }
+
   },
   props: {
     placeholder: {
@@ -170,20 +153,24 @@ export default {
   },
   data() {
     return {
+      flag: 0,
       loading: false,
       startTime: null,
       company: '',
       orderCategory: '',
       Category: [
         {
-          orderCategory: '11',
-          name: '采购入库'
+          orderCategory: '21',
+          name: '领用出库'
         }, {
-          orderCategory: '12',
-          name: '退货入库'
+          orderCategory: '22',
+          name: '退货出库'
         }, {
-          orderCategory: '13',
-          name: '借用还库'
+          orderCategory: '23',
+          name: '借用出库'
+        }, {
+          orderCategory: '24',
+          name: '销毁出库'
         }
       ],
       list: [],
@@ -216,13 +203,12 @@ export default {
           { name: '邮箱', prop: 'email' }
         ],
         goods: [
-          { name: '货品名称', prop: 'goodsName' },
-          { name: '货品编码', prop: 'goodsCode' },
+          { name: '货品名称', prop: 'name' },
+          { name: '货品编码', prop: 'code' },
           { name: '品牌', prop: 'brand' },
-          { name: '所属类目', prop: 'goodsCategoryName' },
+          { name: '所属类目', prop: 'categoryName' },
           { name: '货品条码', prop: 'ean13' },
-          { name: '规格', prop: 'size' },
-          { name: '剩余库存', prop: 'residueNum' }
+          { name: '规格', prop: 'size' }
         ],
         gldj1: [
           { name: '单据状态', prop: 'flag' },
@@ -231,18 +217,24 @@ export default {
           { name: '类目名称', prop: 'goodsCategoryName' },
           { name: '往来单位', prop: 'memoryCardName' },
           { name: '仓库', prop: 'wareHouseName' }
+        ],
+        gldj2: [
+          { name: '单据状态', prop: 'flag' },
+          { name: '单据号', prop: 'orderNo' },
+          { name: '出库类型', prop: 'orderCategory' },
+          { name: '类目名称', prop: 'goodsCategoryName' },
+          { name: '往来单位', prop: 'memoryCardName' },
+          { name: '仓库', prop: 'wareHouseName' }
         ]
-
       },
       label: {},
-      flag: 0,
       warehouseName: '',
       catetoryName: ''
     }
   },
   computed: {
     shows1: function() {
-      if (this.name == 'jfkh' || this.name == 'gldj1') {
+      if (this.name == 'jfkh' || this.name == 'gldj1' || this.name == 'gldj2') {
         return false
       } else if (this.name == 'dutyUser') {
         return false
@@ -256,7 +248,13 @@ export default {
       this.shows = true
       this.pageSize = 15
       this.currentPage = 0
-      this.flag = 0
+      this.label = []
+      if (this.objs.identification && this.name == 'goods') {
+        this.label = JSON.parse(JSON.stringify(this.labelList[this.name]))
+        this.label.push({ name: '剩余库存', prop: 'residueNum' }, { name: '占用库存', prop: 'occupyNum' })
+      } else {
+        this.label = this.labelList[this.name]
+      }
       this.Pagelist()
     }
   },
@@ -273,20 +271,18 @@ export default {
       }
     },
     dialogSure() {
-      debugger
       const isCheckedItems = this.list.filter(d => d.checked)
       if (isCheckedItems.length > 0) {
-        if (this.name == 'gldj1') {
+        if (this.name == 'gldj1' || this.name == 'gldj2') {
           GetOrder(this.row.id).then(res => {
-            this.$emit('change', res, this.name)
-            // const arr = res.detailList
-            // for (let i = 0; i < arr.length; i++) {
-            //   // GetInfo(arr[i].goodsId).then(res1 => {
-            //   //   arr[i].ean13List = res1.unitList
-            //   //   arr[i].checked = false
-            //   //   this.$emit('change', arr[i], this.name)
-            //   // })
-            // }
+            const arr = res.detailList
+            for (let i = 0; i < arr.length; i++) {
+              GetInfo(arr[i].goodsId).then(res1 => {
+                arr[i].ean13List = res1.unitList
+                arr[i].checked = false
+                this.$emit('change', arr[i], this.name)
+              })
+            }
           })
         } else {
           this.$emit('change', this.row, this.name)
@@ -322,8 +318,13 @@ export default {
     Pagelist() {
       this.loading = true
       const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
-      if (this.name == 'gldj1') {
-        data.isOutbound = false
+      if (this.name == 'gldj1' || this.name == 'gldj2') {
+        if (this.name == 'gldj1') {
+          data.isOutbound = false
+        } else {
+          data.isOutbound = true
+        }
+        data.flag = 4
         if (this.orderCategory) {
           data.stockCategory = this.orderCategory
         }
@@ -344,18 +345,14 @@ export default {
             element.hover = false
             element.checked = false
           })
-          this.loading = false
-          this.$nextTick(() => {
-            this.label = this.labelList[this.name]
-            this.list = res.items
-            console.log(this.label)
-            this.flag = 1
-          })
-
+          this.list = res.items
           this.total = res.totalCount
+          this.flag = 1
+          this.loading = false
         })
       } else {
-        if (this.p == '货品') {
+        if (this.p == '货品' && this.objs.identification) {
+          data.goodsName = this.inputContent
           data.warehouseId = this.objs.ckId
           data.catetoryId = this.objs.typeId
           data.isBigThenZero = true
@@ -375,15 +372,12 @@ export default {
             element.hover = false
             element.checked = false
           })
-          this.loading = false
-          this.$nextTick(() => {
-            this.label = this.labelList[this.name]
-            this.list = res.items
-            console.log(this.label)
-            this.flag = 1
-          })
 
+
+          this.list = res.items
           this.total = res.totalCount
+          this.loading = false
+          this.flag = 1
         })
       }
     }

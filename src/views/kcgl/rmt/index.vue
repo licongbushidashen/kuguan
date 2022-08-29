@@ -66,8 +66,10 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="角色权限" name="rule"><!-- v-if="roleActive && showRuleSet" -->
-            <!-- 权限管理 -->
+          <!-- v-if="roleActive && showRuleSet" -->
+          <!-- 权限管理 -->
+          <!-- <el-tab-pane v-if="roleActive.name!='admin'" label="角色权限" name="rule">
+
 
             <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box" style="padding-left:17px;overflow-y: scroll;">
 
@@ -91,6 +93,56 @@
                 </div>
               </div>
               <div v-show="quanxian==2">
+                <el-tree
+                  ref="tree"
+                  :data="data"
+                  :props="defaultProps"
+                  show-checkbox
+                  default-expand-all
+                  node-key="id"
+                  highlight-current/>
+              </div>
+            </div>
+
+          </el-tab-pane> -->
+          <el-tab-pane v-if="roleActive.name!='admin'" label="功能权限" name="rule1"><!-- v-if="roleActive && showRuleSet" -->    <!-- 权限管理 -->
+
+
+            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box" style="padding-left:17px;overflow-y: scroll;">
+
+              <div style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
+
+                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
+              </div>
+              <div style="margin-left:20px">
+                <div v-for="(item,index) in allrole" :key="index" style="">
+                  <el-checkbox :indeterminate="item.indeterminate" v-model="item.isGranted" @change="handleCheckAllChange(item,index)">{{ item.displayName }}</el-checkbox>
+                  <br style="">
+                  <div v-for="(item1, index1) in item.permissions" :key="index1" style="    margin-bottom: 5px;">
+                    <el-checkbox :indeterminate="item1.indeterminate" v-model="item1.isGranted" @change="handleCheckAllChange1(item1,index,index1)">{{ item1.displayName }}</el-checkbox>
+
+                    <div style="">
+                      <el-checkbox v-for="(item2 ,index2) in item1.permissions" :key="index2" v-model="item2.isGranted" @change="handleCheckAllChange2(item2,index,index1,index2)" >{{ item2.displayName }}</el-checkbox>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </el-tab-pane>
+          <el-tab-pane v-if="roleActive.name!='admin'" label="数据权限" name="rule2"><!-- v-if="roleActive && showRuleSet" -->
+            <!-- 权限管理 -->
+
+            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box" style="padding-left:17px;overflow-y: scroll;">
+
+              <div style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
+
+                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
+              </div>
+
+              <div >
                 <el-tree
                   ref="tree"
                   :data="data"

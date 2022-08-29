@@ -86,10 +86,10 @@
           prop="quantity"
           label="数量"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="unitPrice"
           label="单价"
-        />
+        /> -->
         <el-table-column
           prop="amountMoney"
           label="金额"

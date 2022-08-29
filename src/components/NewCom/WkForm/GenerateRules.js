@@ -67,7 +67,23 @@ export default {
           })
         }
       }
-
+      if (item.array1) {
+        debugger
+        const validateCRMMobile = (rule, value, callback) => {
+          if (rule.item.setting1.length > 0 && rule.item.parentId1 == '') {
+            callback(new Error('空间点位不能为空'))
+          } else if (rule.item.setting2.length > 0 && rule.item.parentId2 == '') {
+            callback(new Error('空间点位不能为空'))
+          } else {
+            callback()
+          }
+        }
+        tempList.push({
+          validator: validateCRMMobile,
+          item: item,
+          trigger: ['blur']
+        })
+      }
       if (item.expres === 'mobile') {
         const validateCRMMobile = (rule, value, callback) => {
           if (isEmpty(value) || regexIsCRMMobile(value)) {

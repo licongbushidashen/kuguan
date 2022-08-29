@@ -20,6 +20,7 @@ import hrmRouter from './modules/hrm'
 import kcglRouter from './modules/kcgl'
 import warehouseRouter from './modules/warehouse'
 import accountRouter from './modules/account'
+import handleRouter from './modules/handle'
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
 * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
@@ -66,8 +67,8 @@ export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
-import Layout from '@/views/layout/handle'
-const layout = function(meta = {}, path = '/handle', requiresAuth = true) {
+import Layout from '@/views/layout/home'
+const layout = function(meta = {}, path = '/home', requiresAuth = true) {
   return {
     path: path,
     component: Layout,
@@ -92,28 +93,7 @@ export const asyncRouterMap = [
   { type: 'kcgl', router: kcglRouter },
   { type: 'warehouse', router: warehouseRouter },
   { type: 'account', router: accountRouter },
-  { type: 'handle', router: [{
-    ...layout({
-      permissions: ['handle', 'system-project']
-    }),
-    meta: {
-      title: 'OrderSetting.Orders',
-      icon: 's-seas'
-    },
-    children: [
-      {
-        name: 'handle',
-        path: 'handle', // 类目
-        component: () => import('@/views/kchk/handle'),
-        meta: {
-          title: '类目管理',
-          icon: 'iconfont icon-31leimu'
-        }
-      }
-
-
-    ]
-  }] },
+  { type: 'handle', router: handleRouter },
   { type: 'home', router: [{
     ...layout({
       permissions: ['home', 'system-project']
@@ -137,3 +117,25 @@ export const asyncRouterMap = [
     ]
   }] }
 ]
+// [{
+//     ...layout({
+//       permissions: ['handle', 'system-project']
+//     }),
+//     meta: {
+//       title: 'OrderSetting.Orders',
+//       icon: 's-seas'
+//     },
+//     children: [
+//       {
+//         name: 'handle',
+//         path: 'handle', // 类目
+//         component: () => import('@/views/kchk/handle'),
+//         meta: {
+//           title: '类目管理',
+//           icon: 'iconfont icon-31leimu'
+//         }
+//       }
+
+
+//     ]
+//   }]

@@ -1,20 +1,20 @@
 <template>
-  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :destroy-on-close="true" style="    " width="1200px" class="bill" title="出库单">
+  <el-dialog :visible.sync="showDialog" :title="objs.identification?'出库单':'入库单' " style="    " width="1200px" class="bill">
     <div class="wy-body">
       <div class="wy-body-info">
         <div class="wy-body-info-one">
           <div class="wy-body-info-one-left">
             <div class="field__label">
-              出库类型
+              {{ objs.identification?'出库':'入库' }}类型
             </div>
-            <div v-if="!butoom1" class="wy-body-info-one-left-val ">
+            <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ orderCategory|ordername }}
             </div>
 
             <div v-else :class="erroring?orderCategory?'':'errorshow':''" class=" wy-body-info-one-left-val wy-body-info-one-left-puts">
-              <el-select v-model="orderCategory" >
+              <el-select v-model="orderCategory">
                 <el-option
-                  v-for="(item,index) in Category"
+                  v-for="(item,index) in Category[objs.identification]"
                   :key="index" :label="item.name"
                   :value="item.orderCategory"
                   class="wy-select"/>
@@ -36,7 +36,7 @@
             <div class="field__label">
               货品类目
             </div>
-            <div v-if="!butoom1" class="wy-body-info-one-left-val ">
+            <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ objs.typeName }}
             </div>
             <div v-else :class="erroring?objs.typeId?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" >
@@ -53,7 +53,7 @@
             <div class="field__label">
               类目负责人
             </div>
-            <div v-if="!butoom1" class="wy-body-info-one-left-val ">
+            <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ objs.dutyUserName }}
             </div>
             <div v-else :class="erroring?objs.dutyUserName?'':'errorshow':''" class="wy-body-info-one-left-val  wk changers" @click="opende('dutyUser')">
@@ -66,7 +66,7 @@
             <div class="field__label">
               仓库
             </div>
-            <div v-if="!butoom1" class="wy-body-info-one-left-val ">
+            <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ objs.ckName }}
             </div>
             <div v-else :class="erroring?objs.ckName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('ck')">
@@ -77,7 +77,7 @@
             <div class="field__label">
               往来单位
             </div>
-            <div v-if="!butoom1" class="wy-body-info-one-left-val ">
+            <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ objs.wldwName }}
             </div>
             <div v-else :class="erroring?objs.wldwName?'':'errorshow':''" class="wy-body-info-one-left-val  wk changers" @click="opende('wldw')">
@@ -92,10 +92,10 @@
             <div class="field__label">
               经费卡号
             </div>
-            <div v-if="!butoom1" class="wy-body-info-one-left-val ">
+            <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ objs.jfkhName }}
             </div>
-            <div v-else :class="erroring?objs.jfkhName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('jfkh')">
+            <div v-else :class="erroring?objs.jfkhNumber?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('jfkh')">
               <div :style="objs.jfkhNumber?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择' }}</div>
             </div>
           </div>
@@ -111,8 +111,8 @@
         </div>
       </div>
       <div class="wy-body-detailed">
-        <p>出库明细</p>
-        <div v-if="butoom1" class="wy-body-detailed-ed">
+        <p>{{ objs.identification?'出库':'入库' }}明细</p>
+        <div v-if="!butoom1" class="wy-body-detailed-ed">
           <el-button
             type="primary"
             icon="el-icon-plus" @click="addpush">新建</el-button>
@@ -121,7 +121,7 @@
             icon="wk wk-delete" style="margin-bottom:20px" @click="dellist">删除</el-button>
             <!-- <el-button
             type="primary"
-            icon="el-icon-plus" @click="opende('gldj1')">关联单据</el-button> -->
+            icon="el-icon-plus" @click="opende(objs.identification?'gldj1':'gldj2')">关联单据</el-button> -->
         </div>
         <el-table
           id="examine-table"
@@ -172,7 +172,7 @@
             label="货品名称"
           >
             <template slot-scope="scope">
-              <div v-if="!butoom1">
+              <div v-if="butoom1">
                 <div style="    font-size: 13px;    color: #cccfd6;">{{ scope.row.name || scope.row.goodsName || '请选择' }}</div>
               </div>
               <div v-else style="    border: 1px solid #d9d9d9;    min-height: 30px;    line-height: 30px;    padding-left: 12px;    border-radius: 5px;" @click="opende('goods',scope.$index)">
@@ -195,7 +195,7 @@
             label="单位"
           >
             <template slot-scope="scope">
-              <div v-if="!butoom1">
+              <div v-if="butoom1">
                 {{ scope.row.unitName }}
               </div>
               <el-select v-else v-model="scope.row.unitId" placeholder="请选择">
@@ -206,34 +206,36 @@
                   :value="item.id"/>
               </el-select>
             </template>
-          </el-table-column>>
-          <!-- <el-table-column
+          </el-table-column>
+          <el-table-column
+            v-if="!objs.identification"
             prop="unitPrice"
             label="单价(元)"
           >
-            <template slot-scope="scope">
-              <div v-if="!butoom1">
+            <template v-if="!objs.identification" slot-scope="scope">
+              <div v-if="butoom1">
                 {{ scope.row.unitPrice }}
               </div>
-              <el-input v-else v-model="scope.row.unitPrice" type="number" @change="totalNum(scope.$index)"/>
+              <el-input v-else v-model="scope.row.unitPrice" oninput="value=value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')" @change="totalNum(scope.$index)"/>
             </template>
-          </el-table-column> -->
+          </el-table-column>
 
           <el-table-column
             prop="quantity"
             label="数量"
           >
             <template slot-scope="scope">
-              <div v-if="!butoom1">
+              <div v-if="butoom1">
                 {{ scope.row.quantity }}
               </div>
-              <el-input v-else v-model="scope.row.quantity" type="number" />
+              <el-input v-else v-model="scope.row.quantity" oninput="value=value.replace(/[^\d]/g,'')" @change="totalNum(scope.$index)"/>
             </template>
           </el-table-column>
-          <!-- <el-table-column
+          <el-table-column
+            v-if="!objs.identification"
             prop="amountMoney"
             label="金额"
-          /> -->
+          />
         </el-table>
       </div>
       <div style="padding:10px;    border-left: 1px solid #d9d9d9;    border-right: 1px solid #d9d9d9;" />
@@ -245,7 +247,7 @@
             </div>
             <div class=" wy-body-info-one-left-val ">
               <el-input
-                v-if="butoom1"
+                v-if="!butoom1"
                 :rows="2"
                 v-model="objs.remark"
                 class="orderput"
@@ -266,13 +268,13 @@
             </div>
             <div class=" wy-body-info-one-left-val ">
               <el-upload
-                v-if="butoom1"
+                v-if="!butoom1"
                 :on-success="handleAvatarSuccess"
                 :on-remove="handleRemove"
                 :show-file-list="false"
                 drag
                 style="    line-height: 11px;min-height: 75px;"
-                action="file2/api/zjlab/Attachment/UploadProviderFile"
+                action="/api/zjlab/Attachment/UploadProviderFile"
               >
                 <el-button size="small" ><i
                   class="wk wk-icon-relation" style="font-size: 12px;    margin-right: 5px;"/>点击或拖拽上传</el-button>
@@ -281,7 +283,6 @@
               <div>
                 <ul>
                   <li v-for="(item,index) in fileList" :key="index" class="fileList-order">
-
                     <div class="fileList-order-content">     <i class="el-icon-document"/> {{ item.fileName }}</div>
                     <div>
                       <span style="    cursor: pointer;"><i aria-label="图标: eye" class="anticon anticon-eye"><svg viewBox="64 64 896 896" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class=""><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 0 0 0 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"/></svg></i>
@@ -321,15 +322,24 @@
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-checkbox
-        v-if="butoom1&&!info.order"
-        v-model="save"
-
-      />
-      <span v-if="butoom1">继续创建时，保存本次提交内容</span>
-      <el-button v-if="butoom1 &&!info.order" @click="debouncedHandleLogin(1,1)">提交并继续创建</el-button>
-      <el-button v-if="butoom1" type="primary" @click="debouncedHandleLogin(1)">提 交</el-button>
-      <el-button v-if="butoom1" @click="dialogSure(0)">暂 存</el-button>
+      <!-- <div
+        v-if="typebutton==0 ">
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchSubmit']" type="primary" @click="dialogSure(1)">提 交</el-button>
+        <el-button @click="dialogSure(0)">暂 存</el-button>
+      </div>
+      <div v-if="typebutton==1">
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchAgree']" type="primary" @click="Batch('/api/zjlab/Order/BatchAgree')">同 意</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchRject']" @click="Batch('/api/zjlab/Order/BatchRject')">驳 回</el-button>
+      </div>
+      <div v-if="typebutton==2">
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchStorageIn'] &&!objs.identification" type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认入库</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchStorageOut'] && objs.identification" type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认出库</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchObsolete']" @click="Batch('/api/zjlab/Order/BatchObsolete')">作废</el-button>
+      </div>
+      <div v-if="typebutton==3">
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchSubmit']" type="primary" @click="dialogSure(1)">提 交</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchObsolete']" @click="Batch('/api/zjlab/Order/BatchObsolete')">作 废</el-button>
+      </div> -->
     </span>
 
     <Type :objs="objs" :placeholder="placeholder" :p="p" :typeling="typeling" :url="url" :name="name" @change="typevalu"/>
@@ -337,32 +347,35 @@
 
 </template>
 <script>
-import { debounce } from 'throttle-debounce'
-import { filterTimestampToFormatTime } from '@/filters/index'
 import { mapGetters } from 'vuex'
+import { filterTimestampToFormatTime } from '@/filters/index'
 import {
   GetInfo,
   CreateOrder,
   GetGoodsCategoryTreeHasRole
 } from '@/api/kchk/goods'
 import {
+  BatchALL
+} from '@/api/kchk/order'
+
+import { downloadFileWithBuffer } from '@/utils'
+import {
   UpdateOrder,
   DownLoadFile
 } from '@/api/kchk/order'
+
 import Type from './type.vue'
 
 export default{
   components: { Type },
   filters: {
     ordername: function(value) {
-      if (value == 21) {
-        return '领用出库'
-      } else if (value == 22) {
-        return '退货出库'
-      } else if (value == 23) {
-        return '借用出库'
-      } else if (value == 24) {
-        return '销毁出库'
+      if (value == 11) {
+        return '采购入库'
+      } else if (value == 12) {
+        return '退货入库'
+      } else if (value == 13) {
+        return '借用还库'
       }
     },
     flagname: function(value) {
@@ -382,10 +395,6 @@ export default{
     }
   },
   props: {
-    ffts: {
-      type: Boolean,
-      default: false
-    },
     showing: {
       type: Boolean,
       default: false
@@ -437,28 +446,43 @@ export default{
       checkedAll: [],
       showDialog: false,
       orderCategory: '',
+      typebutton: 0,
       Category: [
-        {
-          orderCategory: '21',
-          name: '领用出库'
-        }, {
-          orderCategory: '22',
-          name: '退货出库'
-        }, {
-          orderCategory: '23',
-          name: '借用出库'
-        }, {
-          orderCategory: '24',
-          name: '销毁出库'
-        }
+        [
+          {
+            orderCategory: '11',
+            name: '采购入库'
+          }, {
+            orderCategory: '12',
+            name: '退货入库'
+          }, {
+            orderCategory: '13',
+            name: '借用还库'
+          }
+        ], [
+          {
+            orderCategory: '21',
+            name: '领用出库'
+          }, {
+            orderCategory: '22',
+            name: '退货出库'
+          }, {
+            orderCategory: '23',
+            name: '借用出库'
+          }, {
+            orderCategory: '24',
+            name: '销毁出库'
+          }
+        ]
       ],
+
       list: [
       ]
     }
   },
   computed: {
     ...mapGetters([
-      'userInfo'
+      'userInfo', 'allAuth'
     ])
   },
   watch: {
@@ -489,14 +513,13 @@ export default{
         }
         this.showDialog = !this.showDialog
         if (this.info.order) {
-          if (this.info.pl) {
-            this.butoom1 = true
-            this.orderCategory = ''
+          if (this.info.order.flag == 0 || this.info.order.flag == 3) {
+            this.butoom1 = false
           } else {
-            this.info.order.flag ? this.butoom1 = false : this.butoom1 = true
-            this.orderCategory = this.info.order ? this.info.order.orderCategory + '' : ''
+            this.butoom1 = true
           }
-
+          this.typebutton = this.info.order.flag
+          this.orderCategory = this.info.order ? this.info.order.orderCategory + '' : ''
           this.objs = {
             wldwName: this.info.order.companyName,
             wldwId: this.info.order.companyId,
@@ -509,7 +532,8 @@ export default{
             jfkhId: this.info.order.memoryCardId,
             dutyUserName: this.info.order.goodsCategoryDutyUserName,
             dutyUserId: this.info.order.goodsCategoryDutyUserId,
-            remark: this.info.order.remark
+            remark: this.info.order.remark,
+            identification: this.info.order.identification
           }
           this.createUser = {
             createUserName: this.info.order.createUserName,
@@ -526,6 +550,7 @@ export default{
               this.list.push(row)
             })
           }
+
           this.fileList = this.info.attachmentList
         } else {
           this.addpush()
@@ -533,22 +558,30 @@ export default{
       }
     }
   },
-  created() {
-    this.debouncedHandleLogin = debounce(300, this.dialogSure)
-  },
-  mounted() {
-    this.getDepTreeList()
-  },
   methods: {
-    listn() {
-      this.list = []
-      this.list.push({ hover: false, checked: false })
-    },
     delfilelist(index) {
       this.fileList.splice(index, 1)
     },
+    Batch(url) {
+      const id = [this.info.order.id]
+      BatchALL(id, url).then(res => {
+        res.forEach(e => {
+          if (e.code) {
+            this.$emit('change', 0)
+            this.showDialog = false
+            this.$message.success(e.message)
+          } else {
+            this.$message.error(e.message)
+          }
+        })
+      })
+    },
     download(row) {
       DownLoadFile(row.id).then(res => {
+        const blob = new Blob([res], {
+          type: ''
+        })
+        downloadFileWithBuffer(blob, row.fileName, 'application/vnd.ms-excel;charset=UTF-8')
       })
     },
     handleAvatarSuccess(res) {
@@ -569,11 +602,12 @@ export default{
         }
         const values = data.map(item => Number(item[column.property]))
 
+
         if (!values.every(value => isNaN(value))) {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
-              return prev + curr
+              return Math.round((prev + curr) * 100) / 100
             } else {
               return prev
             }
@@ -591,6 +625,9 @@ export default{
       return sums
     },
     totalNum(index) {
+      if (this.objs.identification) {
+        return
+      }
       const amountMoney = Math.round(this.list[index].unitPrice * this.list[index].quantity * 100) / 100
       this.$set(this.list[index], 'amountMoney', isNaN(amountMoney) ? 0 : amountMoney)
     },
@@ -616,15 +653,19 @@ export default{
           this.depLoading = false
         })
     },
+    listn() {
+      this.list = []
+      this.list.push({ hover: false, checked: false })
+    },
     typevalu(row, name) {
-      if (name == 'ck') {
+      if (name == 'ck' && this.objs.identification) {
         this.listn()
       }
-      if (name == 'gldj1') {
+      if (name == 'gldj1' || name == 'gldj2') {
         this.list.push(row)
       } else
       if (name == 'goods') {
-        GetInfo(row.goodsId).then(res => {
+        GetInfo(row.id).then(res => {
           row.ean13List = res.unitList
           row.checked = false
           this.list[this.goodsIndex] = row
@@ -639,11 +680,13 @@ export default{
         this.objs[name + 'Id'] = row.id
       }
     },
-    dialogSure(val, f) {
+    dialogSure(val) {
       let flag = false
       for (const i in this.objs) {
-        if (!this.objs[i]) {
-          if (i != 'remark' && i != 'typeName') { flag = true }
+        if (i != 'remark' && !this.objs[i]) {
+          if (i != 'identification') {
+            flag = true
+          }
         }
       }
       if (!this.orderCategory || flag) {
@@ -657,6 +700,10 @@ export default{
       const arr = []
       for (let i = 0; i < this.list.length; i++) {
         const d = this.list[i]
+        if (!this.objs.identification && (!d.quantity || !d.unitPrice)) {
+          this.$message.error('数量，单价未填写')
+          return
+        }
         arr.push({ goodsId: d.goodsId || d.id, goodsCode: d.code || d.goodsCode, unitId: d.unitId, unitPrice: d.unitPrice, quantity: d.quantity, amountMoney: d.amountMoney, DefaultUnitId: d.DefaultUnitId })
       }
       const obj = {
@@ -667,7 +714,7 @@ export default{
           memoryCardId: this.objs.jfkhId,
           receiptDate: filterTimestampToFormatTime(new Date(this.time).getTime(), 'YYYY-MM-DD HH:mm:ss'),
           remark: this.objs.remark,
-          identification: 1,
+          identification: this.objs.identification,
           companyId: this.objs.wldwId,
           flag: val,
           goodsCategoryDutyUserId: this.objs.dutyUserId
@@ -675,30 +722,18 @@ export default{
         detaiList: arr,
         attachmentList: this.fileList.map(e => e.id)
       }
-      if (this.info.order && !this.ffts) {
+
+      if (this.info.order) {
         obj.order.orderNo = this.info.order.orderNo
         UpdateOrder(obj, this.info.order.id).then(res => {
           this.$message.success('修改成功')
-          if (!f) {
-            this.showDialog = false
-            this.time = Date.now()
-          } else {
-            if (!this.save) {
-              this.objs = {}
-              this.orderCategory = ''
-              this.fileList = []
-              this.list = []
-              this.time = Date.now()
-            }
-          }
+          this.showDialog = false
           this.$emit('change', 0)
         })
       } else {
         CreateOrder(obj).then(res => {
           this.$message.success('新增成功')
-          if (!f) {
-            this.showDialog = false
-          }
+          this.showDialog = false
           this.$emit('change', 0)
         })
       }
@@ -736,14 +771,19 @@ export default{
         this.url = '/api/identity/users'
         this.name = val
       } else if (val == 'goods') {
-        if (!this.objs.typeId || !this.objs.ckName) {
+        if ((!this.objs.typeId || !this.objs.ckName) && this.objs.identification) {
           this.$message.error('请先选择商品和类目')
           return
+        }
+        if (this.objs.identification) {
+          this.url = '/api/zjlab/Inventory/InventoryPage'
+        } else {
+          this.url = '/api/zjlab/GoodsInfo/GoodsInfoPage'
         }
         this.p = '货品'
         this.placeholder = '请输入货品名称'
         this.typeling = !this.typeling
-        this.url = '/api/zjlab/Inventory/InventoryPage'
+
         this.name = val
         this.goodsIndex = item
       } else if (val == 'gldj1' || val == 'gldj2') {
@@ -882,7 +922,7 @@ export default{
 <style>
 .errorshow{
   border: 1px solid red !important;
-    margin: 0px !important;
+  margin: 0px !important;
 }
 .bill .el-dialog__header{
         text-align: center;

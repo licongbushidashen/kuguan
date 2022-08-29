@@ -148,7 +148,7 @@ export default {
         .then(res => {
           const list = []
           const tableH = []
-          this.tableH = []
+          this.tableH = [{ name: '规格', props: 'size' }]
           const tableHName = new Set()
           for (let i = 0; i < res.length; i++) {
             if (!tableHName.has(res[i].spacePointName)) {

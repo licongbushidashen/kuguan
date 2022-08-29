@@ -67,21 +67,22 @@
           class="table-top"
         >
           <div class="table-top__title" />
-          <div>
-            <template>
-              <el-button
-                v-if="allAuth['SystemSetting.GoodsCategorys.Create'] ||allAuth['SystemSetting.GoodsCategorys.Edit']"
-                type="primary"
-                @click="savechange"
-              >保存</el-button
-              >
-            </template>
 
-          </div>
         </flexbox>
         <div class="flex-box">
           <create-sections >
             <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
+            <div style="margin:20px 0px 0px 15px">
+              <template>
+                <el-button
+                  v-if="allAuth['SystemSetting.GoodsCategorys.Create'] ||allAuth['SystemSetting.GoodsCategorys.Edit']"
+                  type="primary"
+                  @click="savechange"
+                >保存</el-button
+                >
+              </template>
+
+            </div>
           </create-sections>
         </div>
       </div>

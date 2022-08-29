@@ -2,11 +2,11 @@
 
   <div class="main">
     <xr-header
-      icon-class="wk wk-approve"
+      icon-class="wk wk-o-task"
       icon-color="#2362FB"
-      label="任务中心" >
+      label="我的申请" >
       <template v-slot:ft>
-        <div style="    display: flex;    justify-content: end;">
+        <!-- <div style="    display: flex;    justify-content: end;">
           <div>
             <el-button
               v-if="activeName==1&&allAuth['OrderSetting.Orders.BatchAgree']"
@@ -24,20 +24,20 @@
           </div>
           <div>
             <el-button
-              v-if="activeName==3 &&allAuth['OrderSetting.Orders.BatchStorageOut']"
+              v-if="activeName==4 &&allAuth['OrderSetting.Orders.BatchStorageOut']"
               :disabled="!disable"
               style="margin:0px 0px 10px 0px"
               type="primary" @click="addJurisdiction(4)">批量出库</el-button>
 
           </div>
-          <!-- <div>
+          <div>
             <el-button
               v-if="activeName==3&&allAuth['OrderSetting.Orders.BatchSubmit']"
               :disabled="!disable"
               style="margin:0px 0px 10px 0px"
               type="primary" @click="addJurisdiction(1)">批量提交</el-button>
 
-          </div> -->
+          </div>
           <div>
             <el-button
               v-if="activeName==0&&allAuth['OrderSetting.Orders.BatchSubmit']"
@@ -46,20 +46,20 @@
               type="primary" @click="addJurisdiction(1)">批量提交</el-button>
 
           </div>
-        </div>
+        </div> -->
       </template>
     </xr-header>
     <div class="main-body">
-      <div class="main-table-header">
+      <!-- <div class="main-table-header">
         <el-tabs v-model="activeName" @tab-click="handleCurrentChange(0)">
           <el-tab-pane label="待我审批" name="1"/>
           <el-tab-pane label="待入库确认" name="2"/>
           <el-tab-pane label="待出库确认" name="3"/>
-          <!-- <el-tab-pane label="我的已办" name="4"/>
-          <el-tab-pane label="我的审评" name="5"/> -->
-          <el-tab-pane label="草稿" name="0"/>
+          <el-tab-pane label="我的已办" name="4"/>
+            <el-tab-pane label="我的审评" name="5"/>
+            <el-tab-pane label="草稿" name="0"/>
         </el-tabs>
-      </div>
+      </div> -->
 
       <el-table
         v-loading="loading"
@@ -123,14 +123,14 @@
         <el-table-column prop="createUserName" label="申请人" />
         <el-table-column prop="creationTime" label="申请时间" />
         <!-- <el-table-column
-          prop="ean13"
-          label="单位"
-          width="200">
-          <template slot-scope="{ row, column, $index}">
-            <span class="buttonc" @click.stop="openplan(row)">计划管理</span>
-            <span class="buttonc" @click.stop="openwarn(row)">预警管理</span>
-          </template>
-        </el-table-column> -->
+            prop="ean13"
+            label="单位"
+            width="200">
+            <template slot-scope="{ row, column, $index}">
+              <span class="buttonc" @click.stop="openplan(row)">计划管理</span>
+              <span class="buttonc" @click.stop="openwarn(row)">预警管理</span>
+            </template>
+          </el-table-column> -->
       </el-table>
       <div class="p-contianer">
         <el-pagination
@@ -212,7 +212,7 @@ export default {
   mixins: [],
   data() {
     return {
-      activeName: '1',
+      activeName: '5',
       flag: '',
       flagName: [
         { name: '草稿', value: 0 },
@@ -231,7 +231,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 200, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -264,8 +264,8 @@ export default {
       this.warningshow = !this.warningshow
     },
     /*
-     * 当checkbox选择change时事件
-     */
+       * 当checkbox选择change时事件
+       */
     onItemCheckboxChange() {
       this.obj = {}
       this.disable = this.list.filter(d => d.checked).length
@@ -279,8 +279,8 @@ export default {
         })
     },
     /**
-     * 获取列表数据
-     */
+       * 获取列表数据
+       */
     getList() {
       this.loading = true
       const data = {
@@ -311,9 +311,9 @@ export default {
         })
     },
     /**
-     * 更改当前页数
-     * @param {*} val
-     */
+       * 更改当前页数
+       * @param {*} val
+       */
     handleCurrentChange(val) {
       this.morecondition = false
       const x = val > 0 ? val - 1 : 0
@@ -322,8 +322,8 @@ export default {
     },
 
     /**
-     *  添加权限
-     */
+       *  添加权限
+       */
     addJurisdiction(val) {
       const ids = this.list.filter(d => d.checked).map(e => e.id)
       switch (val) {
@@ -386,8 +386,8 @@ export default {
 
     /** 列表操作 */
     /**
-     * 当某一行被点击时会触发该事件
-     */
+       * 当某一行被点击时会触发该事件
+       */
     handleRowClick(row, column, event) {
       if (column.label == '序号') {
         return
@@ -406,81 +406,82 @@ export default {
       this.dbsyShow = true
     }
     /**
-     * 编辑删除
-     */
+       * 编辑删除
+       */
     /**
-     * 导出
-     */
+       * 导出
+       */
   }
 }
 </script>
 
-<style lang="scss" scoped>
-  /deep/.wk{
+  <style lang="scss" scoped>
+    /deep/.wk{
     margin-right: 0px !important;
   }
-  /deep/.el-table{
-    margin-top:10px !important
-  }
-.morecondition{
-      position: absolute;
-    z-index: 9;
-    background: #fff;
-    width: 100%;
-    border: 1px solid #e6e6e6;
-    // display: flex;
-    padding: 20px;
-    >div{
-      // flex: 1;
-          display: inline-block;
-          line-height: 44px;
-          margin-left: 20px;
-      label{
-        margin-right: 10px;
-      }
+    /deep/.el-table{
+      margin-top:0px !important
     }
+  .morecondition{
+        position: absolute;
+      z-index: 9;
+      background: #fff;
+      width: 100%;
+      border: 1px solid #e6e6e6;
+      // display: flex;
+      padding: 20px;
+      >div{
+        // flex: 1;
+            display: inline-block;
+            line-height: 44px;
+            margin-left: 20px;
+        label{
+          margin-right: 10px;
+        }
+      }
 
-}
-.main {
-  height: 100%;
-
-  /deep/ .xr-header {
-    padding: 15px 30px;
   }
-}
+  .main {
+    height: 100%;
 
-.main-body {
-  // height: calc(100% - 61px);
-  background-color: white;
-  border-top: 1px solid $xr-border-line-color;
-  border-bottom: 1px solid $xr-border-line-color;
-  padding:20px
-}
-// .main-table{
-//       height: calc(100% - 90px ) !important;
-// }
-.main-table-header {
-  height: 45px;
-  background-color: white;
-  position: relative;
-  .main-table-header-button {
-    float: right;
-        margin-right: 20px;
-    margin-top: 5px;
-    margin-bottom: 6px;
-    margin-left: 21px;
+    /deep/ .xr-header {
+      padding: 15px 30px;
+    }
   }
-}
 
-.project-reminder {
-  width: auto;
-  float: left;
-  margin-left: 20px;
-  margin-top: 10px;
-}
-@import '../styles/table.scss';
-.buttonc {
-  color: #4f81fc;
-   cursor: pointer;
-}
-</style>
+  .main-body {
+    // height: calc(100% - 61px);
+    background-color: white;
+    border-top: 1px solid $xr-border-line-color;
+    border-bottom: 1px solid $xr-border-line-color;
+    padding:0px
+  }
+  // .main-table{
+  //       height: calc(100% - 90px ) !important;
+  // }
+  .main-table-header {
+    height: 45px;
+    background-color: white;
+    position: relative;
+    .main-table-header-button {
+      float: right;
+          margin-right: 20px;
+      margin-top: 5px;
+      margin-bottom: 6px;
+      margin-left: 21px;
+    }
+  }
+
+  .project-reminder {
+    width: auto;
+    float: left;
+    margin-left: 20px;
+    margin-top: 10px;
+  }
+  @import '../styles/table.scss';
+  .buttonc {
+    color: #4f81fc;
+     cursor: pointer;
+  }
+  </style>
+

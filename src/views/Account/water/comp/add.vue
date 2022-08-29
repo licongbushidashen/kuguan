@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    " destroy-on-close title="直饮水台账">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" style="    " destroy-on-close title="直饮水台账">
     <create-sections >
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
     </create-sections>
@@ -14,7 +14,8 @@ import { mapGetters } from 'vuex'
 import { objDeepCopy } from '@/utils'
 import {
   WaterDispenserCreate,
-  WaterDispenserUpdate
+  WaterDispenserUpdate,
+  GetSpacePointTree
 } from '@/api/account'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
@@ -41,17 +42,22 @@ export default {
       list: [],
       maxlength: 300,
       checkedAll: [],
+      tt: true,
       fieldsRules: {}, // 字段列表需要验证,
+      setting2: [],
+      setting1: [],
       aoiinfo: {
         drugName: '',
-        parentName: ''
+        parentId1: '',
+        parentId2: ''
       },
       tree: [],
       fields: {},
       isSave: false,
       mining: false,
       isDefault: false,
-      yq: {}
+      yq: {},
+      settings: []
     }
   },
   computed: {
@@ -67,7 +73,7 @@ export default {
           this.aoiinfo = {
           }
         } else {
-          this.aoiinfo = { ...this.info, ...{ parentName: this.info.spacePointName, parentId: this.aoiinfo.spacePointId }}
+          this.aoiinfo = { ...this.info, ...{ parentId1: '', parentId2: '' }}
         }
         this.getBaseField()
       },
@@ -76,17 +82,72 @@ export default {
     }
   },
   created() {
-    this.getBaseField()
+    this.pointTree()
   },
   methods: {
 
-
+    pointTree(item, name, j) {
+      const data = item ? { parentId: item } : {}
+      GetSpacePointTree(data)
+        .then(response => {
+          if (j == 1) {
+            for (let i = 0; i < this.fields.length; i++) {
+              if (this.fields[i].field == 'parentId') {
+                this.aoiinfo.parentId2 = ''
+                this.setting2 = response
+                this.$set(this.fields[i], 'setting2', response)
+              }
+            }
+          } else if (j == 2) {
+            this.tt = false
+            this.aoiinfo = { ...this.aoiinfo }
+          } else if (name == 'parentId') {
+            for (let i = 0; i < this.fields.length; i++) {
+              if (this.fields[i].field == 'parentId') {
+                this.setting1 = response
+                this.setting2 = []
+                this.$set(this.fields[i], 'setting1', response)
+                this.fields[i].setting2 = []
+                this.aoiinfo.parentId1 = ''
+                this.aoiinfo.parentId2 = ''
+              }
+            }
+          } else {
+            this.settings = response || []
+            this.getBaseField()
+          }
+          this.fieldsRules['parentId'] = this.getRules({
+            field: 'parentId',
+            formType: 'seleteAll',
+            isNull: 1,
+            name: '空间点位',
+            array1: 1,
+            placeholder: '请选择空间点位',
+            setting: this.settings,
+            setting1: this.setting1,
+            setting2: this.setting2,
+            parentId2: this.aoiinfo.parentId2,
+            parentId1: this.aoiinfo.parentId1,
+            optionL: 'specificLocation',
+            optionV: 'id',
+            inputTips: '',
+            value: this.aoiinfo ? this.aoiinfo.parentId : ''
+          })
+        })
+        .catch(() => {
+        })
+    },
 
     saveClick(data) {
       console.log(this.aoiinfo, 666)
       if (!data) return
-      this.aoiinfo.spacePointId = this.aoiinfo.parentId
-      this.aoiinfo.spacePointName = this.aoiinfo.parentName
+      if (this.aoiinfo.parentId2 != '') {
+        this.aoiinfo.spacePointId = this.aoiinfo.parentId2.id
+      } else if (this.aoiinfo.parentId1 != '') {
+        this.aoiinfo.spacePointId = this.aoiinfo.parentId1.id
+      } else {
+        this.aoiinfo.spacePointId = this.aoiinfo.parentId
+      }
       if (this.aoiinfo.id) {
         WaterDispenserUpdate(this.aoiinfo).then(res => {
           this.$message.success('修改成功')
@@ -101,7 +162,10 @@ export default {
         })
       }
     },
-    formChange(id, type, type1) {
+    formChange(id, type, type1, i, j) {
+      if (id.field == 'parentId') {
+        this.pointTree(type1.id, id.field, j)
+      }
     },
     savechange() {
       this.isSave = !this.isSave
@@ -139,13 +203,19 @@ export default {
         value: this.aoiinfo ? this.aoiinfo.maintenanceDate : ''
       })
       field.push({
-        field: 'parentName',
-        formType: 'leave1',
+        field: 'parentId',
+        formType: 'seleteAll',
         isNull: 1,
         name: '空间点位',
+        array1: 1,
         placeholder: '请选择空间点位',
+        setting: this.settings,
+        setting1: this.setting1,
+        setting2: this.setting2,
+        optionL: 'specificLocation',
+        optionV: 'id',
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.parentName : ''
+        value: this.aoiinfo ? this.aoiinfo.parentId : ''
       })
       field.push({
         field: 'machineModel',

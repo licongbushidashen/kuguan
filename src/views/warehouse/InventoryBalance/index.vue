@@ -80,10 +80,10 @@
           prop="goodsName"
           label="商品名称"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="unitName"
           label="单位"
-        />
+        /> -->
         <el-table-column
           prop="ean13"
           label="商品条码"
@@ -105,6 +105,14 @@
           >
             <template slot-scope="{ row, column, $index}">
               <span>{{ row[item+'1'] }} {{ row.unitName }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :prop="item+'2'"
+            label="结存金额"
+          >
+            <template slot-scope="{ row, column, $index}">
+              <span>{{ row[item+'2'] }}</span>
             </template>
           </el-table-column>
         </el-table-column>
@@ -210,14 +218,14 @@ export default {
           debugger
           this.tableHader = []
           for (let i = 0; i < res.items.length; i++) {
+            res.items[i].warehouseData = res.items[i].warehouseData.reverse()
             res.items[i].warehouseData.forEach(e => {
               res.items[i][e.warehouseName + '1'] = e.num
-              // res.items[i][e.warehouseData + '2'] = e.wfactoryName
-              debugger
+              res.items[i][e.warehouseName + '2'] = e.amount
+
               this.tableHader.push(e.warehouseName)
             })
           }
-          console.log(this.tableHader)
           this.list = res.items
           this.total = res.totalCount
           this.loading = false

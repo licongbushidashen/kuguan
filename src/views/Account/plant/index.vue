@@ -28,7 +28,7 @@
         <label>填写日期</label>
         <el-date-picker
           v-model="time"
-          type="datetimerange"
+          type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"/>
@@ -223,7 +223,7 @@ export default {
      */
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, beginTime: parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00', endTime: parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59' }
       GreenPlantGetPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {

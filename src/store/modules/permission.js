@@ -137,6 +137,7 @@ const permission = {
     manageRouters: [],
     hrmRouters: [],
     kchkRouters: [],
+    handleRouters: [],
     kcglRouters: [],
     warehouseRouters: [],
     accountRouter: []
@@ -148,6 +149,7 @@ const permission = {
       state.warehouseRouters = data.router.warehouse || []
       state.kcglRouters = data.router.kcgl || []
       state.kchkRouters = data.router.kchk || []
+      state.handleRouters = data.router.handle || []
       state.accountRouter = data.router.account || []
       // state.crmRouters = data.router.crm || []
       // state.workLogRouters = data.router.workLog || []

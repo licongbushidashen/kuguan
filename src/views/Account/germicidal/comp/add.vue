@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="showDialog" style="    " destroy-on-close>
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" style="    " destroy-on-close title="消杀台账">
     <create-sections >
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
     </create-sections>
@@ -14,7 +14,8 @@ import { mapGetters } from 'vuex'
 import { objDeepCopy } from '@/utils'
 import {
   CreateDisinfection,
-  UpdateDisinfection
+  UpdateDisinfection,
+  GetSpacePointTree
 } from '@/api/account'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
@@ -41,17 +42,22 @@ export default {
       list: [],
       maxlength: 300,
       checkedAll: [],
+      tt: true,
       fieldsRules: {}, // 字段列表需要验证,
+      setting2: [],
+      setting1: [],
       aoiinfo: {
         drugName: '',
-        parentName: ''
+        parentId1: '',
+        parentId2: ''
       },
       tree: [],
       fields: {},
       isSave: false,
       mining: false,
       isDefault: false,
-      yq: {}
+      yq: {},
+      settings: []
     }
   },
   computed: {
@@ -67,7 +73,7 @@ export default {
           this.aoiinfo = {
           }
         } else {
-          this.aoiinfo = { ...this.info, ...{ parentName: '' }}
+          this.aoiinfo = { ...this.info, ...{ parentId1: '', parentId2: '' }}
         }
         this.getBaseField()
       },
@@ -76,18 +82,69 @@ export default {
     }
   },
   created() {
-    this.getBaseField()
+    this.pointTree()
   },
   methods: {
-
-
-
+    pointTree(item, name, j) {
+      const data = item ? { parentId: item } : {}
+      GetSpacePointTree(data)
+        .then(response => {
+          if (j == 1) {
+            for (let i = 0; i < this.fields.length; i++) {
+              if (this.fields[i].field == 'parentId') {
+                this.aoiinfo.parentId2 = ''
+                this.setting2 = response
+                this.$set(this.fields[i], 'setting2', response)
+              }
+            }
+          } else if (j == 2) {
+            this.tt = false
+            this.aoiinfo = { ...this.aoiinfo }
+          } else if (name == 'parentId') {
+            for (let i = 0; i < this.fields.length; i++) {
+              if (this.fields[i].field == 'parentId') {
+                this.setting1 = response
+                this.setting2 = []
+                this.$set(this.fields[i], 'setting1', response)
+                this.fields[i].setting2 = []
+                this.aoiinfo.parentId1 = ''
+                this.aoiinfo.parentId2 = ''
+              }
+            }
+          } else {
+            this.settings = response || []
+            this.getBaseField()
+          }
+          this.fieldsRules['parentId'] = this.getRules({
+            field: 'parentId',
+            formType: 'seleteAll',
+            isNull: 1,
+            name: '空间点位',
+            array1: 1,
+            placeholder: '请选择空间点位',
+            setting: this.settings,
+            setting1: this.setting1,
+            setting2: this.setting2,
+            parentId2: this.aoiinfo.parentId2,
+            parentId1: this.aoiinfo.parentId1,
+            optionL: 'specificLocation',
+            optionV: 'id',
+            inputTips: '',
+            value: this.aoiinfo ? this.aoiinfo.parentId : ''
+          })
+        })
+        .catch(() => {
+        })
+    },
     saveClick(data) {
-      console.log(this.aoiinfo, 666)
       if (!data) return
-      this.aoiinfo.spacePointId = this.aoiinfo.parentId
-      this.aoiinfo.spacePointName = this.aoiinfo.parentName
-
+      if (this.aoiinfo.parentId2 != '') {
+        this.aoiinfo.spacePointId = this.aoiinfo.parentId2.id
+      } else if (this.aoiinfo.parentId1 != '') {
+        this.aoiinfo.spacePointId = this.aoiinfo.parentId1.id
+      } else {
+        this.aoiinfo.spacePointId = this.aoiinfo.parentId
+      }
       this.aoiinfo.servicesAvailableRemark = this.aoiinfo.servicesAvailableRemark ? this.aoiinfo.servicesAvailableRemark : ''
       this.aoiinfo.pestCategoriesRemark = this.aoiinfo.pestCategoriesRemark ? this.aoiinfo.pestCategoriesRemark : ''
       this.aoiinfo.serviceContentRemark = this.aoiinfo.serviceContentRemark ? this.aoiinfo.serviceContentRemark : ''
@@ -108,7 +165,10 @@ export default {
         })
       }
     },
-    formChange(id, type, type1) {
+    formChange(id, type, type1, i, j) {
+      if (id.field == 'parentId') {
+        this.pointTree(type1.id, id.field, j)
+      }
       switch (id.field) {
         case 'servicesAvailable':
           this.setBaseField(id.field, type1, 'servicesAvailableRemark', '请输入其它服务项目')
@@ -207,7 +267,6 @@ export default {
     },
     setBaseField(name, type, field1, p) {
       const field = []
-      debugger
       if ((name == 'servicesAvailable') && type == '其它') {
         field.push({
           field: field1,
@@ -254,7 +313,6 @@ export default {
         this.fieldsRules[Object.keys(fieldsRules)[0]] = Object.values(fieldsRules)[0]
       } else {
         if (num1 == 1) {
-          console.log(this.fieldsRules[this.fields[num].field])
           delete this.fieldsRules[this.fields[num].field]
           this.fields.splice(num + 1, 1)
         }
@@ -294,13 +352,19 @@ export default {
         value: this.aoiinfo ? this.aoiinfo.phone : ''
       })
       field.push({
-        field: 'parentName',
-        formType: 'leave1',
+        field: 'parentId',
+        formType: 'seleteAll',
         isNull: 1,
         name: '空间点位',
+        array1: 1,
         placeholder: '请选择空间点位',
+        setting: this.settings,
+        setting1: this.setting1,
+        setting2: this.setting2,
+        optionL: 'specificLocation',
+        optionV: 'id',
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.parentName : ''
+        value: this.aoiinfo ? this.aoiinfo.parentId : ''
       })
       field.push({
         field: 'weatherForecast',
@@ -311,7 +375,7 @@ export default {
         setting: [
           { name: '晴天', id: '晴天' },
           { name: '雨天', id: '雨天' },
-          { name: '已完成', id: '已完成' }
+          { name: '阴天', id: '阴天' }
         ],
         optionL: 'name',
         optionV: 'id',

@@ -103,7 +103,6 @@ const option = {
   },
   yAxis: {
     type: 'value',
-    max: '1200',
     axisLine: {
       lineStyle: {
         color: '#fff'
@@ -132,7 +131,7 @@ const option = {
     barWidth: '15%',
     itemStyle: {
       normal: {
-        color: '#9C9AFF',
+        color: '#063AC0',
         barBorderRadius: [12, 12, 0, 0]
       }
     },
@@ -144,7 +143,7 @@ const option = {
     barWidth: '15%',
     itemStyle: {
       normal: {
-        color: '#FC8B62',
+        color: '#2FA86B',
         barBorderRadius: [12, 12, 0, 0]
       }
 
@@ -159,7 +158,7 @@ const option = {
     smooth: true,
     itemStyle: {
       normal: {
-        color: '#FFCA71',
+        color: '#2FA86B',
         barBorderRadius: [12, 12, 0, 0]
       }
     },
@@ -330,7 +329,7 @@ export default {
               barWidth: '15%',
               itemStyle: {
                 normal: {
-                  color: '#9C9AFF',
+                  color: '#063AC0',
                   barBorderRadius: [12, 12, 0, 0]
                 }
               },
@@ -342,7 +341,7 @@ export default {
               smooth: true,
               itemStyle: {
                 normal: {
-                  color: '#FFCA71',
+                  color: '#2FA86B',
                   barBorderRadius: [12, 12, 0, 0]
                 }
               },
@@ -381,7 +380,7 @@ export default {
               barWidth: '15%',
               itemStyle: {
                 normal: {
-                  color: '#9C9AFF',
+                  color: '#063AC0',
                   barBorderRadius: [12, 12, 0, 0]
                 }
               },
@@ -393,7 +392,7 @@ export default {
               smooth: true,
               itemStyle: {
                 normal: {
-                  color: '#FFCA71',
+                  color: '#2FA86B',
                   barBorderRadius: [12, 12, 0, 0]
                 }
               },

@@ -22,11 +22,11 @@
         <label for="" style="margin:0px 10px">时间范围</label>
         <el-date-picker
           v-model="time"
+          :picker-options="pickerOptions"
           style="    vertical-align: bottom;"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"/>
+          type="month"
+          laceholder="选择月"
+        />
         <el-button type="primary" @click="handleCurrentChange(0)">搜索</el-button>
       </div>
       <el-table
@@ -165,6 +165,10 @@ export default {
   mixins: [],
   data() {
     return {
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
+        } },
       categoryName: '',
       goodsName: '',
       showing: false,
@@ -183,7 +187,7 @@ export default {
       total: 0,
       obj: {},
       info: {},
-      time: []
+      time: ''
     }
   },
   computed: {},
@@ -191,7 +195,7 @@ export default {
     const date = new Date()
     const year = date.getFullYear()
     const month = date.getMonth() + 1
-    this.time = [year + '-' + month + '-' + '01', date]
+    this.time = year + '-' + month
     var self = this
     /** 控制table的高度 */
     window.onresize = function() {
@@ -220,7 +224,7 @@ export default {
     getList() {
       this.loading = true
 
-      const data = { 'maxResultCount': this.currentPage + 15, 'skipCount': this.currentPage, goodsName: this.goodsName, categoryName: this.categoryName, beginTime: this.gettiem(this.time[0], 1), endTime: this.gettiem(this.time[1]) }
+      const data = { 'maxResultCount': this.currentPage + 15, 'skipCount': this.currentPage, goodsName: this.goodsName, categoryName: this.categoryName, month: this.gettiem(this.time, 1) }
       console.log(data, 666)
       TotalInventory(data)
         .then(res => {
@@ -236,11 +240,10 @@ export default {
       const date = new Date(time)
       const year = date.getFullYear()
       const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
-      const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
       if (flag) {
-        return year + '-' + month + '-' + day + ' 00:00:00'
+        return year + '-' + month
       } else {
-        return year + '-' + month + '-' + day + ' 23:59:59'
+        return year + '-' + month
       }
     },
     /**

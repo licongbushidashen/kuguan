@@ -638,8 +638,8 @@ export default{
     dialogSure(val) {
       let flag = false
       for (const i in this.objs) {
-        if (i != 'remark' && !this.objs[i]) {
-          flag = true
+        if (!this.objs[i]) {
+          if (i != 'remark' && i != 'typeName') { flag = true }
         }
       }
       if (!this.orderCategory || flag) {

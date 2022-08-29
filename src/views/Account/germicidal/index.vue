@@ -28,7 +28,7 @@
         <label>消杀日期</label>
         <el-date-picker
           v-model="time"
-          type="datetimerange"
+          type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"/>
@@ -97,7 +97,7 @@
         />
       </div>
     </div>
-    <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList" />
+    <Ccware :showing="jurisdictionCreateShow" :info="info" @change="handleCurrentChange(0)" />
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
@@ -116,6 +116,7 @@ import { downloadFileWithBuffer } from '@/utils'
 import {
   DisinfectionPage,
   DisinfectionDownload
+
 } from '@/api/account'
 import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
@@ -156,6 +157,7 @@ export default {
       obj: {},
       info: {},
       time: [new Date() - 24 * 3600 * 1000 * 30, new Date()]
+
     }
   },
   computed: {
@@ -173,6 +175,7 @@ export default {
     this.getList()
   },
   methods: {
+
     /**
      * 导出
      */
@@ -225,7 +228,7 @@ export default {
      */
     getList() {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }
+      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, beginTime: parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00', endTime: parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59' }
       DisinfectionPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -245,6 +248,8 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
+      debugger
+      // this.time = [new Date() - 24 * 3600 * 1000 * 30, new Date()]
       const x = val > 0 ? val - 1 : 0
       this.currentPage = x ? x * 15 : x
       this.getList()

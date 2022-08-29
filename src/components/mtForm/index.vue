@@ -109,6 +109,52 @@
           :label="ite[item.optionL]"
           :value="ite"/>
       </el-select>
+      <div v-else-if="item.formType == 'seleteAll'" class="input-width" style="    display: flex;">
+        <el-select
+          :multiple="item.multiple || false"
+          v-model="fieldFrom[item.field]"
+          :disabled="item.disabled"
+          :placeholder="item.placeholder"
+          :value-key="item.optionV"
+          style="flex:1;max-width: 190px;"
+          @input="commonChange(item, index, $event)">
+          <el-option
+            v-for="(ite,ind) in item.setting"
+            :key="ind"
+            :label="ite[item.optionL]"
+            :value="ite"/>
+        </el-select>
+        <el-select
+          v-show="fieldFrom[item.field]&&item.setting1.length>0"
+          v-model="fieldFrom[item.field+'1']"
+          :multiple="item.multiple || false"
+          :disabled="item.disabled"
+          :placeholder="item.placeholder"
+          :value-key="item.optionV"
+          style="flex:1;    margin-left: 10px;"
+          @input="commonChange(item, index, $event,1)">
+          <el-option
+            v-for="(ite,ind) in item.setting1"
+            :key="ind"
+            :label="ite[item.optionL]"
+            :value="ite"/>
+        </el-select>
+        <el-select
+          v-show="fieldFrom[item.field+'1'] &&item.setting2.length>0"
+          v-model="fieldFrom[item.field+'2']"
+          :multiple="item.multiple || false"
+          :disabled="item.disabled"
+          :placeholder="item.placeholder"
+          :value-key="item.optionV"
+          style="flex:1;    margin-left: 10px;"
+          @input="commonChange(item, index, $event,2)">
+          <el-option
+            v-for="(ite,ind) in item.setting2"
+            :key="ind"
+            :label="ite[item.optionL]"
+            :value="ite"/>
+        </el-select>
+      </div>
       <el-date-picker
         v-else-if="item.formType == 'datetime'"
         v-model="fieldFrom[item.field]"
@@ -428,8 +474,8 @@ export default {
     /**
        * 常规组件change事件
        */
-    commonChange(item, index, value) {
-      this.$emit('change', item, index, value, this.parentIndex)
+    commonChange(item, index, value, j) {
+      this.$emit('change', item, index, value, this.parentIndex, j)
     },
     onSubmit(ruleForm) {
       console.log(this.rules)

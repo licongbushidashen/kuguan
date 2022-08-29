@@ -79,20 +79,25 @@
         /> -->
         <el-table-column
           prop="occupyNum"
-          label="占用库存"
-        />
-        <el-table-column
-          prop="residueNum"
-          label="剩余库存"
+          label="占用库存 (单位)"
         >
           <template slot-scope="{ row, column, $index}">
 
-            <span>{{ row.residueNum }} {{ row.unitName }}</span>
+            <span>{{ row.occupyNum }} {{ row.occupyNum>0?row.unitName :'' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="residueNum"
+          label="剩余库存 (单位)"
+        >
+          <template slot-scope="{ row, column, $index}">
+
+            <span>{{ row.residueNum }} {{ row.residueNum>0?row.unitName :'' }}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="totalAmount"
-          label="总金额"
+          label="总金额(元)"
         />
 
 

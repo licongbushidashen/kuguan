@@ -16,6 +16,7 @@
       <navbar nav-index="/handle" @nav-items-click="navClick" />
     </el-header>
     <el-container>
+      <sidebar :items="handleRouters" class="sidebar-container" />
 
       <el-main id="workLog-main-container" >
         <app-main />
@@ -25,6 +26,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 // import { ManagerNavbar, Sidebar, AppMain } from './components'
 import { Navbar, Sidebar, AppMain } from './components'
 export default {
@@ -41,9 +43,13 @@ export default {
   },
 
   computed: {
+    // ...mapGetters(['manage', 'manageRouters'])
+    ...mapGetters(['handleRouters'])
   },
 
-  mounted() {},
+  mounted() {
+    console.log(this.handleRouters)
+  },
 
   methods: {
     navClick(index) {}
