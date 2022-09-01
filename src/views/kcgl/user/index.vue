@@ -103,7 +103,7 @@
       </div>
     </div>
     <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList"/>
-    <el-dialog :close-on-click-modal="false" :visible.sync="passwording" style="    width: 800px;left: 30%;   " title="重置密码">
+    <el-dialog :close-on-click-modal="false" :visible.sync="passwording" class="ttser" style="    width: 800px;left: 30%;   " title="重置密码">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm">
         <el-form-item label="新密码：" prop="password">
           <el-input v-model="ruleForm.password" show-password style="width:200px"/>
@@ -310,7 +310,11 @@ export default {
   }
 }
 </script>
-
+<style>
+  .ttser .el-dialog__body{
+min-height: auto !important;
+}
+</style>
 <style lang="scss" scoped>
 .main {
   height:100%;
@@ -351,4 +355,5 @@ export default {
   color:#4f81fc;
    cursor: pointer;
 }
+
 </style>

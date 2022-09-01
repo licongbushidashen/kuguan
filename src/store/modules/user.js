@@ -7,7 +7,7 @@ import { addAuth, removeAuth } from '@/utils/auth'
 import { request } from '@/utils'
 import Lockr from 'lockr'
 import { debounce } from 'throttle-debounce'
-
+import Cookies from 'js-cookie'
 const user = {
   state: {
     userInfo: null, // 用户信息
@@ -58,7 +58,8 @@ const user = {
     SET_AUTH: (state, data) => {
       state.access_token = data.access_token
       const token = data.access_token
-      Lockr.set('accessToken', token)
+      Cookies.set('accessToken', token)
+      // Lockr.set('accessToken', token)
       addAuth(token)
     },
     SET_USERLIST: (state, data) => {
@@ -94,6 +95,8 @@ const user = {
         adminIndexAuthListAPI()
           .then(response => {
             if (!response.currentUser.isAuthenticated) {
+              debugger
+              Cookies.remove('accessToken')
               localStorage.removeItem('accessToken')
               removeAuth()
               resetRouter()
@@ -150,6 +153,7 @@ const user = {
 
     // 登出
     LogOut({ commit }) {
+      Cookies.remove('accessToken')
       localStorage.removeItem('accessToken')
       removeAuth()
       resetRouter()

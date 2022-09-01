@@ -2,64 +2,21 @@
 
   <div class="main">
     <xr-header
-      icon-class="wk wk-o-task"
+      icon-class="wk wk-approve"
       icon-color="#2362FB"
-      label="我的申请" >
-      <template v-slot:ft>
-        <!-- <div style="    display: flex;    justify-content: end;">
-          <div>
-            <el-button
-              v-if="activeName==1&&allAuth['OrderSetting.Orders.BatchAgree']"
-              :disabled="!disable"
-              style="margin:0px 0px 10px 0px"
-              type="primary" @click="addJurisdiction(2)">批量同意</el-button>
-          </div>
-          <div>
-            <el-button
-              v-if="activeName==2&&allAuth['OrderSetting.Orders.BatchStorageIn']"
-              :disabled="!disable"
-              style="margin:0px 0px 10px 0px"
-              type="primary" @click="addJurisdiction(5)">批量入库</el-button>
-
-          </div>
-          <div>
-            <el-button
-              v-if="activeName==4 &&allAuth['OrderSetting.Orders.BatchStorageOut']"
-              :disabled="!disable"
-              style="margin:0px 0px 10px 0px"
-              type="primary" @click="addJurisdiction(4)">批量出库</el-button>
-
-          </div>
-          <div>
-            <el-button
-              v-if="activeName==3&&allAuth['OrderSetting.Orders.BatchSubmit']"
-              :disabled="!disable"
-              style="margin:0px 0px 10px 0px"
-              type="primary" @click="addJurisdiction(1)">批量提交</el-button>
-
-          </div>
-          <div>
-            <el-button
-              v-if="activeName==0&&allAuth['OrderSetting.Orders.BatchSubmit']"
-              :disabled="!disable"
-              style="margin:0px 0px 10px 0px"
-              type="primary" @click="addJurisdiction(1)">批量提交</el-button>
-
-          </div>
-        </div> -->
-      </template>
-    </xr-header>
+      label="我的预警" />
     <div class="main-body">
-      <!-- <div class="main-table-header">
+      <div class="main-table-header">
         <el-tabs v-model="activeName" @tab-click="handleCurrentChange(0)">
-          <el-tab-pane label="待我审批" name="1"/>
-          <el-tab-pane label="待入库确认" name="2"/>
-          <el-tab-pane label="待出库确认" name="3"/>
-          <el-tab-pane label="我的已办" name="4"/>
-            <el-tab-pane label="我的审评" name="5"/>
-            <el-tab-pane label="草稿" name="0"/>
+          <el-tab-pane label="待处理" name="1">
+            <span slot="label">待我审批<el-badge v-if="quantity['3']>0" :value="quantity['3']" :max="99" class="item" style="    margin: 0px;"/></span>
+          </el-tab-pane>
+          <el-tab-pane label="已处理" name="2">
+            <span slot="label">已处理<el-badge v-if="quantity['4']>0" :value="quantity['4']" :max="99" class="item" style="    margin: 0px;"/></span>
+          </el-tab-pane>
+
         </el-tabs>
-      </div> -->
+      </div>
 
       <el-table
         v-loading="loading"
@@ -76,6 +33,15 @@
           width="50"
           label="序号"
         >
+          <template slot="header" slot-scope="scope">
+            <div style="text-align: center; display: block;">
+              <el-checkbox
+                v-model="checkedAll"
+                :disabled="!list || !list.length"
+                @change="selectAll"
+              />
+            </div>
+          </template>
           <template slot-scope="{ row, column, $index }">
             <span class="status-name">
               <span
@@ -96,27 +62,25 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="申请事项">
+        <el-table-column prop="address" label="类型">
           <template slot-scope="{ row, column, $index }">
             <span>{{ row.orderCategory | ordername }}</span>
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="name" label="单据状态">
-          <template slot-scope="{ row, column, $index }">
-            <span>{{ row.flag | flagname }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="orderNo" label="商品编号" />
+        <!-- <el-table-column show-overflow-tooltip prop="name" label="单据状态">
+            <template slot-scope="{ row, column, $index }">
+              <span>{{ row.flag | flagname }}</span>
+            </template>
+          </el-table-column> -->
 
-        <el-table-column prop="orderNo" label="单据号" />
-        <el-table-column prop="address" label="类型">
-          <template slot-scope="{ row, column, $index }">
-            <span>{{ row.identification | ident }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="goodsCategoryName" label="所属类目" />
-        <el-table-column prop="wareHouseName" label="仓库" />
-        <el-table-column prop="createUserName" label="申请人" />
-        <el-table-column prop="creationTime" label="申请时间" />
+        <el-table-column prop="orderNo" label="商品名称" />
+        <el-table-column prop="goodsCategoryName" label="商品名称" />
+        <el-table-column prop="wareHouseName" label="规格" />
+        <el-table-column prop="createUserName" label="最低库存" />
+        <el-table-column prop="creationTime" label="最高库存" />
+        <el-table-column prop="creationTime" label="结存数量" />
+        <el-table-column prop="creationTime" label="超限数量" />
         <!-- <el-table-column
             prop="ean13"
             label="单位"
@@ -140,7 +104,7 @@
         />
       </div>
     </div>
-    <Bill :showing="jurisdictionCreateShow" :info="info" @change="getList" />
+
   </div>
 </template>
 
@@ -151,14 +115,13 @@ import { TaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchSto
 // import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
-import Bill from './comp/bill'
+
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
   components: {
     XrHeader,
-    CreateSections,
-    Bill
+    CreateSections
     // Ccware
   },
   filters: {
@@ -173,19 +136,13 @@ export default {
     },
     ordername: function(value) {
       if (value == 21) {
-        return '领用出库'
+        return '库存总量预警'
       } else if (value == 22) {
-        return '退货出库'
+        return '每单出库预警'
       } else if (value == 23) {
-        return '借用出库'
+        return '月度出库预警'
       } else if (value == 24) {
-        return '销毁出库'
-      } else if (value == 11) {
-        return '采购入库'
-      } else if (value == 12) {
-        return '退货入库'
-      } else if (value == 13) {
-        return '借用还库'
+        return '季度出库预警'
       }
     },
     flagname: function(value) {
@@ -204,10 +161,12 @@ export default {
       }
     }
   },
+
   mixins: [],
   data() {
     return {
-      activeName: '5',
+      checkedAll: [],
+      activeName: '1',
       flag: '',
       flagName: [
         { name: '草稿', value: 0 },
@@ -226,7 +185,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 200, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -239,8 +198,14 @@ export default {
       disable: false
     }
   },
+
   computed: {
-    ...mapGetters(['allAuth'])
+    ...mapGetters(['allAuth', 'quantity'])
+  },
+  watch: {
+    activeName() {
+      this.checkedAll = []
+    }
   },
   mounted() {
     var self = this
@@ -257,6 +222,21 @@ export default {
     },
     openwarn(row) {
       this.warningshow = !this.warningshow
+    },
+    selectAll(e) {
+      const isChecked = e
+      if (isChecked) {
+        this.list.forEach((item) => {
+          item.checked = true
+          this.isCheckedItems = 1
+        })
+      } else {
+        this.list.forEach((item) => {
+          item.checked = false
+          this.isCheckedItems = 0
+        })
+      }
+      this.onItemCheckboxChange()
     },
     /*
        * 当checkbox选择change时事件
@@ -280,9 +260,8 @@ export default {
       this.loading = true
       const data = {
         maxResultCount: this.pageSize,
-        skipCount: this.currentPage,
-        createName: this.inputs,
-        searchKey: this.company
+        skipCount: this.currentPage
+
       }
       data.status = Number(this.activeName)
       if (this.orderCategory) {
@@ -324,6 +303,7 @@ export default {
       switch (val) {
         case 1:
           BatchSubmit(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -337,6 +317,7 @@ export default {
           break
         case 2:
           BatchAgree(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -350,6 +331,7 @@ export default {
           break
         case 4:
           BatchStorageOut(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -363,6 +345,7 @@ export default {
           break
         case 5:
           BatchStorageIn(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -412,10 +395,10 @@ export default {
 
   <style lang="scss" scoped>
     /deep/.wk{
-    margin-right: 0px !important;
-  }
+      margin-right: 0px !important;
+    }
     /deep/.el-table{
-      margin-top:0px !important
+      margin-top:10px !important
     }
   .morecondition{
     align-items: baseline;
@@ -450,7 +433,7 @@ export default {
     background-color: white;
     border-top: 1px solid $xr-border-line-color;
     border-bottom: 1px solid $xr-border-line-color;
-    padding:0px
+    padding:20px
   }
   // .main-table{
   //       height: calc(100% - 90px ) !important;

@@ -1,13 +1,18 @@
 <template>
   <div class="navbar">
     <img v-src="logo" :key="logo" class="logo" @click="enterMainPage">
-    <span style="font-size: 17px;">易耗品管理系统</span>
+    <span style="font-size: 18px;font-weight:600">易耗品管理系统</span>
     <div
-      class="nav-items-container" style="       justify-content: right;    margin-right: 50px;">
+      class="nav-items-container" style="margin-left:14px">
       <el-menu :default-active="navActiveIndex" mode="horizontal" active-text-color="#2362FB" @select="navItemsClick">
         <el-menu-item v-for="(item, index) in showItems" :key="index" :index="item.path">
           <i :style="{ fontSize: item.fontSize }" :class="item.icon" />
-          <span>{{ item.title }}</span>
+
+          <span>{{ item.title }} <el-badge v-if="item.title=='任务/审批' &&quantity['1']>0" :value="quantity['1']" :max="99" class="item" style="    margin: 0px;"/>
+
+          </span>
+
+
         </el-menu-item>
         <!-- <el-menu-item ref="navManagerMenu" index="other">
           <i class="wk wk-grid" />
@@ -15,9 +20,9 @@
       </el-menu>
     </div>
 
-    <el-badge :value="unreadNums.announceCount" :hidden="!unreadNums.announceCount || unreadNums.announceCount == 0" :max="99">
+    <!-- <el-badge :value="unreadNums.announceCount" :hidden="!unreadNums.announceCount || unreadNums.announceCount == 0" :max="99">
       <i class="wk wk-announcement" @click="checkMessageDetail(true)" />
-    </el-badge>
+    </el-badge> -->
 
     <el-badge :value="unreadNums.allCount" :hidden="!unreadNums.allCount || unreadNums.allCount == 0" :max="99">
       <i class="wk wk-bell" @click="cherckDB" />
@@ -106,7 +111,8 @@ export default {
       'headerModule',
       'app',
       'hrmUserInfo',
-      'allAuth'
+      'allAuth',
+      'quantity'
     ]),
     ...mapState({
       moduleAuth: (state) => state.app.moduleAuth
@@ -155,10 +161,11 @@ export default {
         type: 6,
         module: 'home',
         path: '/home',
-        icon: 'iconfont icon-shouye',
+        icon: 'iconfont icon-shouye1',
         fontSize: '17px'
       }
-      if (JSON.stringify(this.allAuth).indexOf('SystemSetting') != -1) {
+      console.log(JSON.stringify(this.quantity), 111)
+      if (JSON.stringify(this.allAuth).indexOf('TaskCenterSetting.TaskCenter') != -1) {
         tempsItems.handle = {
           title: '任务/审批',
           type: 6,
@@ -174,7 +181,7 @@ export default {
           type: 6,
           module: 'kchk',
           path: '/kchk',
-          icon: 'iconfont icon-tubiaozhizuomoban-154',
+          icon: 'iconfont icon-churukuguanli',
           fontSize: '17px'
         }
       }
@@ -185,7 +192,7 @@ export default {
           type: 6,
           module: 'warehouse',
           path: '/warehouse',
-          icon: 'iconfont icon-kucunguanli',
+          icon: 'iconfont icon-kucunguanli1',
           fontSize: '17px'
         }
       }
@@ -206,7 +213,7 @@ export default {
           type: 6,
           module: 'kcgl',
           path: '/kcgl',
-          icon: 'iconfont icon-xitongguanli-',
+          icon: 'iconfont icon-xitongguanli1',
           fontSize: '17px'
         }
       }
@@ -642,6 +649,14 @@ export default {
 		overflow-x: auto;
 		line-height: 60px;
 		font-size: 15px;
+    .el-menu-item{
+      i{
+        margin-left:10px;
+      }
+      span{
+        margin-right: 10px;
+      }
+    }
 	}
 
 	.user-container {
@@ -694,14 +709,14 @@ export default {
 	border-bottom: none;
 }
 
-.el-menu-item {
+.nav-items-container .el-menu--horizontal>.el-menu-item {
 	padding: 0;
 	margin: 0 20px !important;
 	font-size: 16px;
 	font-weight: 500;
-	color: #2a304d;
+	color: #2a304d ;
 	i {
-		color: #5c6075;
+		// color: #5c6075;
 	}
 }
 
@@ -716,6 +731,7 @@ export default {
 }
 
 .el-menu-item.is-active {
+
 	border-width: 3px;
 	i {
 		color: $xr-color-primary;

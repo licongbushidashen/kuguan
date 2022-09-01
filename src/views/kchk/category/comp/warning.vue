@@ -85,14 +85,14 @@ export default {
         this.getBaseField()
         this.showDialog = !this.showDialog
         this.ware = {
-          allup: '',
-          alldown: '',
-          oneup: '',
-          onedown: '',
-          mouthup: '',
-          mouthdown: '',
-          quarterup: '',
-          quarterdown: ''
+          allup: null,
+          alldown: null,
+          oneup: null,
+          onedown: null,
+          mouthup: null,
+          mouthdown: null,
+          quarterup: null,
+          quarterdown: null
         }
         if (this.ids.length == 0) {
           this.getinfo()
@@ -187,7 +187,7 @@ export default {
             'warningCategory': 31,
             'upperLimit': 0, // 上线
             'lowerLimit': 0, // 下限
-            'slidingScales': this.slidingScales ? this.slidingScales : 0,
+            'slidingScales': this.slidingScales ? this.slidingScales : null,
             'flag': this.aoiinfo.flag
           }
         ],
@@ -255,14 +255,14 @@ export default {
     getinfo() {
       Getrole(this.info.id).then(res => {
         this.ware = {
-          allup: '',
-          alldown: '',
-          oneup: '',
-          onedown: '',
-          mouthup: '',
-          mouthdown: '',
-          quarterup: '',
-          quarterdown: ''
+          allup: null,
+          alldown: null,
+          oneup: null,
+          onedown: null,
+          mouthup: null,
+          mouthdown: null,
+          quarterup: null,
+          quarterdown: null
         }
         res.length > 0 ? this.flag = true : this.flag = false
         this.alldata = res

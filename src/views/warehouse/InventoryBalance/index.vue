@@ -101,15 +101,17 @@
         >
           <el-table-column
             :prop="item+'1'"
-            label="数量"
+            label="数量 "
+            width="100px"
           >
             <template slot-scope="{ row, column, $index}">
-              <span>{{ row[item+'1'] }} {{ row.unitName }}</span>
+              <span>{{ row[item+'1'] }} {{ row[item+'1']> 0?row.unitName :'' }}</span>
             </template>
           </el-table-column>
           <el-table-column
             :prop="item+'2'"
-            label="结存金额"
+            label="结存金额 (元)"
+            width="110px"
           >
             <template slot-scope="{ row, column, $index}">
               <span>{{ row[item+'2'] }}</span>
@@ -216,16 +218,16 @@ export default {
       InventoryBalance(data)
         .then(res => {
           debugger
-          this.tableHader = []
+          this.tableHader = new Set()
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].warehouseData = res.items[i].warehouseData.reverse()
             res.items[i].warehouseData.forEach(e => {
               res.items[i][e.warehouseName + '1'] = e.num
               res.items[i][e.warehouseName + '2'] = e.amount
-
-              this.tableHader.push(e.warehouseName)
+              this.tableHader.add(e.warehouseName)
             })
           }
+          this.tableHader = [...this.tableHader]
           this.list = res.items
           this.total = res.totalCount
           this.loading = false

@@ -20,8 +20,9 @@ export default [
       permissions: ['handle', 'system-project']
     }),
     meta: {
-      title: 'OrderSetting.Orders',
+      title: 'TaskCenterSetting.TaskCenter',
       icon: 's-seas'
+
     },
     children: [
       {
@@ -30,7 +31,8 @@ export default [
         component: () => import('@/views/kchk/handle'),
         meta: {
           title: '我的待办',
-          icon: 'wk wk-approve'
+          icon: 'iconfont icon-daibanshixiang',
+          num: 0
         }
       }
 
@@ -42,7 +44,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'SystemSetting.GoodsInfos',
+      title: 'TaskCenterSetting.TaskCenter',
       icon: 's-seas'
     },
     children: [
@@ -62,7 +64,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'SystemSetting.Warehouses',
+      title: 'TaskCenterSetting.TaskCenter',
       icon: 's-seas'
     },
     children: [
@@ -75,6 +77,30 @@ export default [
           icon: 'wk wk-o-task'
         }
       }
+    ]
+  },
+  {
+    ...layout({
+      permissions: ['handle', 'system-project']
+    }),
+    meta: {
+      title: 'TaskCenterSetting.TaskCenter',
+      icon: 's-seas'
+
+    },
+    children: [
+      {
+        name: 'warn',
+        path: 'warn', // 类目
+        component: () => import('@/views/kchk/warn'),
+        meta: {
+          title: '我的预警',
+          icon: 'wk wk-approve',
+          num: 0
+        }
+      }
+
+
     ]
   }
 ]

@@ -27,8 +27,12 @@ export default {
   mounted() {
     this.addDocumentVisibilityChange()
     this.setMinHeight()
+    this.TaskCenterCount()
   },
   methods: {
+    TaskCenterCount() {
+
+    },
     addDocumentVisibilityChange() {
       // 网页当前状态判断
       // hidden,

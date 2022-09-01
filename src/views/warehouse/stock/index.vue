@@ -79,7 +79,7 @@
         /> -->
         <el-table-column
           prop="occupyNum"
-          label="占用库存 (单位)"
+          label="占用库存 "
         >
           <template slot-scope="{ row, column, $index}">
 
@@ -88,7 +88,7 @@
         </el-table-column>
         <el-table-column
           prop="residueNum"
-          label="剩余库存 (单位)"
+          label="剩余库存 "
         >
           <template slot-scope="{ row, column, $index}">
 

@@ -15,6 +15,7 @@ const getters = {
   hrmShowType: state => state.hrm.hrmShowType,
   lang: state => state.app.lang,
   app: state => state.app,
+  quantity: state => state.app.quantity,
   logo: state => {
     if (state.app.logo) {
       return state.app.logo

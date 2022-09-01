@@ -216,6 +216,10 @@ export default {
     FinishDetail(val) {
       const data = { detailList: [] }
       for (let i = 0; i < this.list.length; i++) {
+        if (!this.list[i].checkTime) {
+          this.$message.error('请输入盘点时间')
+          return
+        }
         this.list[i].checkTime = parseTime(this.list[i].checkTime)
         data.detailList.push({ id: this.list[i].id, checkPlanDetail: this.list[i] })
       }

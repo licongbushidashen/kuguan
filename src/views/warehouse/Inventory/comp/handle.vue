@@ -2,6 +2,7 @@
   <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" title="盈亏处理" style="    ">
     <el-table
       v-loading="loading"
+      v-if="list.length>0"
       id="examine-table"
       :data="list"
       class="main-table"
@@ -47,7 +48,7 @@
       <el-table-column prop="profitNum" label="盘盈数量" />
       <el-table-column prop="lossNum" label="盘亏数量" />
     </el-table>
-    <div class="p-contianer">
+    <div v-if="list.length>0" class="p-contianer">
       <el-pagination
         :current-page="currentPage"
         :total="total"
@@ -58,6 +59,10 @@
         layout="total, prev, pager, next"
         @current-change="handleCurrentChange"
       />
+    </div>
+    <div v-if="list.length==0">
+
+      <el-empty :image-size="200" description="本次盘点无需盈亏处理"/>
     </div>
     <span v-if="flag!=3" slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>

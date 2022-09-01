@@ -17,7 +17,7 @@
           icon="iconfont icon-piliangtianjia"
           class="xr-btn--orange"
           @click="addJurisdiction1"
-        >批量入库</el-button
+        >整批入库</el-button
         >
       </template>
     </xr-header>
@@ -43,8 +43,9 @@
               <label for="">入库日期</label>
               <el-date-picker
                 v-model="startTime"
-                type="date"
-                placeholder="入库日期"/>
+                type="datetimerange"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"/>
             </div>
             <div>
               <label for="">入库类型</label>
@@ -233,7 +234,7 @@ export default {
           name: '借用还库'
         }
       ],
-      startTime: null,
+      startTime: [],
       showing: false,
       planing: true,
       warningshow: true,
@@ -317,8 +318,9 @@ export default {
       if (this.orderCategory) {
         data.stockCategory = this.orderCategory
       }
-      if (this.startTime) {
-        data.startTime = filterTimestampToFormatTime(new Date(this.startTime).getTime(), 'YYYY-MM-DD HH:mm:ss')
+      if (this.startTime && this.startTime.length > 0) {
+        data.startTime = filterTimestampToFormatTime(new Date(this.startTime[0]).getTime(), 'YYYY-MM-DD HH:mm:ss')
+        data.endTime = filterTimestampToFormatTime(new Date(this.startTime[1]).getTime(), 'YYYY-MM-DD HH:mm:ss')
       }
       OrderPage(data)
         .then(res => {
@@ -395,6 +397,7 @@ export default {
 
 <style lang="scss" scoped>
 .morecondition{
+  align-items: baseline;
       position: absolute;
     z-index: 9;
     background: #fff;

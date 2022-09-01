@@ -169,7 +169,11 @@ const permission = {
       messageItem.children[0].meta.num = num
       Vue.set(state.crmRouters, 1, messageItem)
     },
-
+    SET_CRMROUTERSNUM1: (state, num) => {
+      const messageItem = state.handleRouters[0]
+      messageItem.children[0].meta.num = num
+      Vue.set(state.handleRouters, 0, messageItem)
+    },
     SET_GROUPSLIST: (state, data) => {
       state.groupsList = data
     }
@@ -179,7 +183,7 @@ const permission = {
       return new Promise(resolve => {
         // 路由完善
         perfectRouter(data, routers => {
-          commit('SET_ROUTERS', routers)
+          commit('SET_ROUTERS', routers, commit)
           resolve()
         })
       })

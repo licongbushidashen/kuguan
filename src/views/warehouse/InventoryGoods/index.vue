@@ -78,21 +78,22 @@
           prop="goodsName"
           label="商品名称"
         />
-        <el-table-column
-          prop="unitName"
-          label="单位"
-        />
+
         <el-table-column
           prop="quantity"
           label="数量"
-        />
+        >
+          <template slot-scope="{ row, column, $index}">
+            <span> {{ row.quantity }} {{ row.quantity>0?row.unitName:'' }}</span>
+          </template>
+        </el-table-column>
         <!-- <el-table-column
           prop="unitPrice"
           label="单价"
         /> -->
         <el-table-column
           prop="amountMoney"
-          label="金额"
+          label="金额(元)"
         />
         <el-table-column
           prop="size"

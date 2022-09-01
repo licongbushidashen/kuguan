@@ -4,7 +4,8 @@ import { removeAuth } from '@/utils/auth'
 import qs from 'qs'
 import { debounce } from 'throttle-debounce'
 import router from '../router'
-import Lockr from 'lockr'
+// import Lockr from 'lockr'
+import Cookies from 'js-cookie'
 /**
  * 检查dom是否忽略
  * @param {*} e
@@ -94,7 +95,7 @@ service.interceptors.request.use(
         config.baseURL = '/file2'
       }
     }
-    config.headers['Authorization'] = `Bearer ${Lockr.get('accessToken')}`
+    config.headers['Authorization'] = `Bearer ${Cookies.get('accessToken')}`
     const flag =
       config.headers['Content-Type'] &&
       config.headers['Content-Type'].indexOf('application/json') !== -1
@@ -184,11 +185,21 @@ service.interceptors.response.use(
       const response = error.response
       if (response.status == 401) {
         localStorage.removeItem('accessToken')
+        Cookies.remove('accessToken')
         router.push('/login')
       } else if (response.status == 500) {
         errorMessage('网络错误，请检查您的网络')
       } else if (response.status == 400) {
-        errorMessage(response.data.error.details)
+        debugger
+        if (response.data.error_description) {
+          if (response.data.error_description == 'invalid_username_or_password') {
+            errorMessage('账号或密码错误')
+          } else {
+            errorMessage(response.data.error_description)
+          }
+        } else {
+          errorMessage(response.data.error.details)
+        }
       } else if (response.data && response.data.error.message) {
         errorMessage(response.data.error.message)
       } else if (response.error && response.error.details) {

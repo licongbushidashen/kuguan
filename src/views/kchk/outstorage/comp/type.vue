@@ -1,12 +1,13 @@
 <template>
   <el-dialog :visible.sync="shows" :title="p" append-to-body>
     <div v-loading="loading">
-      <div style="margin-bottom :20px;display: flex;     align-items: baseline;">
+      <div style="display: flex;     align-items: baseline; flex-wrap:wrap ;">
+        <label for="" style="margin-left:0px;margin-right: 18px;">{{ placeholder.slice(3) }}</label>
         <el-input
           :placeholder="placeholder"
           v-model="inputContent"
           class="search-input"
-          style="width:140px"
+          style="width:140px;margin-bottom: 20px;"
           @keyup.enter.native="Pagelist"/>
         <!-- <div v-if="p=='货品'" style="margin: 0px 10px">
           <label for="">仓库名称</label>
@@ -24,33 +25,35 @@
             placeholder="类目名称"
           />
         </div> -->
-        <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
-          <label for="">入库日期</label>
+        <div v-if="name=='gldj1'" style="margin: 0px 10px">
+          <label for="">出库日期</label>
           <el-date-picker
             v-model="startTime"
-            style="width:140px"
-            type="date"
-            placeholder="入库日期"/>
-        </div> -->
-        <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
-        <label for="">入库类型</label>
-        <el-select v-model="orderCategory" style="width:130px">
-          <el-option
-            v-for="(item,index) in Category"
-            :key="index" :label="item.name"
-            :value="item.orderCategory"
-            class="wy-select"/>
-        </el-select>
-      </div>
-      <div v-if="name=='gldj1'" style="margin: 0px 10px">
-        <label for="">往来单位/仓库名称</label>
-        <el-input
-          v-model="company"
-          style="width:130px;"
-          placeholder="往来单位/仓库名称"
-        />
-      </div> -->
-        <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)"> 查询</el-button>
+            style="width:352px"
+            type="datetimerange"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"/>
+        </div>
+
+        <div v-if="name=='gldj1'" style="margin: 0px 10px">
+          <label for="">往来单位/仓库名称</label>
+          <el-input
+            v-model="company"
+            style="width:130px;"
+            placeholder="往来单位/仓库名称"
+          />
+        </div>
+        <div v-if="name=='gldj1'" style="margin-bottom: 20px;">
+          <label for="">入库类型</label>
+          <el-select v-model="orderCategory" style="width:140px">
+            <el-option
+              v-for="(item,index) in Category"
+              :key="index" :label="item.name"
+              :value="item.orderCategory"
+              class="wy-select"/>
+          </el-select>
+        </div>
+        <el-button type="primary" style="margin-left:20px;    margin-bottom: 20px;" @click="handleCurrentChange(0)"> 查询</el-button>
         <!-- <span v-if="shows1" style="background: #85C7AF;    padding: 10px 15px;    border-radius: 5px;    color: #fff;    position: absolute;    right: 30px;" @click="openurl">新 增</span> -->
       </div>
       <el-table
@@ -171,7 +174,7 @@ export default {
   data() {
     return {
       loading: false,
-      startTime: null,
+      startTime: [new Date() - 1000 * 24 * 3600 * 7, new Date()],
       company: '',
       orderCategory: '',
       Category: [
@@ -229,7 +232,7 @@ export default {
           { name: '单据号', prop: 'orderNo' },
           { name: '出库类型', prop: 'orderCategory' },
           { name: '类目名称', prop: 'goodsCategoryName' },
-          { name: '往来单位', prop: 'memoryCardName' },
+          { name: '往来单位', prop: 'companyName' },
           { name: '仓库', prop: 'wareHouseName' }
         ]
 
@@ -323,12 +326,18 @@ export default {
       this.loading = true
       const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
       if (this.name == 'gldj1') {
+        data.orderNo = this.inputContent
+        data.searchKey = this.company
         data.isOutbound = false
         if (this.orderCategory) {
           data.stockCategory = this.orderCategory
         }
-        if (this.startTime) {
-          data.startTime = filterTimestampToFormatTime(new Date(this.startTime).getTime(), 'YYYY-MM-DD HH:mm:ss')
+        if (this.startTime && this.startTime.length > 0) {
+          data.startTime = filterTimestampToFormatTime(new Date(this.startTime[0]).getTime(), 'YYYY-MM-DD HH:mm:ss')
+          data.endTime = filterTimestampToFormatTime(new Date(this.startTime[1]).getTime(), 'YYYY-MM-DD HH:mm:ss')
+        } else {
+          data.startTime = null
+          data.endTime = null
         }
       }
       if (this.name == 'dutyUser') {
@@ -390,3 +399,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+/deep/.el-dialog{
+  min-width: 960px;
+}
+</style>

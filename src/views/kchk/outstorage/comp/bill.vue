@@ -313,8 +313,16 @@
             <div class="field__label">
               申请时间
             </div>
-            <div class="wy-body-info-one-left-val ">
+            <div v-if="!butoom1" class="wy-body-info-one-left-val ">
               {{ time|filterTimestampToFormatTime('YYYY-MM-DD HH:mm') }}
+            </div>
+            <div v-else class="wy-body-info-one-left-val ">
+              <el-date-picker
+                v-model="time"
+                :clearable="false"
+                style="width:100%"
+                type="datetime"
+                placeholder="选择日期时间"/>
             </div>
           </div>
         </div>
@@ -678,6 +686,7 @@ export default{
       if (this.info.order && !this.ffts) {
         obj.order.orderNo = this.info.order.orderNo
         UpdateOrder(obj, this.info.order.id).then(res => {
+          this.$store.dispatch('TaskCenterCount')
           this.$message.success('修改成功')
           if (!f) {
             this.showDialog = false
@@ -695,6 +704,7 @@ export default{
         })
       } else {
         CreateOrder(obj).then(res => {
+          this.$store.dispatch('TaskCenterCount')
           this.$message.success('新增成功')
           if (!f) {
             this.showDialog = false
@@ -816,6 +826,9 @@ export default{
 
 </script>
 <style lang="scss" scoped>
+  /deep/.el-date-editor input{
+  border: 0px !important;
+}
 .fileList-order{
   display: flex;
       padding: 0px 20px;

@@ -314,8 +314,16 @@
             <div class="field__label">
               申请时间
             </div>
-            <div class="wy-body-info-one-left-val ">
+            <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ time|filterTimestampToFormatTime('YYYY-MM-DD HH:mm') }}
+            </div>
+            <div v-else class="wy-body-info-one-left-val ">
+              <el-date-picker
+                v-model="time"
+                :clearable="false"
+                style="width:100%"
+                type="datetime"
+                placeholder="选择日期时间"/>
             </div>
           </div>
         </div>
@@ -558,6 +566,9 @@ export default{
       }
     }
   },
+  mounted() {
+    this.getDepTreeList()
+  },
   methods: {
     delfilelist(index) {
       this.fileList.splice(index, 1)
@@ -567,6 +578,7 @@ export default{
       BatchALL(id, url).then(res => {
         res.forEach(e => {
           if (e.code) {
+            this.$store.dispatch('TaskCenterCount')
             this.$emit('change', 0)
             this.showDialog = false
             this.$message.success(e.message)
@@ -726,12 +738,14 @@ export default{
       if (this.info.order) {
         obj.order.orderNo = this.info.order.orderNo
         UpdateOrder(obj, this.info.order.id).then(res => {
+          this.$store.dispatch('TaskCenterCount')
           this.$message.success('修改成功')
           this.showDialog = false
           this.$emit('change', 0)
         })
       } else {
         CreateOrder(obj).then(res => {
+          this.$store.dispatch('TaskCenterCount')
           this.$message.success('新增成功')
           this.showDialog = false
           this.$emit('change', 0)
@@ -856,6 +870,9 @@ export default{
 
 </script>
 <style lang="scss" scoped>
+/deep/.el-date-editor input{
+  border: 0px !important;
+}
 .fileList-order{
   display: flex;
       padding: 0px 20px;

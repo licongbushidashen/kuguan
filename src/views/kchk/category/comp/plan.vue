@@ -43,14 +43,14 @@ export default {
     return {
       showDialog: false,
       ware: {
-        allup: '',
-        alldown: '',
-        oneup: '',
-        onedown: '',
-        mouthup: '',
-        mouthdown: '',
-        quarterup: '',
-        quarterdown: ''
+        allup: null,
+        alldown: null,
+        oneup: null,
+        onedown: null,
+        mouthup: null,
+        mouthdown: null,
+        quarterup: null,
+        quarterdown: null
       },
       flag: false,
       slidingScales: ''
@@ -147,7 +147,7 @@ export default {
             'warningCategory': 31,
             'upperLimit': 0, // 上线
             'lowerLimit': 0, // 下限
-            'slidingScales': this.slidingScales,
+            'slidingScales': this.slidingScales == '' ? null : this.slidingScales,
             'flag': this.alldata.length ? this.alldata.filter(e => e.warningCategory == '31')[0].flag : 0
           }
         ],
@@ -216,6 +216,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+  /deep/.el-dialog__body{
+    min-height: auto !important;
+  }
 .kuwaring{
       padding-left: 16px;
 }

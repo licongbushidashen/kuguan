@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "905458",
+      "name": "首页",
+      "font_class": "shouye1",
+      "unicode": "e6a5",
+      "unicode_decimal": 59045
+    },
+    {
+      "icon_id": "6296995",
+      "name": "出入库管理",
+      "font_class": "churukuguanli",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "12694055",
+      "name": "系统管理",
+      "font_class": "xitongguanli1",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "12959362",
+      "name": "我的已办",
+      "font_class": "wodeyiban",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "18442751",
+      "name": "系统管理",
+      "font_class": "xitongguanli2",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "18533065",
+      "name": "待办事项",
+      "font_class": "daibanshixiang",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "24164803",
+      "name": "库存管理",
+      "font_class": "kucunguanli1",
+      "unicode": "e80a",
+      "unicode_decimal": 59402
+    },
+    {
       "icon_id": "7964503",
       "name": "批量添加",
       "font_class": "piliangtianjia",

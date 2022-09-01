@@ -1,7 +1,8 @@
 <template>
   <el-dialog :visible.sync="shows" :title="p" append-to-body>
     <div v-loading="loading">
-      <div style="margin-bottom :20px;display: flex;     align-items: baseline;">
+      <div style="margin-bottom :20px;display: flex;     align-items: baseline; flex-wrap: wrap;">
+        <label for="">单据号</label>
         <el-input
           :placeholder="placeholder"
           v-model="inputContent"
@@ -12,9 +13,10 @@
           <label for="">出库日期</label>
           <el-date-picker
             v-model="startTime"
-            style="width:140px"
-            type="date"
-            placeholder="入库日期"/>
+            style="width:352px"
+            type="datetimerange"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"/>
         </div>
         <!-- <div v-if="name=='gldj1'" style="margin: 0px 10px">
         <label for="">入库类型</label>
@@ -152,7 +154,7 @@ export default {
   data() {
     return {
       loading: false,
-      startTime: null,
+      startTime: [new Date() - 1000 * 24 * 3600 * 7, new Date()],
       company: '',
       orderCategory: '',
       Category: [
@@ -265,7 +267,7 @@ export default {
       if (isCheckedItems.length > 0) {
         if (this.name == 'gldj1') {
           debugger
-          GetOrder(this.row.goodsId).then(res => {
+          GetOrder(this.row.id).then(res => {
             // const arr = res.detailList
             this.$emit('change', res, this.name)
             // for (let i = 0; i < arr.length; i++) {
@@ -316,8 +318,12 @@ export default {
         if (this.orderCategory) {
           data.stockCategory = this.orderCategory
         }
-        if (this.startTime) {
-          data.startTime = filterTimestampToFormatTime(new Date(this.startTime).getTime(), 'YYYY-MM-DD HH:mm:ss')
+        if (this.startTime && this.startTime.length > 0) {
+          data.startTime = filterTimestampToFormatTime(new Date(this.startTime[0]).getTime(), 'YYYY-MM-DD HH:mm:ss')
+          data.endTime = filterTimestampToFormatTime(new Date(this.startTime[1]).getTime(), 'YYYY-MM-DD HH:mm:ss')
+        } else {
+          data.startTime = null
+          data.endTime = null
         }
       }
       if (this.name == 'dutyUser') {

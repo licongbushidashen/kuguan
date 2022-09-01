@@ -2,7 +2,7 @@
 
   <div class="main">
     <xr-header
-      icon-class="wk wk-approve"
+      icon-class="iconfont icon-daibanshixiang"
       icon-color="#2362FB"
       label="任务中心" >
       <template v-slot:ft>
@@ -30,14 +30,14 @@
               type="primary" @click="addJurisdiction(4)">批量出库</el-button>
 
           </div>
-          <!-- <div>
+          <div>
             <el-button
-              v-if="activeName==3&&allAuth['OrderSetting.Orders.BatchSubmit']"
+              v-if="activeName==6&&allAuth['OrderSetting.Orders.BatchSubmit']"
               :disabled="!disable"
               style="margin:0px 0px 10px 0px"
               type="primary" @click="addJurisdiction(1)">批量提交</el-button>
 
-          </div> -->
+          </div>
           <div>
             <el-button
               v-if="activeName==0&&allAuth['OrderSetting.Orders.BatchSubmit']"
@@ -52,12 +52,22 @@
     <div class="main-body">
       <div class="main-table-header">
         <el-tabs v-model="activeName" @tab-click="handleCurrentChange(0)">
-          <el-tab-pane label="待我审批" name="1"/>
-          <el-tab-pane label="待入库确认" name="2"/>
-          <el-tab-pane label="待出库确认" name="3"/>
-          <!-- <el-tab-pane label="我的已办" name="4"/>
-          <el-tab-pane label="我的审评" name="5"/> -->
-          <el-tab-pane label="草稿" name="0"/>
+          <el-tab-pane label="待我审批" name="1">
+            <span slot="label">待我审批<el-badge v-if="quantity['3']>0" :value="quantity['3']" :max="99" class="item" style="    margin: 0px;"/></span>
+          </el-tab-pane>
+          <el-tab-pane label="待入库确认" name="2">
+            <span slot="label">待入库确认<el-badge v-if="quantity['4']>0" :value="quantity['4']" :max="99" class="item" style="    margin: 0px;"/></span>
+          </el-tab-pane>
+          <el-tab-pane label="待出库确认" name="3">
+            <span slot="label">待出库确认<el-badge v-if="quantity['5']>0" :value="quantity['5']" :max="99" class="item" style="    margin: 0px;"/></span>
+          </el-tab-pane>
+          <el-tab-pane label="被驳回" name="6">
+            <span slot="label">被驳回<el-badge v-if="quantity['6']>0" :value="quantity['6']" :max="99" class="item" style="    margin: 0px;"/></span>
+          </el-tab-pane>
+          <!-- <el-tab-pane label="我的审评" name="5"/> -->
+          <el-tab-pane label="草稿" name="0">
+            <span slot="label">草稿<el-badge v-if="quantity['0']>0" :value="quantity['0']" :max="99" class="item" style="    margin: 0px;"/></span>
+          </el-tab-pane>
         </el-tabs>
       </div>
 
@@ -76,6 +86,15 @@
           width="50"
           label="序号"
         >
+          <template slot="header" slot-scope="scope">
+            <div style="text-align: center; display: block;">
+              <el-checkbox
+                v-model="checkedAll"
+                :disabled="!list || !list.length"
+                @change="selectAll"
+              />
+            </div>
+          </template>
           <template slot-scope="{ row, column, $index }">
             <span class="status-name">
               <span
@@ -111,11 +130,6 @@
         <el-table-column prop="address" label="类型">
           <template slot-scope="{ row, column, $index }">
             <span>{{ row.identification | ident }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column show-overflow-tooltip prop="name" label="单据状态">
-          <template slot-scope="{ row, column, $index }">
-            <span>{{ row.flag | flagname }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="goodsCategoryName" label="所属类目" />
@@ -209,9 +223,11 @@ export default {
       }
     }
   },
+
   mixins: [],
   data() {
     return {
+      checkedAll: [],
       activeName: '1',
       flag: '',
       flagName: [
@@ -244,8 +260,14 @@ export default {
       disable: false
     }
   },
+
   computed: {
-    ...mapGetters(['allAuth'])
+    ...mapGetters(['allAuth', 'quantity'])
+  },
+  watch: {
+    activeName() {
+      this.checkedAll = []
+    }
   },
   mounted() {
     var self = this
@@ -262,6 +284,21 @@ export default {
     },
     openwarn(row) {
       this.warningshow = !this.warningshow
+    },
+    selectAll(e) {
+      const isChecked = e
+      if (isChecked) {
+        this.list.forEach((item) => {
+          item.checked = true
+          this.isCheckedItems = 1
+        })
+      } else {
+        this.list.forEach((item) => {
+          item.checked = false
+          this.isCheckedItems = 0
+        })
+      }
+      this.onItemCheckboxChange()
     },
     /*
      * 当checkbox选择change时事件
@@ -285,9 +322,8 @@ export default {
       this.loading = true
       const data = {
         maxResultCount: this.pageSize,
-        skipCount: this.currentPage,
-        createName: this.inputs,
-        searchKey: this.company
+        skipCount: this.currentPage
+
       }
       data.status = Number(this.activeName)
       if (this.orderCategory) {
@@ -329,6 +365,7 @@ export default {
       switch (val) {
         case 1:
           BatchSubmit(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -342,6 +379,7 @@ export default {
           break
         case 2:
           BatchAgree(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -355,6 +393,7 @@ export default {
           break
         case 4:
           BatchStorageOut(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -368,6 +407,7 @@ export default {
           break
         case 5:
           BatchStorageIn(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -423,6 +463,7 @@ export default {
     margin-top:10px !important
   }
 .morecondition{
+  align-items: baseline;
       position: absolute;
     z-index: 9;
     background: #fff;

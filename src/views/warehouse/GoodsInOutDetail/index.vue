@@ -116,15 +116,16 @@
           </template>
           <el-table-column
             prop="inNum"
-            label="入库数量"
+            label="入库数量 "
+            width="120px"
           >
             <template slot-scope="{ row, column, $index}">
-              {{ row.inNum }} {{ row.unitName }}
+              {{ row.inNum }} {{ row.inNum>0? row.unitName:'' }}
             </template>
           </el-table-column>
           <el-table-column
             prop="inPrice"
-            label="入库金额"
+            label="入库金额 (元)"
           />
         </el-table-column>
         <el-table-column
@@ -136,15 +137,16 @@
           </template>
           <el-table-column
             prop="outNum"
-            label="出库数量"
+            label="出库数量 "
+            width="120px"
           >
             <template slot-scope="{ row, column, $index}">
-              {{ row.outNum }} {{ row.unitName }}
+              {{ row.outNum }} {{ row.outNum>0? row.unitName:'' }}
             </template>
           </el-table-column>
           <el-table-column
             prop="outPrice"
-            label="出库金额"
+            label="出库金额 (元)"
           />
         </el-table-column>
         <el-table-column
@@ -156,15 +158,16 @@
           </template>
           <el-table-column
             prop="residueQuantity"
-            label="剩余数量"
+            label="剩余数量 "
+            width="120px"
           >
             <template slot-scope="{ row, column, $index}">
-              {{ row.residueQuantity }} {{ row.unitName }}
+              {{ row.residueQuantity }} {{ row.residueQuantity>0? row.unitName:'' }}
             </template>
           </el-table-column>
           <el-table-column
             prop="residuePrice"
-            label="结存金额"
+            label="结存金额 (元)"
           />
         </el-table-column>
       </el-table>

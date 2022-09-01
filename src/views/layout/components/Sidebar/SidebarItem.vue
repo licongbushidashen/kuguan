@@ -128,11 +128,61 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import './variables.scss';
+.el-menu--collapse{
+  .menu-wrapper .el-menu-item{
+    padding-left: 13px !important;
+  }
+ .menu-wrapper .el-submenu /deep/.el-submenu__title{
 
+      padding-left: 13px !important;
+
+  }
+  .menu-wrapper .el-menu-item.is-active{
+
+    margin-left: 14px !important;
+    margin-right: 14px !important;
+    >div{
+      padding-left: 9px !important;
+    border-radius: 4px !important;
+    }
+  }
+}
+.menu-wrapper.nest-menu .el-menu-item.is-active>div{
+  background-color :#fff !important;
+      padding-left: 51px !important;
+      border-radius: 0px !important;
+}
 .menu-wrapper {
+/deep/.el-menu-item.is-active{
+  color: rgba(0, 0, 0, 0.85) !important;
+    margin: 0px !important;
+    padding: 0px !important;
+    background: rgb(0, 21, 41) !important;
+    .el-submenu__title+ul>div{
+      background-color :#fff !important;
+      padding-left: 51px !important;
+      border-radius: 0px !important;
+    }
+    >div{
+      background-color :#fff !important;
+      padding-left: 31px !important;
+      border-radius: 0px !important;
+      >span{
+        color: #000000d9 !important;
+      }
+      >i{
+        color: #000000d9 !important;
+      }
+      .el-badge{
+        right: 54px !important;
+    top: 5px !important;
+      }
+    }
+}
   /deep/ .el-submenu__title {
     height: auto;
     line-height: normal;
+
   }
 
   /deep/ .el-submenu.is-active {

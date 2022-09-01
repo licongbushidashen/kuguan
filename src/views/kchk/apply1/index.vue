@@ -113,11 +113,7 @@
             <span>{{ row.identification | ident }}</span>
           </template>
         </el-table-column>
-        <el-table-column show-overflow-tooltip prop="name" label="单据状态">
-          <template slot-scope="{ row, column, $index }">
-            <span>{{ row.flag | flagname }}</span>
-          </template>
-        </el-table-column>
+
         <el-table-column prop="goodsCategoryName" label="所属类目" />
         <el-table-column prop="wareHouseName" label="仓库" />
         <el-table-column prop="createUserName" label="申请人" />
@@ -423,6 +419,7 @@ export default {
       margin-top:0px !important
     }
   .morecondition{
+    align-items: baseline;
         position: absolute;
       z-index: 9;
       background: #fff;

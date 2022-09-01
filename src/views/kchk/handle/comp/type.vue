@@ -1,12 +1,12 @@
 <template>
   <el-dialog :visible.sync="shows" :title="p" append-to-body>
     <div v-loading="loading">
-      <div style="margin-bottom :20px;display: flex;     align-items: baseline;">
+      <div style="display: flex;     align-items: baseline;">
         <el-input
           :placeholder="placeholder"
           v-model="inputContent"
           class="search-input"
-          style="width:140px"
+          style="width:140px;margin-bottom :20px"
           @keyup.enter.native="Pagelist"/>
         <!-- <div v-if="objs.identification &&p=='货品'" style="margin: 0px 10px">
           <label for="">仓库名称</label>

@@ -263,6 +263,7 @@ export default {
           this.isCheckedItems = 0
         })
       }
+      this.onItemCheckboxChange()
     },
     /*
    * 当checkbox选择change时事件

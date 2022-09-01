@@ -1,5 +1,5 @@
 <template>
-  <div class="home-main">
+  <div class="home-main" style="padding:15px">
     <div class="tops">
       <div>
         <h1 class="color1">{{ d.waringNum }}</h1>
@@ -29,12 +29,12 @@
     <div class="home-content">
       <div class="seacrh">
         <el-select v-model="os" style="margin-right:20px" @change="GetDataBoradChart">
-          <el-option v-for="(item ,i ) in o" :key="i" :label="item.name" :value="item.name" />
+          <el-option v-for="(item ,i ) in o" :key="i" :label="item.name" :value="item.id" />
         </el-select>
         <el-date-picker
           v-model="time"
           :picker-options="pickerOptions"
-          type="daterange"
+          type="monthrange"
           align="right"
           unlink-panels
           range-separator="至"
@@ -43,11 +43,11 @@
           @change="GetDataBoradChart"/>
       </div>
 
-      <div class="echart1" style="    background: #fff;">
+      <div class="echart1">
         <div v-if="!echartHasData1" id="axismain1" />
         <el-empty v-if="echartHasData1" :image-size="200"/>
       </div>
-      <div class="echart2" style="    background: #fff;">
+      <div class="echart2" >
         <div>
           <div v-if="!echartHasData2" id="axismain2"/>
           <el-empty v-if="echartHasData1" :image-size="200"/>
@@ -62,7 +62,7 @@
 </template>
 <script>
 const option = {
-  backgroundColor: '#fff',
+
   tooltip: {
     trigger: 'axis',
     axisPointer: { // 坐标轴指示器，坐标轴触发有效
@@ -70,7 +70,7 @@ const option = {
     }
   },
   grid: {
-    left: '2%',
+    left: '20px',
     right: '4%',
     bottom: '5%',
     top: '16%',
@@ -78,8 +78,8 @@ const option = {
   },
   legend: {
     data: ['出库', '入库', '库存'],
-    left: '20px',
-    top: 0,
+    right: '20px',
+    top: '0px',
     icon: 'path://M0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z',
     textStyle: {
       color: '#333'
@@ -109,7 +109,7 @@ const option = {
       }
     },
     splitLine: {
-      show: true,
+      show: false,
       lineStyle: {
         color: '#f1f1f1'
       }
@@ -131,8 +131,8 @@ const option = {
     barWidth: '15%',
     itemStyle: {
       normal: {
-        color: '#063AC0',
-        barBorderRadius: [12, 12, 0, 0]
+        color: '#063AC0'
+
       }
     },
     data: []
@@ -143,8 +143,8 @@ const option = {
     barWidth: '15%',
     itemStyle: {
       normal: {
-        color: '#2FA86B',
-        barBorderRadius: [12, 12, 0, 0]
+        color: '#2FA86B'
+
       }
 
     },
@@ -158,8 +158,8 @@ const option = {
     smooth: true,
     itemStyle: {
       normal: {
-        color: '#2FA86B',
-        barBorderRadius: [12, 12, 0, 0]
+        color: '#2FA86B'
+
       }
     },
     data: []
@@ -273,7 +273,7 @@ export default {
     },
     GetDataBoradChart() {
       console.log(this.getTime(this.time[0]))
-      const data = { 'catetoryName': this.os == '全部' ? '' : this.os, 'beginMonth': this.getTime(this.time[0]), 'endMonth': this.getTime(this.time[1]) }
+      const data = { 'catetoryId': this.os == '全部' ? null : this.os, 'beginMonth': this.getTime(this.time[0]), 'endMonth': this.getTime(this.time[1]) }
       request({
         url: '/api/zjlab/DataBoard/GetDataBoradChart',
         method: 'post',
@@ -286,8 +286,8 @@ export default {
           const arr1 = []; const arr2 = []; const arr3 = []; const time = []
           for (let i = 0; i < res.inventoryNumDto.length; i++) {
             const data = res.inventoryNumDto[i]
-            arr1.push(data.inNum)
-            arr2.push(data.outNum)
+            arr1.push(data.outNum)
+            arr2.push(data.inNum)
             arr3.push(data.inventory)
             time.push(data.month)
           }
@@ -297,11 +297,12 @@ export default {
             text: '易耗品库存量',
             textStyle: {
               align: 'center',
-              color: '#666',
-              fontSize: 16
+              color: '#333',
+              fontSize: 15,
+              fontWeight: '500'
             },
-            top: '0',
-            left: 'center'
+            top: '0px',
+            left: 'left'
           }
           option1.series[0].data = arr1
           option1.series[1].data = arr2
@@ -329,8 +330,8 @@ export default {
               barWidth: '15%',
               itemStyle: {
                 normal: {
-                  color: '#063AC0',
-                  barBorderRadius: [12, 12, 0, 0]
+                  color: '#063AC0'
+
                 }
               },
               data: []
@@ -341,8 +342,8 @@ export default {
               smooth: true,
               itemStyle: {
                 normal: {
-                  color: '#2FA86B',
-                  barBorderRadius: [12, 12, 0, 0]
+                  color: '#2FA86B'
+
                 }
               },
               data: []
@@ -352,11 +353,12 @@ export default {
             text: '易耗品消耗量',
             textStyle: {
               align: 'center',
-              color: '#666',
-              fontSize: 16
+              color: '#333',
+              fontSize: 15,
+              fontWeight: '500'
             },
-            top: '0',
-            left: 'center'
+            top: '0px',
+            left: 'left'
           }
           option1.xAxis.data = time
           option1.series[0].data = arr1
@@ -380,8 +382,8 @@ export default {
               barWidth: '15%',
               itemStyle: {
                 normal: {
-                  color: '#063AC0',
-                  barBorderRadius: [12, 12, 0, 0]
+                  color: '#063AC0'
+
                 }
               },
               data: []
@@ -392,8 +394,8 @@ export default {
               smooth: true,
               itemStyle: {
                 normal: {
-                  color: '#2FA86B',
-                  barBorderRadius: [12, 12, 0, 0]
+                  color: '#2FA86B'
+
                 }
               },
               data: []
@@ -404,11 +406,12 @@ export default {
             text: '易耗品消耗费用',
             textStyle: {
               align: 'center',
-              color: '#666',
-              fontSize: 16
+              color: '#333',
+              fontSize: 15,
+              fontWeight: '500'
             },
-            top: '0',
-            left: 'center'
+            top: '0px',
+            left: 'left'
           }
           option1.xAxis.data = time
           option1.series[0].data = arr1
@@ -426,22 +429,38 @@ export default {
     height: 100%;
 }
 .echart2,.echart1{
-    height: 45%;
+    height: 44%;
+
+}
+.echart1{
+    margin: 16px 0px;
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 20px 12px 20px 16px;
+    border: 1px solid #e6e6e6;
 }
 .echart2{
     display: flex;
+    >div:first-child{
+      margin-right: 10px;
+    }
+    >div:last-child{
+      margin-left: 10px;
+    }
     >div{
-       flex:1
+       flex:1;
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 20px 12px 10px 16px;
+    border: 1px solid #e6e6e6;
     }
 }
 .home-content{
 height: 100%;
 .seacrh{
-    padding: 20px;
-    background: #fff;
-    margin-top: 20px;
+margin-top: 15px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     padding-right: 20px;
     }
 }
@@ -465,13 +484,15 @@ height: 100%;
 
 .tops {
     width: 100%;
-    height: 100px;
+    height: 120px;
     display: flex;
     background: #fff;
     border: 1px solid #efefef;
     border-radius: 4px;
       padding: 10px 0px;
-
+span{
+  font-size: 15px;
+}
     >div {
         flex: 1;
         text-align: center;
@@ -479,7 +500,7 @@ height: 100%;
     border-left: 1px solid #efefef;
         h1 {
             margin: 10px 0px;
-
+            margin-top: 17px;
         }
     }
 }

@@ -1,6 +1,16 @@
 import request from '@/utils/request'
 
 
+export function TaskCenterCount(data) {
+  return request({
+    url: `/api/zjlab/Order/TaskCenterCount`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function GetSpacePointTree(data) {
   const url = data.parentId ? `/api/zjlab/SpacePoint/GetSpacePointTree?parentId=${data.parentId}` : `/api/zjlab/SpacePoint/GetSpacePointTree`
   return request({

@@ -78,38 +78,54 @@
           prop="goodsName"
           label="商品名称"
         />
-        <el-table-column
+        <!-- <el-table-column
           prop="unitName"
           label="计量单位"
-        />
+        /> -->
         <el-table-column
           prop="initialNum"
-          label="期初数量"
-        />
+          label="期初数量 "
+        >
+          <template slot-scope="{ row, column, $index}">
+            {{ row.initialNum }}     {{ row.initialNum>0?row.unitName:'' }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="initialPrice"
-          label="期初金额"
+          prop="initialAmount"
+          label="期初金额 (元)"
         />
         <el-table-column
           prop="inNum"
-          label="入库数量"
-        />
+          label="入库数量 "
+        >
+          <template slot-scope="{ row, column, $index}">
+            {{ row.inNum }}     {{ row.inNum>0?row.unitName:'' }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="inPrice"
-          label="入库金额"
+          label="入库金额 (元)"
         />
         <el-table-column
           prop="outNum"
-          label="出库数量"
-        />
+          label="出库数量 "
+        >
+          <template slot-scope="{ row, column, $index}">
+            {{ row.outNum }}     {{ row.outNum>0?row.unitName:'' }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="outPrice"
-          label="出库金额"
+          label="出库金额 (元)"
         />
         <el-table-column
-          prop="changeNum"
-          label="盈亏数量"
-        />
+          prop="profitLossNum"
+          label="盈亏数量 "
+        >
+          <template slot-scope="{ row, column, $index}">
+            {{ row.profitLossNum }}     {{ row.profitLossNum>0?row.unitName:'' }}
+          </template>
+        </el-table-column>
         <!-- <el-table-column
           prop="changePrice"
           label="调整单价"
@@ -120,15 +136,19 @@
         /> -->
         <el-table-column
           prop="endNum"
-          label="期末数量"
-        />
+          label="期末数量 "
+        >
+          <template slot-scope="{ row, column, $index}">
+            {{ row.endNum }}     {{ row.endNum>0?row.unitName:'' }}
+          </template>
+        </el-table-column>
         <!-- <el-table-column
           prop="endPrice"
           label="期末单价"
         /> -->
         <el-table-column
           prop="endAmount"
-          label="期末金额"
+          label="期末金额 (元)"
         />
       </el-table>
       <div class="p-contianer">
@@ -241,7 +261,7 @@ export default {
       const year = date.getFullYear()
       const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
       if (flag) {
-        return year + '-' + month
+        return year + '-' + month + '-01' + ' 00:00:00'
       } else {
         return year + '-' + month
       }

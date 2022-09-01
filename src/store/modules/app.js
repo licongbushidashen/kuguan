@@ -1,5 +1,6 @@
 import { adminSystemIndexAPI } from '@/api/admin/config'
 import { crmSettingConfigDataAPI } from '@/api/admin/crm'
+import { TaskCenterCount } from '@/api/account'
 // import { adminConfigsetIndexAPI } from '@/api/admin/application'
 // import { configHeaderModelSortAPI } from '@/api/config'
 import Lockr from 'lockr'
@@ -23,7 +24,8 @@ const app = {
     imageCache: {},
     headerModule: null, // 置顶模块
     // 模块权限
-    moduleAuth: null
+    moduleAuth: null,
+    quantity: {}
   },
 
   mutations: {
@@ -60,10 +62,33 @@ const app = {
     },
     SET_HEADERMODULE: (state, value) => {
       state.headerModule = value
+    },
+    SET_quantity: (state, value) => {
+      state.quantity = value
     }
   },
 
   actions: {
+    // 待办数量
+    TaskCenterCount({ commit }) {
+      return new Promise((resolve, reject) => {
+        TaskCenterCount()
+          .then(response => {
+            const resData = response || {}
+            const obj = {}
+            resData.forEach(e => {
+              obj[e.status] = e.count
+            })
+            commit('SET_CRMROUTERSNUM1', obj['1'])
+            commit('SET_quantity', obj)
+            resolve(response)
+          })
+          .catch(error => {
+            reject(error)
+          })
+      })
+    },
+
     // 登录
     SystemLogoAndName({ commit }) {
       return new Promise((resolve, reject) => {
