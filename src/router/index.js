@@ -80,20 +80,6 @@ const layout = function(meta = {}, path = '/home', requiresAuth = true) {
 }
 export default router
 export const asyncRouterMap = [
-  { type: 'kchk', router: kcRouter },
-  { type: 'crm', router: crmRouter },
-  { type: 'taskExamine', router: taskExamineRouter },
-  { type: 'workLog', router: workLogRouter },
-  { type: 'addressBook', router: addressBookRouter },
-  { type: 'project', router: pmRouter },
-  { type: 'bi', router: biRouter },
-  { type: 'calendar', router: calendarRouter },
-  { type: 'hrm', router: hrmRouter },
-  { type: 'manage', router: adminRouter },
-  { type: 'kcgl', router: kcglRouter },
-  { type: 'warehouse', router: warehouseRouter },
-  { type: 'account', router: accountRouter },
-  { type: 'handle', router: handleRouter },
   { type: 'home', router: [{
     ...layout({
       permissions: ['home', 'system-project']
@@ -115,7 +101,22 @@ export const asyncRouterMap = [
 
 
     ]
-  }] }
+  }] },
+  { type: 'kchk', router: kcRouter },
+  { type: 'crm', router: crmRouter },
+  { type: 'taskExamine', router: taskExamineRouter },
+  { type: 'workLog', router: workLogRouter },
+  { type: 'addressBook', router: addressBookRouter },
+  { type: 'project', router: pmRouter },
+  { type: 'bi', router: biRouter },
+  { type: 'calendar', router: calendarRouter },
+  { type: 'hrm', router: hrmRouter },
+  { type: 'manage', router: adminRouter },
+  { type: 'kcgl', router: kcglRouter },
+  { type: 'warehouse', router: warehouseRouter },
+  { type: 'account', router: accountRouter },
+  { type: 'handle', router: handleRouter }
+
 ]
 // [{
 //     ...layout({

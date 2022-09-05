@@ -50,6 +50,13 @@
                   @click="addEmployees"> 关联用户 </el-button>
               </flexbox>
               <el-table :data="tableData" :height="tableHeight" style="width: 100%">
+                <el-table-column
+                  label="序号"
+                  width="50">
+                  <template slot-scope="{ row, column, $index }">
+                    <span style="    text-align: center;"> {{ $index + 1 }}</span>
+                  </template>
+                </el-table-column>
                 <el-table-column v-for="(item, index) in tableList" :prop="item.field" :label="item.label" :key="index" show-overflow-tooltip />
                 <el-table-column label="操作">
                   <template slot-scope="scope">
@@ -112,10 +119,10 @@
 
               <div style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
 
-                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
+                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit(1)"> 保存 </el-button>
               </div>
-              <div style="margin-left:20px">
-                <div v-for="(item,index) in allrole" :key="index" style="">
+              <div >
+                <!-- <div v-for="(item,index) in allrole" :key="index" style="">
                   <el-checkbox :indeterminate="item.indeterminate" v-model="item.isGranted" @change="handleCheckAllChange(item,index)">{{ item.displayName }}</el-checkbox>
                   <br style="">
                   <div v-for="(item1, index1) in item.permissions" :key="index1" style="    margin-bottom: 5px;">
@@ -126,10 +133,18 @@
                     </div>
 
                   </div>
-                </div>
+                </div> -->
+                <el-tree
+                  ref="tree1"
+                  :data="allrole"
+                  :props="defaultProps1"
+                  show-checkbox
+                  default-expand-all
+                  node-key="id"
+                  highlight-current/>
               </div>
-
             </div>
+
 
           </el-tab-pane>
           <el-tab-pane v-if="roleActive.name!='admin'" label="数据权限" name="rule2"><!-- v-if="roleActive && showRuleSet" -->
@@ -231,6 +246,12 @@ export default {
         label: 'name',
         children: 'childen'
       },
+      defaultProps1: {
+        id: 'name',
+        label: 'displayName',
+        children: 'permissions'
+      },
+      data1: [],
       quanxian: 1,
       pid: '',
       title: '',
@@ -296,7 +317,8 @@ export default {
       currentCrumbs: {},
       checkList: [], // 自定义选择
       allrole: [], // 按钮权限
-      nowrole: []
+      nowrole: [],
+      allroleActive: []
     }
   },
 
@@ -375,7 +397,6 @@ export default {
         for (const [k, v] of res) {
           obj.push({ name: k, isGranted: v })
         }
-        console.log()
         this.nowrole = obj
       }
     },
@@ -460,6 +481,7 @@ export default {
       this.checkedarr(arr)
     },
     handleCheckAllChange4() {
+      this.allroleActive = []
       for (let i = 0; i < this.allrole.length; i++) {
         let flag = 0
         for (let j = 0; j < this.allrole[i].permissions.length; j++) { // 第二层全选反选
@@ -475,8 +497,8 @@ export default {
             }
           }
         }
+
         const obj = this.GrantedArray(this.allrole[i].permissions, 1, flag)
-        debugger
         this.allrole[i] = { ...this.allrole[i], ...obj }
       }
     },
@@ -485,6 +507,11 @@ export default {
       let unTickCount = 0
       const len = arr.length
 
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i].isGranted) {
+          this.allroleActive.push(arr[i])
+        }
+      }
       if (index == 1) {
         for (var i = 0; i < arr.length; i++) {
           if (!arr[i].indeterminate)unTickCount++
@@ -670,10 +697,27 @@ export default {
           }
           res.groups[i].permissions = arr
         }
-        this.allrole = res.groups
-        this.handleCheckAllChange4()
-        console.log(res.groups)
+        this.allrole = JSON.parse(JSON.stringify(res.groups).replace(/name/g, 'id'))
+        this.allroleActive = []
+        this.pushids(this.allrole)
+        this.$nextTick(() => {
+          this.$refs.tree1.setCheckedKeys(this.allroleActive)
+        })
       })
+    },
+    // pushs(){
+    //   for
+    // },
+    pushids(arr) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].permissions && arr[i].permissions.length) {
+          this.pushids(arr[i].permissions)
+        } else {
+          if (arr[i].isGranted) {
+            this.allroleActive.push(arr[i].id)
+          }
+        }
+      }
     },
     /**
        * 员工列表
@@ -789,15 +833,28 @@ export default {
       })
     },
     // 权限提交
-    ruleSubmit() {
+    ruleSubmit(val) {
+      debugger
       this.ruleLoading = true
       // const arr = []
 
-      if (this.quanxian == 1) {
+      if (val == 1) {
         this.newArr = []
         // this.toOneArray(this.allrole)
         // this.nowrole
-        updatapermissions(`?providerName=R&providerKey=${this.roleActive.name}`, { permissions: this.nowrole }).then(res => {
+        const arr = this.$refs.tree1.getCheckedNodes()
+        const obj = []
+        const active = new Set(this.allroleActive)
+        for (const item of arr) {
+          if (item.isGranted != undefined) {
+            obj.push({ name: item.id, isGranted: true })
+            active.delete(item.id)
+          }
+        }
+        [...active].forEach(e => {
+          obj.push({ name: e, isGranted: false })
+        })
+        updatapermissions(`?providerName=R&providerKey=${this.roleActive.name}`, { permissions: obj }).then(res => {
           this.$message.success('保存成功！')
           this.ruleLoading = false
         }).catch(() => {
@@ -1087,7 +1144,7 @@ export default {
        */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getUserList()
     },
 
@@ -1163,14 +1220,14 @@ export default {
 
   .nav__hd {
     position: relative;
-    padding: 15px;
+    padding: 20px 15px;
     font-size: 16px;
     font-weight: 600;
     border-bottom: 1px solid $xr-border-line-color;
 
     .el-button {
       position: absolute;
-      top: 10px;
+      top: 13px;
       right: 15px;
     }
   }
@@ -1283,6 +1340,9 @@ export default {
       color: $xr-color-primary;
     }
   }
+ /deep/ .el-tree-node__content{
+  margin-bottom: 10px;
+ }
 
   .jurisdiction-content-checkbox .el-tree /deep/ .el-tree-node>.el-tree-node__content {
     margin-bottom: 20px;

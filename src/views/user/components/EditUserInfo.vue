@@ -19,9 +19,9 @@
             :size="70"
             :src="userInfo.img"
             class="user-img" />
-          <div class="change-avatar" @click="handleChangeAvatar">
+            <!-- <div class="change-avatar" @click="handleChangeAvatar">
             更换头像
-          </div>
+          </div> -->
         </flexbox>
       </el-form-item>
       <el-form-item
@@ -66,8 +66,11 @@
 
 <script>
 import {
-  adminUsersUpdateImgAPI,
-  adminUsersUpdateAPI
+  putprofile,
+  getprofile
+} from '@/api/kcjl/user'
+import {
+  adminUsersUpdateImgAPI
 } from '@/api/user/personCenter'
 import { mapGetters } from 'vuex'
 import { regexIsCRMMobile, regexIsCRMEmail } from '@/utils'
@@ -79,11 +82,6 @@ export default {
     EditImage
   },
   data() {
-    const sexMap = [
-      { label: '请选择', value: 0 },
-      { label: '男', value: 1 },
-      { label: '女', value: 2 }
-    ]
     const validateCRMMobile = (rule, value, callback) => {
       if (!value || value == '' || regexIsCRMMobile(value)) {
         callback()
@@ -100,13 +98,10 @@ export default {
     }
     return {
       fieldList: [
-        { label: '姓名', field: 'realname' },
-        { label: '手机号(登录名)', field: 'mobile', disabled: true },
-        { label: '直属上级', field: 'parentName', disabled: true },
-        { label: '性别', field: 'sex', type: 'select', setting: sexMap },
-        { label: '邮箱', field: 'email' },
-        { label: '部门', field: 'deptName', disabled: true },
-        { label: '岗位', field: 'post' }
+        { label: '账号', field: 'userName', disabled: true },
+        { label: '姓名', field: 'name' },
+        { label: '手机号', field: 'phoneNumber' },
+        { label: '邮箱', field: 'email' }
       ],
       rules: {
         realname: [{ required: true, message: '请填写姓名', trigger: 'blur' }],
@@ -133,13 +128,20 @@ export default {
     userInfo: {
       handler() {
         this.initData()
+        this.getinfo()
       },
       deep: true,
       immediate: true
     }
   },
   methods: {
+    getinfo() {
+      getprofile().then(res => {
+        this.form = Object.assign({}, res)
+      })
+    },
     initData() {
+      console.log(this.userInfo)
       this.form = Object.assign({}, this.userInfo)
     },
     handleChangeAvatar() {
@@ -189,17 +191,18 @@ export default {
      * 个人信息编辑
      */
     handleSave() {
-      const params = {
-        realname: this.form.realname,
-        sex: this.form.sex,
-        email: this.form.email,
-        post: this.form.post,
-        username: this.form.username
-      }
+      // const params = {
+      //   realname: this.form.realname,
+      //   sex: this.form.sex,
+      //   email: this.form.email,
+      //   post: this.form.post,
+      //   username: this.form.username
+      // }
+      this.form.dutyUserId = this.form.id
       this.$refs.form.validate(valid => {
         if (valid) {
           this.loading = true
-          adminUsersUpdateAPI(params).then(() => {
+          putprofile(this.form).then(() => {
             this.loading = false
             this.$message.success('保存成功')
             this.$emit('change')

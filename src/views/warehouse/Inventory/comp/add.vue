@@ -3,7 +3,7 @@
     <create-sections title="基础信息">
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
     </create-sections>
-    <span slot="footer" class="dialog-footer" style="text-align: center !important;">
+    <span slot="footer" class="dialog-footer" style="text-align: center !important;margin-bottom: 20px !important;">
       <el-button @click="showDialog = false">取 消</el-button>
       <el-button type="primary" @click="savechange">保 存</el-button>
     </span>
@@ -135,9 +135,8 @@ export default {
         field: 'planName',
         formType: 'text',
         isNull: 1,
-        width: 1,
         name: '计划名称',
-        placeholder: '请输入',
+        placeholder: '请输入计划名称',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.planName : ''
@@ -147,7 +146,7 @@ export default {
         formType: 'selete',
         isNull: 1,
         name: '盘点方式',
-        placeholder: '',
+        placeholder: '请选择盘点方式',
         setting: [
           { name: '明盘', id: 0 },
           { name: '暗盘', id: 1 }
@@ -158,32 +157,11 @@ export default {
         value: this.aoiinfo ? this.aoiinfo.checkWay : ''
       })
       field.push({
-        field: 'operator',
-        formType: 'seleteload',
-        isNull: 1,
-        name: '经办人',
-        placeholder: '请选择',
-        setting: [],
-        inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.operator : ''
-      })
-      field.push({
-        field: 'wareHouseName',
-        formType: 'open',
-        isNull: 1,
-        name: '盘点仓库',
-        placeholder: '',
-        setting: [
-        ],
-        inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.wareHouseName : ''
-      })
-      field.push({
         field: 'goodsCategoryId',
         formType: 'selete',
         isNull: 1,
         name: '所属类目',
-        placeholder: '',
+        placeholder: '请选择所属类目',
         setting: this.tree,
         inputTips: '',
         optionL: 'name',
@@ -191,11 +169,24 @@ export default {
         value: this.aoiinfo ? this.aoiinfo.goodsCategoryId : ''
       })
       field.push({
+        field: 'wareHouseName',
+        formType: 'open',
+        isNull: 1,
+        name: '盘点仓库',
+        placeholder: '请选择仓库',
+        setting: [
+        ],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.wareHouseName : ''
+      })
+
+      field.push({
         field: 'startTime',
         formType: 'datetime',
+        format: 'yyyy-MM-dd HH:mm',
         isNull: 1,
         name: '开始时间',
-        placeholder: '请选择',
+        placeholder: '请选择开始时间',
         setting: [],
         inputTips: '',
 
@@ -204,12 +195,23 @@ export default {
       field.push({
         field: 'endTime',
         formType: 'datetime1',
+        format: 'yyyy-MM-dd HH:mm',
         isNull: 1,
         name: '结束时间',
-        placeholder: '请选择',
+        placeholder: '请选择结束时间',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.endTime : ''
+      })
+      field.push({
+        field: 'operator',
+        formType: 'seleteload',
+        isNull: 1,
+        name: '经办人',
+        placeholder: '请选择经办人',
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.operator : ''
       })
       // field.push({
       //   field: 'flag',
@@ -230,13 +232,12 @@ export default {
         formType: 'textarea',
         isNull: 0,
         name: '备注',
-        placeholder: '请输入',
+        placeholder: '请输入备注',
         row: 3,
         maxLength: 200,
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.remark : '',
-        width: 1
+        value: this.aoiinfo ? this.aoiinfo.remark : ''
       })
       this.fields = this.handleFields(field).list
       this.fieldsRules = this.handleFields(field).fieldRules

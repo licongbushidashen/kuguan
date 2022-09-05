@@ -5,7 +5,7 @@
         <el-button
           v-if="allAuth['InventoryManager.CheckPlans.Create']"
           class="main-table-header-button "
-          type=""
+          type="primary"
           icon="el-icon-plus"
           @click="addJurisdiction"
         >新建</el-button
@@ -25,7 +25,6 @@
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
-        <label>填写日期</label>
         <el-date-picker
           v-model="time"
           type="daterange"
@@ -85,14 +84,13 @@
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size.sync="pageSize"
           :total="total"
-          :page-size="pageSize"
-          :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
-          @current-change="handleCurrentChange"
-        />
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"/>
       </div>
     </div>
     <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList" />
@@ -118,6 +116,7 @@ import {
 import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
+import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -127,7 +126,7 @@ export default {
     Ccware,
     BulkImportUser
   },
-  mixins: [],
+  mixins: [pagest],
   data() {
     return {
       // 批量导入
@@ -142,7 +141,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 230, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -229,6 +228,8 @@ export default {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
             res.items[i].checked = false
+
+            res.items[i].fillingDate = parseTime(res.items[i].fillingDate, '{y}-{m}-{d} {h}:{m}')
           }
           this.list = res.items
           this.total = res.totalCount
@@ -244,7 +245,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 

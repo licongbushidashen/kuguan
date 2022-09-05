@@ -4,12 +4,14 @@
       <mtForm :file-list="attachmentList" :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
     </create-sections>
     <create-sections title="单位管理" style="margin:0px;" class="create-sections1">
-      <el-button
-        style="margin-top:10px"
-        type="primary"
-        icon="el-icon-plus" @click="addpush">新建</el-button>
-      <el-button
-        icon="el-icon-plus" style="margin-bottom:20px" @click="dellist">删除</el-button>
+      <div style="float: right;">
+        <el-button
+          style="margin-top:10px"
+          type="primary"
+          icon="el-icon-plus" @click="addpush">新建</el-button>
+        <el-button
+          icon="el-icon-plus" style="margin-bottom:20px" @click="dellist">删除</el-button>
+      </div>
       <el-table
         ref="multipleTable"
         :data="list"
@@ -87,20 +89,22 @@
           </template>
         </el-table-column>
       </el-table>
-      <span style="margin:20px 0px;display: block;">说明</span>
-      <el-input
-        v-model="aoiinfo.remark"
-        :autosize="{ minRows: 3, maxRows: 4}"
-        :maxlength="maxlength || 800"
-        type="textarea"
-        placeholder="请输入"
-        resize="none"/>
-      <span style="margin:20px 0px;display: block;"><i style="color:red;margin-right: 5px;">*</i> 状态</span>
-      <el-radio-group
-        v-model="aoiinfo.flag">
-        <el-radio key="1" :label="1">启用</el-radio>
-        <el-radio key="0" :label="0">禁用</el-radio>
-      </el-radio-group>
+      <div>
+        <span style="margin:20px 0px;display: block;">说明</span>
+        <el-input
+          v-model="aoiinfo.remark"
+          :autosize="{ minRows: 3, maxRows: 4}"
+          :maxlength="maxlength || 800"
+          type="textarea"
+          placeholder="请输入"
+          resize="none"/>
+        <span style="margin:20px 0px;display: block;"><i style="color:red;margin-right: 5px;">*</i> 状态</span>
+        <el-radio-group
+          v-model="aoiinfo.flag">
+          <el-radio key="1" :label="1">启用</el-radio>
+          <el-radio key="0" :label="0">禁用</el-radio>
+        </el-radio-group>
+      </div>
     </create-sections>
     <span slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>
@@ -362,7 +366,7 @@ export default {
         formType: 'selete',
         isNull: 1,
         name: '所属类目',
-        placeholder: '',
+        placeholder: '请选择类目',
         setting: this.tree,
         inputTips: '',
         optionL: 'name',

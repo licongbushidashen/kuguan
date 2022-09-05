@@ -62,6 +62,37 @@ export function Createusers(data) {
     }
   })
 }
+
+export function getprofile(data) {
+  return request({
+    url: `/api/account/my-profile`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function putprofile(data) {
+  return request({
+    url: `/api/account/my-profile`,
+    method: 'put',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function putpassword(data) {
+  return request({
+    url: `/api/account/my-profile/change-password`,
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function Updateusers(data) {
   return request({
     url: `/api/identity/users/${data.id}`,

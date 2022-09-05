@@ -4,7 +4,7 @@
     <xr-header
       icon-class="iconfont icon-daibanshixiang"
       icon-color="#2362FB"
-      label="任务中心" >
+      label="我的待办" >
       <template v-slot:ft>
         <div style="    display: flex;    justify-content: end;">
           <div>
@@ -135,7 +135,7 @@
         <el-table-column prop="goodsCategoryName" label="所属类目" />
         <el-table-column prop="wareHouseName" label="仓库" />
         <el-table-column prop="createUserName" label="申请人" />
-        <el-table-column prop="creationTime" label="申请时间" />
+        <el-table-column prop="receiptDate" label="申请时间" />
         <!-- <el-table-column
           prop="ean13"
           label="单位"
@@ -150,11 +150,13 @@
         <el-pagination
           :current-page="currentPage"
           :total="total"
+          :page-sizes="pageSizes"
           :page-size="pageSize"
           :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
+
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
       </div>
@@ -247,13 +249,14 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 280, // 表的高度
       list: [],
       createAction: {
         type: 'save'
       },
       currentPage: 0,
       pageSize: 15,
+      pageSizes: [15, 30, 60, 100],
       total: 0,
       obj: {},
       info: {},
@@ -279,6 +282,14 @@ export default {
     this.getList()
   },
   methods: {
+    /**
+     * 更改每页展示数量
+     */
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.getList()
+    },
+
     openplan(row) {
       this.planing = !this.planing
     },
@@ -337,6 +348,7 @@ export default {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
             res.items[i].checked = false
+            res.items[i].receiptDate = filterTimestampToFormatTime(new Date(res.items[i].receiptDate).getTime(), 'YYYY-MM-DD HH:mm')
           }
           this.list = res.items
           this.total = res.totalCount
@@ -353,7 +365,7 @@ export default {
     handleCurrentChange(val) {
       this.morecondition = false
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 
@@ -462,7 +474,8 @@ export default {
   /deep/.el-table{
     margin-top:10px !important
   }
-.morecondition{
+.morecondition{ padding-left:4px !important;top: -5px;
+  margin-top: 4px;
   align-items: baseline;
       position: absolute;
     z-index: 9;

@@ -223,7 +223,9 @@ div[lazy=loading] {
     background-color: #f4f4f5 !important;
   }
 }
-
+.el-pagination span:not([class*=suffix]), .el-pagination button{
+  line-height: 35px;
+}
 // 可访问
 .can-visit,
 .can-visit--underline {

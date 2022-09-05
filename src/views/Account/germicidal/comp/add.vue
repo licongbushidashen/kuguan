@@ -326,6 +326,7 @@ export default {
         isNull: 1,
         name: '消杀日期',
         placeholder: '请选择日期',
+        format: 'yyyy-MM-dd HH:mm',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.antivirusDate : ''
@@ -563,8 +564,8 @@ export default {
         maxLength: 200,
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.workCondition : '',
-        width: 1
+        value: this.aoiinfo ? this.aoiinfo.workCondition : ''
+
       })
       field.push({
         field: 'customerProblem',
@@ -576,8 +577,8 @@ export default {
         maxLength: 200,
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.customerProblem : '',
-        width: 1
+        value: this.aoiinfo ? this.aoiinfo.customerProblem : ''
+
       })
       field.push({
         field: 'processWay',
@@ -589,8 +590,8 @@ export default {
         maxLength: 200,
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.processWay : '',
-        width: 1
+        value: this.aoiinfo ? this.aoiinfo.processWay : ''
+
       })
       field.push({
         field: 'suggest',
@@ -602,8 +603,8 @@ export default {
         maxLength: 200,
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.suggest : '',
-        width: 1
+        value: this.aoiinfo ? this.aoiinfo.suggest : ''
+
       })
       this.fields = this.handleFields(field).list
       this.fieldsRules = this.handleFields(field).fieldRules

@@ -132,6 +132,15 @@ export default {
   .menu-wrapper .el-menu-item{
     padding-left: 13px !important;
   }
+  .menu-wrapper /deep/.el-menu-item.is-active > div .el-badge{
+        right: 13px !important;
+    top: -2px !important;
+      }
+
+  .menu-wrapper /deep/.el-menu-item> div .el-badge{
+        right: 13px !important;
+    top: -2px !important;
+      }
  .menu-wrapper .el-submenu /deep/.el-submenu__title{
 
       padding-left: 13px !important;
@@ -153,11 +162,17 @@ export default {
       border-radius: 0px !important;
 }
 .menu-wrapper {
-/deep/.el-menu-item.is-active{
+  /deep/.el-badge{
+        right: 40px !important;
+    top: 5px !important;
+      }
+
+  /deep/.el-menu-item.is-active{
   color: rgba(0, 0, 0, 0.85) !important;
     margin: 0px !important;
     padding: 0px !important;
     background: rgb(0, 21, 41) !important;
+
     .el-submenu__title+ul>div{
       background-color :#fff !important;
       padding-left: 51px !important;

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-if="showDialog" :visible.sync="showDialog" style="    " destroy-on-close title="直饮水台账">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" style="    " destroy-on-close title="饮水机台账">
     <create-sections >
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
     </create-sections>
@@ -175,6 +175,7 @@ export default {
       field.push({
         field: 'fillingDate',
         formType: 'datetime',
+        format: 'yyyy-MM-dd HH:mm',
         isNull: 1,
         name: '填写日期',
         placeholder: '请选择日期',
@@ -185,6 +186,7 @@ export default {
       field.push({
         field: 'installationDate',
         formType: 'datetime',
+        format: 'yyyy-MM-dd HH:mm',
         isNull: 1,
         name: '安装日期',
         placeholder: '请选择日期',
@@ -195,6 +197,7 @@ export default {
       field.push({
         field: 'maintenanceDate',
         formType: 'datetime',
+        format: 'yyyy-MM-dd HH:mm',
         isNull: 1,
         name: '维护日期',
         placeholder: '请选择维护日期',
@@ -267,8 +270,7 @@ export default {
         maxLength: 200,
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.remark : '',
-        width: 1
+        value: this.aoiinfo ? this.aoiinfo.remark : ''
       })
       this.fields = this.handleFields(field).list
       this.fieldsRules = this.handleFields(field).fieldRules

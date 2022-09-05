@@ -117,7 +117,7 @@
         <el-table-column prop="goodsCategoryName" label="所属类目" />
         <el-table-column prop="wareHouseName" label="仓库" />
         <el-table-column prop="createUserName" label="申请人" />
-        <el-table-column prop="creationTime" label="申请时间" />
+        <el-table-column prop="receiptDate" label="申请时间" />
         <!-- <el-table-column
             prop="ean13"
             label="单位"
@@ -131,14 +131,13 @@
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size.sync="pageSize"
           :total="total"
-          :page-size="pageSize"
-          :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
-          @current-change="handleCurrentChange"
-        />
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"/>
       </div>
     </div>
     <Bill :showing="jurisdictionCreateShow" :info="info" @change="getList" />
@@ -153,6 +152,7 @@ import { TaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchSto
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 import Bill from './comp/bill'
+import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -205,7 +205,7 @@ export default {
       }
     }
   },
-  mixins: [],
+  mixins: [pagest],
   data() {
     return {
       activeName: '4',
@@ -227,7 +227,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 200, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 180, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -297,6 +297,7 @@ export default {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
             res.items[i].checked = false
+            res.items[i].receiptDate = filterTimestampToFormatTime(new Date(res.items[i].receiptDate).getTime(), 'YYYY-MM-DD HH:mm')
           }
           this.list = res.items
           this.total = res.totalCount
@@ -313,7 +314,7 @@ export default {
     handleCurrentChange(val) {
       this.morecondition = false
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 
@@ -418,7 +419,8 @@ export default {
     /deep/.el-table{
       margin-top:0px !important
     }
-  .morecondition{
+  .morecondition{ padding-left:4px !important;top: -5px;
+    margin-top: 4px;
     align-items: baseline;
         position: absolute;
       z-index: 9;

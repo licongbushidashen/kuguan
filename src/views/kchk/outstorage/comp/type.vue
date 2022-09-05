@@ -2,7 +2,7 @@
   <el-dialog :visible.sync="shows" :title="p" append-to-body>
     <div v-loading="loading">
       <div style="display: flex;     align-items: baseline; flex-wrap:wrap ;">
-        <label for="" style="margin-left:0px;margin-right: 18px;">{{ placeholder.slice(3) }}</label>
+        <!-- <label for="" style="margin-left:0px;margin-right: 18px;">{{ placeholder.slice(3) }}</label> -->
         <el-input
           :placeholder="placeholder"
           v-model="inputContent"
@@ -29,14 +29,14 @@
           <label for="">出库日期</label>
           <el-date-picker
             v-model="startTime"
-            style="width:352px"
-            type="datetimerange"
+            style="width:240px"
+            type="daterange"
             start-placeholder="开始日期"
             end-placeholder="结束日期"/>
         </div>
 
         <div v-if="name=='gldj1'" style="margin: 0px 10px">
-          <label for="">往来单位/仓库名称</label>
+          <label for="">关键字</label>
           <el-input
             v-model="company"
             style="width:130px;"
@@ -199,18 +199,17 @@ export default {
       labelList: {
         wldw: [
           { name: '单位名称', prop: 'name' },
-          { name: '单位编码', prop: 'code' },
           { name: '联系人', prop: 'linkman' },
           { name: '联系方式', prop: 'phone' }
         ],
         ck: [
           { name: '仓库名称', prop: 'name' },
-          { name: '仓库编码', prop: 'code' }
+          { name: '仓库地址', prop: 'address' },
+          { name: '仓库说明', prop: 'remark' }
         ],
         jfkh: [
           { name: '经费卡号', prop: 'number' },
           { name: '经费名称', prop: 'name' },
-          { name: '所属部门 ', prop: 'deptName' },
           { name: '负责人 ', prop: 'dutyUser' }
         ],
         dutyUser: [
@@ -220,19 +219,18 @@ export default {
         ],
         goods: [
           { name: '货品名称', prop: 'goodsName' },
+          { name: '所属类目', prop: 'goodsCategoryName' },
           { name: '货品编码', prop: 'goodsCode' },
           { name: '品牌', prop: 'brand' },
-          { name: '所属类目', prop: 'goodsCategoryName' },
           { name: '货品条码', prop: 'ean13' },
-          { name: '规格', prop: 'size' },
-          { name: '剩余库存', prop: 'residueNum' }
+          { name: '规格', prop: 'size' }
         ],
         gldj1: [
           { name: '单据状态', prop: 'flag' },
           { name: '单据号', prop: 'orderNo' },
           { name: '出库类型', prop: 'orderCategory' },
           { name: '类目名称', prop: 'goodsCategoryName' },
-          { name: '往来单位', prop: 'companyName' },
+          { name: '往来单位', prop: 'memoryCardName' },
           { name: '仓库', prop: 'wareHouseName' }
         ]
 
@@ -316,7 +314,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.Pagelist()
     },
     changeParam(param) {

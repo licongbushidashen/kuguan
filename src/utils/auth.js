@@ -7,6 +7,7 @@ import Cookies from 'js-cookie'
 export function removeAuth() {
   return new Promise((resolve, reject) => {
     cache.rmAxiosCache()
+    Cookies.remove('accessToken')
     store.commit('SET_ALLAUTH', null)
     delete axios.defaults.headers['Authorization']
     resolve(true)

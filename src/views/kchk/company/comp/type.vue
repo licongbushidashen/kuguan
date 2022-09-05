@@ -1,7 +1,7 @@
 <template>
   <el-dialog :visible.sync="showDialog" title="单位类型管理" >
     <div>
-      <el-input v-model="inputs" style="width:200px;padding: 10px 0px 10px 10px;" placeholder="请输入单位类别">
+      <el-input v-model="inputs" style="width:200px;padding: 10px 0px 10px 0px;" placeholder="请输入单位类型">
         <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(1)"/>
       </el-input>
       <div style="float:right"><el-button
@@ -30,9 +30,17 @@
       <el-table-column
         show-overflow-tooltip
         type="index"
-        width="150"
+        width="70"
         label="序号">
-
+        <template slot="header" slot-scope="scope">
+          <div style="text-align: center; display: block;">
+            <el-checkbox
+              v-model="checkedAll"
+              :disabled="!list || !list.length"
+              @change="selectAll"
+            />
+          </div>
+        </template>
         <template slot-scope="{ row, column, $index}">
           <span class="status-name">
             <span
@@ -112,6 +120,7 @@ export default {
     }},
   data() {
     return {
+      checkedAll: [],
       titles: '新建单位类型',
       addshow: false,
       showDialog: false,
@@ -232,12 +241,27 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
     /*
    * 当checkbox选择change时事件
    */
+    selectAll(e) {
+      const isChecked = e
+      if (isChecked) {
+        this.list.forEach((item) => {
+          item.checked = true
+          this.isCheckedItems = 1
+        })
+      } else {
+        this.list.forEach((item) => {
+          item.checked = false
+          this.isCheckedItems = 0
+        })
+      }
+      this.onItemCheckboxChange()
+    },
     onItemCheckboxChange() {
       this.obj = {}
       this.list.filter((d) => d.checked).map(e => {

@@ -71,7 +71,7 @@
           prop="email"
           label="邮箱"
         />
-        <el-table-column label="操作" width="200">
+        <el-table-column label="操作" width="240">
           <template slot-scope="{ row, column }">
             <el-button type="text" icon="el-icon-user" @click="handleRowpassword(row,column)"/>
             <el-button type="text" icon="el-icon-edit" @click="handleRowClick(row,column)" />
@@ -93,12 +93,12 @@
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size.sync="pageSize"
           :total="total"
-          :page-size="pageSize"
-          :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
       </div>
     </div>
@@ -128,7 +128,7 @@ import {
 import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
-
+import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -137,7 +137,7 @@ export default {
     CreateSections,
     Ccware
   },
-  mixins: [],
+  mixins: [pagest],
   data() {
     const validateCRM = (rule, value, callback) => {
       var regex = /^(?![0-9A-Za-z]+$)(?![-`=\[\];',.~!@#$%^&*()_+|{}:"?]+$)(?![0-9-`=\[\];',.~!@#$%^&*()_+|{}:"?]+$)(?![A-Za-z-`=\[\];',.~!@#$%^&*()_+|{}:"?]+$)[0-9a-zA-Z-`=\[\];',.~!@#$%^&*()_+|{}:"?]{7,16}$/
@@ -157,7 +157,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 230, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -234,7 +234,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 

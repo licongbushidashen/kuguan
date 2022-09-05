@@ -4,17 +4,16 @@
       <template v-slot:ft>
         <el-button
           class="main-table-header-button "
-          type=""
+          type="primary"
           icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
       </template>
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
-        <label>填写日期</label>
         <el-date-picker
           v-model="time"
-          type="datetimerange"
+          type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"/>
@@ -29,6 +28,32 @@
         highlight-current-row
         @row-click="handleRowClick"
       >
+        <el-table-column
+          show-overflow-tooltip
+          type="index"
+          width="50"
+          label="序号"
+        >
+          <template slot-scope="{ row, column, $index }">
+            <span class="status-name">
+              <span
+                class="index"
+                style="text-align: center; display: block;"
+                @mouseenter="row.hover = true"
+                @mouseleave="row.hover = false"
+              >
+                <!-- <el-checkbox
+                  v-show="row.hover || row.checked"
+                  v-model="row.checked"
+                  @change="onItemCheckboxChange"
+                /> -->
+                <span class="text">{{
+                  $index + 1
+                }}</span>
+              </span>
+            </span>
+          </template>
+        </el-table-column>
 
         <el-table-column v-for="(item,index) in tableH" :prop="item.props" :label="item.name" :key="index"/>
 
@@ -183,7 +208,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 

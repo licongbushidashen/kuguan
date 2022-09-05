@@ -90,14 +90,13 @@
           prop="name"
           label="货品名称"/>
         <el-table-column
+          prop="categoryName"
+          label="所属类目"
+        />
+        <el-table-column
           show-overflow-tooltip
           prop="brand"
           label="品牌"/>
-
-        <el-table-column
-          prop="categoryName"
-          label="所属类目"
-          width="200"/>
         <el-table-column
           prop="size"
           label="规格"
@@ -120,12 +119,12 @@
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size.sync="pageSize"
           :total="total"
-          :page-size="pageSize"
-          :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
       </div>
     </div>
@@ -158,6 +157,7 @@ import Plan from './comp/plan.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 import TemplateManageDialog from '../../hrm/salary/archives/components/TemplateManageDialog.vue'
+import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -170,7 +170,7 @@ export default {
     BulkImportUser,
     TemplateManageDialog
   },
-  mixins: [],
+  mixins: [pagest],
   data() {
     return {
 
@@ -182,7 +182,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 230, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -312,7 +312,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 

@@ -168,7 +168,7 @@ export function DownloadWaterDispenserExcel(data) {
     }
   })
 }
-// 直饮水台账
+// 饮水机台账
 export function WaterDispenserGetPage(data) {
   return request({
     url: '/api/zjlab/WaterDispenser/GetPage',

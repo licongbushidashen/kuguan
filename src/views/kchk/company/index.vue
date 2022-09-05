@@ -91,10 +91,7 @@
           prop="name"
           label="单位名称"/>
 
-        <el-table-column
-          prop="code"
-          label="单位编码"
-        />
+
         <el-table-column
           prop="categoryName"
           label="类别"
@@ -106,6 +103,10 @@
         <el-table-column
           prop="phone"
           label="联系方式"
+        />
+        <el-table-column
+          prop="remark"
+          label="说明"
         />
         <el-table-column
           prop="creationTime"
@@ -125,12 +126,12 @@
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size.sync="pageSize"
           :total="total"
-          :page-size="pageSize"
-          :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
       </div>
     </div>
@@ -153,12 +154,14 @@ import {
   GetInfo,
   DownloadWarehouseExcel
 } from '@/api/kchk/company'
+import { filterTimestampToFormatTime } from '@/filters/index'
 import Ccware from './comp/add.vue'
 import Cctype from './comp/type.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 import { mapGetters } from 'vuex'
 import BulkImportUser from '../import.vue'
+import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -169,7 +172,7 @@ export default {
     Cctype,
     BulkImportUser
   },
-  mixins: [],
+  mixins: [pagest],
   data() {
     return {
       checkedAll: [],
@@ -182,7 +185,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 230, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -268,6 +271,7 @@ export default {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
             res.items[i].checked = false
+            res.items[i].creationTime = filterTimestampToFormatTime(new Date(res.items[i].creationTime).getTime(), 'YYYY-MM-DD HH:mm')
           }
           this.list = res.items
           this.total = res.totalCount
@@ -283,7 +287,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 

@@ -16,7 +16,14 @@
     <div class="main-body">
       <div class="main-table-header" style="padding-left:20px">
         <label for="">类目名称</label>
-        <el-input v-model="categoryName" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入类目名称"/>
+        <!-- <el-input v-model="categoryName" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入类目名称"/> -->
+        <el-select v-model="categoryName" clearable style="width:200px;padding: 10px 0px 0px 10px;" >
+          <el-option
+            v-for="(item,index) in showDepData"
+            :key="index"
+            :label="item.name" :value="item.id"
+            class="wy-select"/>
+        </el-select>
         <label for="" style="margin-left:10px">货品名称</label>
         <el-input v-model="goodsName" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入货品名称"/>
         <label for="" style="margin:0px 10px">时间范围</label>
@@ -154,12 +161,12 @@
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size.sync="pageSize"
           :total="total"
-          :page-size="pageSize"
-          :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"/>
       </div>
     </div>
@@ -171,9 +178,13 @@ import {
   TotalInventory,
   DownloadTotalInventoryExcel
 } from '@/api/Inventory/kc'
+import {
+  GetGoodsCategoryTreeHasRole
+} from '@/api/kchk/goods'
 import { downloadFileWithBuffer } from '@/utils'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
+import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -182,9 +193,10 @@ export default {
     CreateSections
 
   },
-  mixins: [],
+  mixins: [pagest],
   data() {
     return {
+      showDepData: [],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now()
@@ -197,7 +209,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 230, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -224,9 +236,21 @@ export default {
     if (this.$route.query.add == '1') {
       this.addJurisdiction()
     }
+    this.GetGoodsCategoryTreeHasRole()
     this.getList()
   },
   methods: {
+    GetGoodsCategoryTreeHasRole() {
+      GetGoodsCategoryTreeHasRole()
+        .then(response => {
+          this.showDepData = response || []
+          this.depLoading = false
+        })
+        .catch(() => {
+          this.depLoading = false
+        })
+    },
+
     /*
    * 当checkbox选择change时事件
    */
@@ -244,7 +268,10 @@ export default {
     getList() {
       this.loading = true
 
-      const data = { 'maxResultCount': this.currentPage + 15, 'skipCount': this.currentPage, goodsName: this.goodsName, categoryName: this.categoryName, month: this.gettiem(this.time, 1) }
+      const data = { 'maxResultCount': this.currentPage + 15, 'skipCount': this.currentPage, goodsName: this.goodsName, month: this.gettiem(this.time, 1) }
+      if (this.categoryName) {
+        data.goodsCategoryId = this.categoryName
+      }
       console.log(data, 666)
       TotalInventory(data)
         .then(res => {
@@ -272,7 +299,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 
@@ -304,8 +331,10 @@ export default {
      * 导出
      */
     downs() {
-      const data = { 'maxResultCount': 1000, 'skipCount': 0, goodsName: this.goodsName, categoryName: this.categoryName, beginTime: this.gettiem(this.time[0], 1), endTime: this.gettiem(this.time[1]) }
-
+      const data = { 'maxResultCount': 1000, 'skipCount': 0, goodsName: this.goodsName, beginTime: this.gettiem(this.time[0], 1), endTime: this.gettiem(this.time[1]) }
+      if (this.categoryName) {
+        data.goodsCategoryId = this.categoryName
+      }
       DownloadTotalInventoryExcel(data).then(res => {
         const blob = new Blob([res], {
           type: ''

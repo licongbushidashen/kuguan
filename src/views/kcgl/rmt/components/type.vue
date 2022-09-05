@@ -167,6 +167,7 @@ export default {
         ],
         dutyUser: [
           { name: '姓名', prop: 'name' },
+          { name: '账号', prop: 'userName' },
           { name: '联系方式', prop: 'phoneNumber' },
           { name: '邮箱', prop: 'email' }
         ],
@@ -284,7 +285,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.Pagelist()
     },
     changeParam(param) {

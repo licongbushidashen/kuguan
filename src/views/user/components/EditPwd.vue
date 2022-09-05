@@ -10,29 +10,23 @@
       :model="form"
       :rules="rules"
       label-position="left"
-      label-width="120px">
+      label-width="120px"
+    >
       <el-form-item label="原密码" prop="oldPwd">
-        <el-input
-          v-model.trim="form.oldPwd"
-          :maxlength="20"
-          type="password" />
+        <el-input v-model.trim="form.oldPwd" :maxlength="20" type="password" />
       </el-form-item>
       <el-form-item label="新密码" prop="newPwd">
-        <el-input
-          v-model.trim="form.newPwd"
-          :maxlength="20"
-          type="password" />
+        <el-input v-model.trim="form.newPwd" :maxlength="20" type="password" />
       </el-form-item>
       <el-form-item label="确认密码" prop="confirmPwd">
         <el-input
           v-model.trim="form.confirmPwd"
           :maxlength="20"
-          type="password" />
+          type="password"
+        />
       </el-form-item>
       <el-form-item>
-        <el-button
-          type="primary"
-          @click="handleSave">保存</el-button>
+        <el-button type="primary" @click="handleSave">保存</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -40,7 +34,9 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { adminUsersResetPasswordAPI } from '@/api/user/personCenter'
+import {
+  putpassword
+} from '@/api/kcjl/user'
 import { removeAuth } from '@/utils/auth'
 
 export default {
@@ -53,11 +49,19 @@ export default {
       rules: {
         oldPwd: [
           { required: true, message: '请输入原密码', trigger: 'blur' },
-          { pattern: pwdReg, message: '密码必须由6-20位字母、数字组成', trigger: 'blur' }
+          {
+            pattern: pwdReg,
+            message: '密码必须由6-20位字母、数字组成',
+            trigger: 'blur'
+          }
         ],
         newPwd: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
-          { pattern: pwdReg, message: '密码必须由6-20位字母、数字组成', trigger: 'blur' }
+          {
+            pattern: pwdReg,
+            message: '密码必须由6-20位字母、数字组成',
+            trigger: 'blur'
+          }
         ],
         confirmPwd: [
           { required: true, message: '请再次输入密码', trigger: 'blur' },
@@ -67,9 +71,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'userInfo'
-    ])
+    ...mapGetters(['userInfo'])
   },
   methods: {
     validatedConfirmPwd(rule, value, callback) {
@@ -86,26 +88,29 @@ export default {
         if (valid) {
           this.loading = true
           const params = {
-            id: this.userInfo.userId,
-            oldPwd: this.form.oldPwd,
-            newPwd: this.form.newPwd
+            currentPassword: this.form.oldPwd,
+            newPassword: this.form.newPwd
           }
-          adminUsersResetPasswordAPI(params).then(() => {
-            this.loading = false
-            removeAuth().then(() => {
-              this.$confirm('修改成功, 请重新登录', '提示', {
-                confirmButtonText: '确定',
-                showCancelButton: false,
-                type: 'warning'
-              }).then(() => {
-                this.$router.push('/login')
-              }).catch(() => {
-                this.$router.push('/login')
+          putpassword(params)
+            .then(() => {
+              this.loading = false
+              removeAuth().then(() => {
+                this.$confirm('修改成功, 请重新登录', '提示', {
+                  confirmButtonText: '确定',
+                  showCancelButton: false,
+                  type: 'warning'
+                })
+                  .then(() => {
+                    this.$router.push('/login')
+                  })
+                  .catch(() => {
+                    this.$router.push('/login')
+                  })
               })
             })
-          }).catch(() => {
-            this.loading = false
-          })
+            .catch(() => {
+              this.loading = false
+            })
         } else {
           return false
         }
@@ -116,10 +121,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import "./style";
-  .edit-pwd {
-    width: 100%;
-    background-color: white;
-    padding: 22px 25px;
-  }
+@import './style';
+.edit-pwd {
+  width: 100%;
+  background-color: white;
+  padding: 22px 25px;
+}
 </style>

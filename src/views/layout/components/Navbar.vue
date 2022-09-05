@@ -32,17 +32,17 @@
 
     <el-dropdown trigger="click" @command="moreMenuClick">
       <div class="user-container">
-        <template v-if="userInfo && Object.keys(userInfo).length > 0">
-          <xr-avatar :name="userInfo.realname" :size="32" :src="userInfo.img" class="user-img" />
-        </template>
+        <!-- <template v-if="userInfo && Object.keys(userInfo).length > 0"> -->
+        <xr-avatar :size="32" class="user-img" />
+        <!-- </template> -->
         <i class="el-icon-caret-bottom mark" />
       </div>
       <el-dropdown-menu slot="dropdown" class="el-dropdown-unarrow">
         <el-dropdown-item v-for="(item, index) in moreMenu" :key="index" :command="item.command" :divided="item.divided" :icon="item.icon" :disabled="item.disabled">{{ item.label }}</el-dropdown-item>
         <!-- <div v-if="manage && !isNewest" class="wk-update-tips">有新版本<el-badge is-dot><el-button type="primary" round @click="updateClick">更新</el-button></el-badge></div> -->
-        <div v-if="manage" class="handel-box">
+        <!-- <div v-if="manage" class="handel-box">
           <el-button type="primary" class="handel-button" @click="enterSystemSet()">企业管理后台</el-button>
-        </div>
+        </div> -->
       </el-dropdown-menu>
     </el-dropdown>
 
@@ -53,7 +53,6 @@
 <script>
 // import { systemMessageUnreadCountAPI } from '@/api/common'
 // import { crmCheckVersionAPI } from '@/api/admin/update'
-
 import SystemMessage from './SystemMessage'
 import NavManager from './NavManager'
 
@@ -125,25 +124,25 @@ export default {
           label: '基本信息',
           icon: 'wk wk-user'
         },
-        {
-          command: 'help',
-          divided: true,
-          label: '帮助中心',
-          icon: 'wk wk-help'
-        },
+        // {
+        //   command: 'help',
+        //   divided: true,
+        //   label: '帮助中心',
+        //   icon: 'wk wk-help'
+        // },
         {
           command: 'logOut',
           divided: false,
           label: '退出登录',
           icon: 'wk wk-logout'
-        },
-        {
-          command: 'version',
-          divided: false,
-          label: `版本 ${WKConfig.version}`,
-          icon: 'wk wk-version',
-          disabled: true
         }
+        // {
+        //   command: 'version',
+        //   divided: false,
+        //   label: `版本 ${WKConfig.version}`,
+        //   icon: 'wk wk-version',
+        //   disabled: true
+        // }
       ]
     },
     allItemsObj() {
@@ -711,7 +710,7 @@ export default {
 
 .nav-items-container .el-menu--horizontal>.el-menu-item {
 	padding: 0;
-	margin: 0 20px !important;
+	margin: 0 8px !important;
 	font-size: 16px;
 	font-weight: 500;
 	color: #2a304d ;

@@ -94,8 +94,8 @@ export default [
         path: 'warn', // 类目
         component: () => import('@/views/kchk/warn'),
         meta: {
-          title: '我的预警',
-          icon: 'wk wk-approve',
+          title: '预警管理',
+          icon: 'wk wk-bell',
           num: 0
         }
       }

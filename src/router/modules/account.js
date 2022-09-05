@@ -66,7 +66,7 @@ export default [
         path: 'Account-water', // 类目
         component: () => import('@/views/Account/water'),
         meta: {
-          title: '直饮水台账'
+          title: '饮水机台账'
         }
       }
 
@@ -101,7 +101,7 @@ export default [
       },
       {
         meta: {
-          title: '直饮水台账'
+          title: '饮水机台账'
         },
         name: 'waterReport',
         path: 'Account-waterReport', // 类目

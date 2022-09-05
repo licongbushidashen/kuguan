@@ -2,7 +2,7 @@
   <el-dialog :visible.sync="shows" :title="p" append-to-body>
     <div v-loading="loading">
       <div style="margin-bottom :20px;display: flex;     align-items: baseline; flex-wrap: wrap;">
-        <label for="">单据号</label>
+
         <el-input
           :placeholder="placeholder"
           v-model="inputContent"
@@ -13,8 +13,8 @@
           <label for="">出库日期</label>
           <el-date-picker
             v-model="startTime"
-            style="width:352px"
-            type="datetimerange"
+            style="width:240px"
+            type="daterange"
             start-placeholder="开始日期"
             end-placeholder="结束日期"/>
         </div>
@@ -65,9 +65,7 @@
                   v-model="row.checked"
                   @change="onItemCheckboxChange(row)"
                 />
-                <span class="text">{{
-                  $index+1
-                }}</span>
+
               </span>
 
             </span>
@@ -149,6 +147,9 @@ export default {
     },
     name: {
       type: String
+    },
+    objs: {
+      type: Object
     }
   },
   data() {
@@ -182,18 +183,17 @@ export default {
       labelList: {
         wldw: [
           { name: '单位名称', prop: 'name' },
-          { name: '单位编码', prop: 'code' },
           { name: '联系人', prop: 'linkman' },
           { name: '联系方式', prop: 'phone' }
         ],
         ck: [
           { name: '仓库名称', prop: 'name' },
-          { name: '仓库编码', prop: 'code' }
+          { name: '仓库地址', prop: 'address' },
+          { name: '仓库说明', prop: 'remark' }
         ],
         jfkh: [
           { name: '经费卡号', prop: 'number' },
           { name: '经费名称', prop: 'name' },
-          { name: '所属部门 ', prop: 'deptName' },
           { name: '负责人 ', prop: 'dutyUser' }
         ],
         dutyUser: [
@@ -203,9 +203,9 @@ export default {
         ],
         goods: [
           { name: '货品名称', prop: 'name' },
+          { name: '所属类目', prop: 'categoryName' },
           { name: '货品编码', prop: 'code' },
           { name: '品牌', prop: 'brand' },
-          { name: '所属类目', prop: 'categoryName' },
           { name: '货品条码', prop: 'ean13' },
           { name: '规格', prop: 'size' }
         ],
@@ -303,7 +303,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.Pagelist()
     },
     changeParam(param) {
@@ -312,6 +312,9 @@ export default {
     Pagelist() {
       this.loading = true
       const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
+      if (this.name == 'goods') {
+        data.categoryId = this.objs.typeId
+      }
       if (this.name == 'gldj1') {
         data.isOutbound = true
 

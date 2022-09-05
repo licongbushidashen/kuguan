@@ -49,6 +49,9 @@
  .el-radio .el-radio__label {
    padding-left: 8px;
  }
+ .main-table-header{
+  height: 54px !important
+ }
  .main-table-header .el-input .el-input__inner{
   height: 34px;
   line-height: 34px;
@@ -82,7 +85,7 @@ table {
 
  // 弹窗样式
  .el-dialog__footer {
-   padding: 10px !important;
+   padding: 10px 0px 20px 0px !important;
    background-color: #fff;
    border-top: 0px;
    text-align: center !important;
@@ -171,6 +174,7 @@ table {
 }
  .el-dialog__body{
   min-height: 300px;
+  padding: 15px 20px !important;
 }
 .el-date-editor .el-range-separator{
   width: 7% !important;
@@ -190,4 +194,29 @@ table {
 }
 .el-menu--horizontal>.el-menu-item{
   color: #2a304d;
+}
+.el-pagination .el-select .el-input .el-input__inner{
+  height: 28px !important;
+}
+.el-pagination__editor.el-input .el-input__inner{
+  height: 28px !important;
+}
+.el-button{
+  .iconfont,.wk {
+    font-size: 12px;
+  }
+ i{
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: baseline;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+ }
+}
+.el-tabs__nav-wrap::after{
+  height: 1px !important;
 }

@@ -2,17 +2,17 @@
 
   <div class="main">
     <xr-header
-      icon-class="wk wk-approve"
+      icon-class="wk wk-bell"
       icon-color="#2362FB"
-      label="我的预警" />
+      label="预警管理" />
     <div class="main-body">
       <div class="main-table-header">
         <el-tabs v-model="activeName" @tab-click="handleCurrentChange(0)">
           <el-tab-pane label="待处理" name="1">
-            <span slot="label">待我审批<el-badge v-if="quantity['3']>0" :value="quantity['3']" :max="99" class="item" style="    margin: 0px;"/></span>
+            <span slot="label">待处理<el-badge v-if="quantity['7']>0" :value="quantity['7']" :max="99" class="item" style="    margin: 0px;"/></span>
           </el-tab-pane>
           <el-tab-pane label="已处理" name="2">
-            <span slot="label">已处理<el-badge v-if="quantity['4']>0" :value="quantity['4']" :max="99" class="item" style="    margin: 0px;"/></span>
+            <span slot="label">已处理</span>
           </el-tab-pane>
 
         </el-tabs>
@@ -74,7 +74,7 @@
             </template>
           </el-table-column> -->
 
-        <el-table-column prop="orderNo" label="商品名称" />
+
         <el-table-column prop="goodsCategoryName" label="商品名称" />
         <el-table-column prop="wareHouseName" label="规格" />
         <el-table-column prop="createUserName" label="最低库存" />
@@ -94,14 +94,13 @@
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size.sync="pageSize"
           :total="total"
-          :page-size="pageSize"
-          :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
-          @current-change="handleCurrentChange"
-        />
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"/>
       </div>
     </div>
 
@@ -115,7 +114,7 @@ import { TaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchSto
 // import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
-
+import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -162,7 +161,7 @@ export default {
     }
   },
 
-  mixins: [],
+  mixins: [pagest],
   data() {
     return {
       checkedAll: [],
@@ -291,7 +290,7 @@ export default {
     handleCurrentChange(val) {
       this.morecondition = false
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 
@@ -400,7 +399,8 @@ export default {
     /deep/.el-table{
       margin-top:10px !important
     }
-  .morecondition{
+  .morecondition{ padding-left:4px !important;top: -5px;
+    margin-top: 4px;
     align-items: baseline;
         position: absolute;
       z-index: 9;

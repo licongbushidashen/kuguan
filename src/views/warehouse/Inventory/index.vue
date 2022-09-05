@@ -5,7 +5,7 @@
         <el-button
           v-if="allAuth['InventoryManager.CheckPlans.Create']"
           class="main-table-header-button "
-          type=""
+          type="primary"
           icon="el-icon-plus"
           @click="addJurisdiction"
         >新建</el-button
@@ -69,7 +69,7 @@
             <span>{{ row.flag | flagname }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="planName" label="盘点计划" />
+        <el-table-column prop="planName" label="盘点计划名称" />
         <el-table-column prop="checkWay" label="盘点方式" >
           <template slot-scope="{ row, column, $index }">
             <span>{{ row.checkWay | checkWay }}</span>
@@ -101,14 +101,13 @@
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size.sync="pageSize"
           :total="total"
-          :page-size="pageSize"
-          :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
-          @current-change="handleCurrentChange"
-        />
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"/>
       </div>
     </div>
     <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList" />
@@ -127,6 +126,7 @@ import Ccware from './comp/add.vue'
 import Handle from './comp/handle.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
+import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -157,7 +157,7 @@ export default {
       }
     }
   },
-  mixins: [],
+  mixins: [pagest],
   data() {
     return {
       flag: 0,
@@ -170,7 +170,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 230, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -254,7 +254,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 

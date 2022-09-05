@@ -161,11 +161,11 @@
         :disabled="item.disabled"
         :placeholder="item.placeholder"
         :append-to-body="false"
-        :value-format="item.format?item.format:'yyyy-MM-dd HH:mm:ss'"
         :type="item.date?item.date:'datetime'"
         :picker-options="{disabledDate(time){
           return time.getTime() > new Date(fieldFrom['endTime']).getTime()
         }}"
+        :format="item.format?item.format:'yyyy-MM-dd HH:mm:ss'"
         class="input-width"
         @click.native.stop="()=>{}"
         @input="commonChange(item, index, $event)"/>

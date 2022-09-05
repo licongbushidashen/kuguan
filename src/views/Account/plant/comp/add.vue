@@ -174,6 +174,7 @@ export default {
       field.push({
         field: 'fillingDate',
         formType: 'datetime',
+        format: 'yyyy-MM-dd HH:mm',
         isNull: 1,
         name: '消杀日期',
         placeholder: '请选择日期',
@@ -249,15 +250,14 @@ export default {
       field.push({
         field: 'remark',
         formType: 'textarea',
-        isNull: 1,
         name: '备注',
         placeholder: '请输入备注',
         row: 3,
         maxLength: 200,
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.remark : '',
-        width: 1
+        value: this.aoiinfo ? this.aoiinfo.remark : ''
+
       })
       this.fields = this.handleFields(field).list
       this.fieldsRules = this.handleFields(field).fieldRules

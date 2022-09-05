@@ -2,24 +2,24 @@
   <div class="home-main" style="padding:15px">
     <div class="tops">
       <div>
-        <h1 class="color1">{{ d.waringNum }}</h1>
-        <span>库存预警</span>
+        <h1 class="color1" @click="routerpush(1)">{{ d.waringNum }}</h1>
+        <span @click="routerpush(1)">库存预警</span>
       </div>
       <div>
-        <h1 class="color2">{{ d.inOrderNum }}</h1>
-        <span>今日入库单据数</span>
+        <h1 class="color2" @click="routerpush(2)">{{ d.inOrderNum }}</h1>
+        <span @click="routerpush(2)">今日入库单据数</span>
       </div>
       <div>
-        <h1 class="color3">{{ d.inOrderAmount }}</h1>
-        <span>今日入库总金额</span>
+        <h1 class="color3" @click="routerpush(2)">{{ d.inOrderAmount }}</h1>
+        <span @click="routerpush(2)">今日入库总金额</span>
       </div>
       <div>
-        <h1 class="color4">{{ d.outOrderNum }}</h1>
-        <span>今日出库单据数</span>
+        <h1 class="color4" @click="routerpush(3)">{{ d.outOrderNum }}</h1>
+        <span @click="routerpush(3)">今日出库单据数</span>
       </div>
       <div>
-        <h1 class="color5">{{ d.outOrderAmount }}</h1>
-        <span>今日出库总金额</span>
+        <h1 class="color5" @click="routerpush(3)">{{ d.outOrderAmount }}</h1>
+        <span @click="routerpush(3)">今日出库总金额</span>
       </div>
       <div>
         <h1 class="color6">{{ d.inventoryAmount }}</h1>
@@ -128,7 +128,7 @@ const option = {
   series: [{
     name: '出库',
     type: 'bar',
-    barWidth: '15%',
+    barWidth: '15px',
     itemStyle: {
       normal: {
         color: '#063AC0'
@@ -140,7 +140,7 @@ const option = {
   {
     name: '入库',
     type: 'bar',
-    barWidth: '15%',
+    barWidth: '15px',
     itemStyle: {
       normal: {
         color: '#2FA86B'
@@ -179,11 +179,10 @@ export default {
       time: [],
       pickerOptions: {
         shortcuts: [{
-          text: '最近一个月',
+          text: '当前月',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
             picker.$emit('pick', [start, end])
           }
         }, {
@@ -191,7 +190,7 @@ export default {
           onClick(picker) {
             const end = new Date()
             const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            start.setMonth(start.getMonth() - 4)
             picker.$emit('pick', [start, end])
           }
         }, {
@@ -199,7 +198,7 @@ export default {
           onClick(picker) {
             const end = new Date()
             const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
+            start.setMonth(start.getMonth() - 5)
             picker.$emit('pick', [start, end])
           }
         }]
@@ -224,7 +223,7 @@ export default {
 
   created() {
     const start = new Date()
-    start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
+    start.setMonth(start.getMonth() - 5)
     this.time = [start, new Date()]
     this.GetGoodsCategoryTree()
     this.GetTadayData()
@@ -239,6 +238,25 @@ export default {
     this.chartObj3.setOption(option, true)
   },
   methods: {
+    routerpush(val) {
+      if (val == 1) {
+        this.$router.push('/handle/warn')
+      } else if (val == 2) {
+        this.$router.push({
+          name: 'kcgj-put',
+          params: {
+            time: 1
+          }
+        })
+      } else if (val == 3) {
+        this.$router.push({
+          name: 'kcgj-out',
+          params: {
+            time: 1
+          }
+        })
+      }
+    },
     GetTadayData() {
       request({
         url: '/api/zjlab/DataBoard/GetTadayData',
@@ -327,7 +345,7 @@ export default {
             {
               name: '总消耗',
               type: 'bar',
-              barWidth: '15%',
+              barWidth: '15px',
               itemStyle: {
                 normal: {
                   color: '#063AC0'
@@ -338,7 +356,7 @@ export default {
             }, {
               name: '人均消耗',
               type: 'line',
-              barWidth: '15%',
+              barWidth: '15px',
               smooth: true,
               itemStyle: {
                 normal: {
@@ -379,7 +397,7 @@ export default {
             {
               name: '总费用',
               type: 'bar',
-              barWidth: '15%',
+              barWidth: '15px',
               itemStyle: {
                 normal: {
                   color: '#063AC0'
@@ -390,7 +408,7 @@ export default {
             }, {
               name: '人均费用',
               type: 'line',
-              barWidth: '15%',
+              barWidth: '15px',
               smooth: true,
               itemStyle: {
                 normal: {

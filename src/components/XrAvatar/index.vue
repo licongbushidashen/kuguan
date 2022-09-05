@@ -151,7 +151,10 @@ export default {
 .cursor-pointer {
   cursor: pointer;
 }
-
+.user-img.el-avatar.el-avatar--circle{
+  background: url('./hh.png') !important;
+  background-size: 100% 100% !important;
+}
 .el-avatar {
   /deep/ img {
     width: 100%;

@@ -40,7 +40,7 @@
               {{ objs.typeName }}
             </div>
             <div v-else :class="erroring?objs.typeId?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" >
-              <el-select v-model="objs.typeId">
+              <el-select v-model="objs.typeId" @change="dutychange">
                 <el-option
                   v-for="(item,index) in showDepData"
                   :key="index" :label="item.name"
@@ -176,7 +176,7 @@
                 <div style="    font-size: 13px;    color: #cccfd6;" >{{ scope.row.name || scope.row.goodsName || '请选择' }}</div>
               </div>
               <div v-else style="    border: 1px solid #d9d9d9;    min-height: 30px;    line-height: 30px;    padding-left: 12px;    border-radius: 5px;" @click="opende('goods',scope.$index)">
-                <div style="    font-size: 13px;    color: #cccfd6;">{{ scope.row.name || scope.row.goodsName || '请选择' }}</div>
+                <div :style="(scope.row.name || scope.row.goodsName)?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px; ">{{ scope.row.name || scope.row.goodsName || '请选择' }}</div>
               </div>
             </template>
           </el-table-column>
@@ -271,12 +271,12 @@
                 :on-remove="handleRemove"
                 :show-file-list="false"
                 drag
-                style="    line-height: 11px;min-height: 75px;"
+                style="    line-height: 11px;"
                 action="/api/zjlab/Attachment/UploadProviderFile"
               >
                 <el-button size="small" ><i
                   class="wk wk-icon-relation" style="font-size: 12px;    margin-right: 5px;"/>点击或拖拽上传</el-button>
-                <div slot="tip" >单文件不要超过5MB</div>
+                  <!-- <div slot="tip" >单文件不要超过5MB</div> -->
               </el-upload>
               <div>
                 <ul>
@@ -321,6 +321,7 @@
                 v-model="time"
                 :clearable="false"
                 style="width:100%"
+                format="yyyy-MM-dd HH:mm"
                 type="datetime"
                 placeholder="选择日期时间"/>
             </div>
@@ -339,7 +340,7 @@
       <el-button v-if="butoom1" @click="debouncedHandleLogin(0)">暂 存</el-button>
     </span>
 
-    <Type :placeholder="placeholder" :typeling="typeling" :p="p" :url="url" :name="name" @change="typevalu"/>
+    <Type :placeholder="placeholder" :typeling="typeling" :p="p" :url="url" :name="name" :objs="objs" @change="typevalu"/>
   </el-dialog>
 
 </template>
@@ -493,7 +494,6 @@ export default{
         }
         this.showDialog = !this.showDialog
         if (this.info.order) {
-          debugger
           if (this.info.pl) {
             this.butoom1 = true
             this.orderCategory = ''
@@ -547,6 +547,16 @@ export default{
     this.getDepTreeList()
   },
   methods: {
+    dutychange() {
+      this.list = []
+      this.list.push({ hover: false, checked: false })
+      this.showDepData.forEach(e => {
+        if (e.id == this.objs.typeId) {
+          this.objs.dutyUserName = e.dutyUserName
+          this.objs.dutyUserId = e.dutyUserId
+        }
+      })
+    },
     delfilelist(index) {
       this.fileList.splice(index, 1)
     },
@@ -733,6 +743,10 @@ export default{
         this.url = '/api/identity/users'
         this.name = val
       } else if (val == 'goods') {
+        if (!this.objs.typeId) {
+          this.$message.error('请选择类目')
+          return
+        }
         this.p = '货品'
         this.placeholder = '请输入货品名称'
         this.typeling = !this.typeling
@@ -897,7 +911,9 @@ export default{
 }
 .bill .el-dialog__header{
         text-align: center;
-
+        padding: 20px;
+    padding-bottom: 10px;
+    margin-top: 7px;
 }
 .bill .el-dialog__body{
   padding-bottom: 10px;

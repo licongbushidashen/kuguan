@@ -11,7 +11,7 @@
     </xr-header>
 
     <div class="main-body" style="padding: 26px;">
-      <div class="main-table-header" style="    height: 90px;">
+      <div class="main-table-header" style="    height: 90px !important;">
         <label style="margin-left:12px">消息接口地址</label>
         <el-input v-model="url" disabled style="padding: 10px 0px 0px 10px;" placeholder="请输入接口地址"/>
       </div>
@@ -99,7 +99,7 @@
 
     <el-dialog :visible.sync="passwording" title="编辑通知配置">
       <div class="main-body" style="padding:0px 26px;    border: 0px;">
-        <div class="main-table-header" style="    height: 90px;">
+        <div class="main-table-header" style="    height: 90px !important;">
           <label style="margin-left:0px">中台消息接口地址</label>
           <el-input v-model="url1" style="padding: 10px 0px 0px 0px;" placeholder="请输入中台消息接口地址"/>
         </div>

@@ -1,20 +1,19 @@
 <template>
   <div class="main">
-    <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="直饮水台账">
+    <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="饮水机台账">
       <template v-slot:ft>
         <el-button
           class="main-table-header-button "
-          type=""
+          type="primary"
           icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
       </template>
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
-        <label>填写日期</label>
         <el-date-picker
           v-model="time"
-          type="datetimerange"
+          type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"/>
@@ -181,7 +180,7 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 

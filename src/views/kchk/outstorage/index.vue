@@ -39,46 +39,60 @@
           <div style="width:20px;display:inline-block">
             <i class="wk wk-moretj" @click="morecondition=!morecondition"/>
           </div>
-          <div v-show="morecondition" class="morecondition">
-            <div>
-              <label for="">出库日期</label>
-              <el-date-picker
-                v-model="startTime"
-                type="datetimerange"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"/>
+          <div v-show="morecondition" class="morecondition1">
+            <div class="morecondition">
+              <div>
+                <label for="">申请人</label>
+                <el-input
+                  v-model="inputs"
+                  placeholder="请输入申请人"
+                />
+              </div>
+              <div>
+                <label for="">入库日期</label>
+                <el-date-picker
+                  v-model="startTime"
+                  type="daterange"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"/>
+              </div>
+              <div>
+                <label for="">入库类型</label>
+                <el-select v-model="orderCategory">
+                  <el-option
+                    v-for="(item,index) in Category"
+                    :key="index" :label="item.name"
+                    :value="item.orderCategory"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+              <div>
+                <label for="">关键字</label>
+                <el-input
+                  v-model="company"
+                  placeholder="往来单位/仓库名称"
+                />
+              </div>
+              <div>
+                <label for="">状态</label>
+                <el-select v-model="flag" >
+                  <el-option
+                    v-for="(item,index) in flagName"
+                    :key="index" :label="item.name"
+                    :value="item.value"
+                    class="wy-select"/>
+                </el-select>
+              </div>
             </div>
-            <div>
-              <label for="">出库类型</label>
-              <el-select v-model="orderCategory">
-                <el-option
-                  v-for="(item,index) in Category"
-                  :key="index" :label="item.name"
-                  :value="item.orderCategory"
-                  class="wy-select"/>
-              </el-select>
+            <div
+              class="morecondition2">
+              <el-button
+                class="main-table-header-button "
+                @click="Reset">重置</el-button>
+              <el-button
+                class="main-table-header-button "
+                type="primary" @click="handleCurrentChange(0)">搜索</el-button>
             </div>
-            <div>
-              <label for="">往来单位/仓库名称</label>
-              <el-input
-                v-model="company"
-                style="width:200px;"
-                placeholder="往来单位/仓库名称"
-              />
-            </div>
-            <div>
-              <label for="">状态</label>
-              <el-select v-model="flag" style="width:100px">
-                <el-option
-                  v-for="(item,index) in flagName"
-                  :key="index" :label="item.name"
-                  :value="item.value"
-                  class="wy-select"/>
-              </el-select>
-            </div>
-            <el-button
-              class="main-table-header-button "
-              type="primary" @click="handleCurrentChange(0)">搜索</el-button>
           </div>
         </div>
       </div>
@@ -133,7 +147,7 @@
         <el-table-column prop="wareHouseName" label="仓库" />
         <el-table-column prop="memoryCardName" label="经费卡号" />
         <el-table-column prop="createUserName" label="申请人" />
-        <el-table-column prop="creationTime" label="申请时间" />
+        <el-table-column prop="receiptDate" label="申请时间" />
         <!-- <el-table-column
           prop="ean13"
           label="单位"
@@ -147,14 +161,13 @@
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
+          :page-sizes="pageSizes"
+          :page-size.sync="pageSize"
           :total="total"
-          :page-size="pageSize"
-          :pager-count="5"
           class="p-bar"
-          background
-          layout="total, prev, pager, next"
-          @current-change="handleCurrentChange"
-        />
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"/>
       </div>
     </div>
     <Bill :showing="jurisdictionCreateShow" :info="info" :ffts="ffts" @change="getList"/>
@@ -172,6 +185,7 @@ import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 import Bill from './comp/bill'
 import Type from './comp/type'
+import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -210,7 +224,7 @@ export default {
       }
     }
   },
-  mixins: [],
+  mixins: [pagest],
   data() {
     return {
       flag: '',
@@ -247,7 +261,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 230, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -274,10 +288,19 @@ export default {
     window.onresize = function() {
       self.tableHeight = document.documentElement.clientHeight - 196
     }
-
+    if (this.$route.params.time) {
+      this.startTime = [new Date(), new Date()]
+    }
     this.getList()
   },
   methods: {
+    Reset() {
+      this.company = ''
+      this.flag = null
+      this.orderCategory = null
+      this.startTime = []
+      this.inputs = ''
+    },
     typevalu(row) {
       this.info = row
       this.info.pl = true
@@ -331,14 +354,15 @@ export default {
         data.stockCategory = this.orderCategory
       }
       if (this.startTime && this.startTime.length > 0) {
-        data.startTime = filterTimestampToFormatTime(new Date(this.startTime[0]).getTime(), 'YYYY-MM-DD HH:mm:ss')
-        data.endTime = filterTimestampToFormatTime(new Date(this.startTime[1]).getTime(), 'YYYY-MM-DD HH:mm:ss')
+        data.startTime = filterTimestampToFormatTime(new Date(this.startTime[0]).getTime(), 'YYYY-MM-DD') + ' 00:00:00'
+        data.endTime = filterTimestampToFormatTime(new Date(this.startTime[1]).getTime(), 'YYYY-MM-DD') + ' 23:59:59'
       }
       OrderPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
             res.items[i].checked = false
+            res.items[i].receiptDate = filterTimestampToFormatTime(new Date(res.items[i].receiptDate).getTime(), 'YYYY-MM-DD HH:mm')
           }
           this.list = res.items
           this.total = res.totalCount
@@ -355,7 +379,7 @@ export default {
     handleCurrentChange(val) {
       this.morecondition = false
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * 15 : x
+      this.currentPage = x ? x * this.pageSize : x
       this.getList()
     },
 
@@ -404,26 +428,57 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.morecondition{
+  .morecondition1{
+    padding-left:4px !important;
+  top: -5px;
+  margin-top: 4px;
   align-items: baseline;
       position: absolute;
     z-index: 9;
     background: #fff;
     width: 100%;
     border: 1px solid #e6e6e6;
+  }
+  .morecondition2{
+    width: 100%;
+    padding: 0px 0 8px 8px;
+    text-align: center;
+    .main-table-header-button{
+      float: none !important;
+    }
+  }
+.morecondition{
+
     display: flex;
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
+    flex-wrap: wrap;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
     >div{
-      // flex: 1;
-          display: inline-block;
-          line-height: 44px;
-           margin-left: 20px;
+      margin-bottom: 10px;
+    margin-right: 1.5%;
+    width: 31.33%;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    >div{
+      width: 100%;
+    }
       label{
-        margin-right: 10px;
+        width: 80px;
+    display: inline-block;
+    text-align: right;
       }
+      label:after {
+    content: " ";
+    position: relative;
+    top: -0.5px;
+    margin: 0 8px 0 2px;
+}
     }
 
 }
+
 .main {
   height: 100%;
 

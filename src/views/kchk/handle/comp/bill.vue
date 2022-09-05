@@ -273,12 +273,12 @@
                 :on-remove="handleRemove"
                 :show-file-list="false"
                 drag
-                style="    line-height: 11px;min-height: 75px;"
+                style="    line-height: 11px;"
                 action="/api/zjlab/Attachment/UploadProviderFile"
               >
                 <el-button size="small" ><i
                   class="wk wk-icon-relation" style="font-size: 12px;    margin-right: 5px;"/>点击或拖拽上传</el-button>
-                <div slot="tip" >单文件不要超过5MB</div>
+                  <!-- <div slot="tip" >单文件不要超过5MB</div> -->
               </el-upload>
               <div>
                 <ul>
@@ -666,6 +666,12 @@ export default{
         })
     },
     listn() {
+      this.showDepData.forEach(e => {
+        if (e.id == this.objs.typeId) {
+          this.objs.dutyUserName = e.dutyUserName
+          this.objs.dutyUserId = e.dutyUserId
+        }
+      })
       this.list = []
       this.list.push({ hover: false, checked: false })
     },
@@ -943,7 +949,9 @@ export default{
 }
 .bill .el-dialog__header{
         text-align: center;
-
+        padding: 20px;
+    padding-bottom: 10px;
+    margin-top: 7px;
 }
 .bill .el-dialog__body{
   padding-bottom: 10px;

@@ -65,14 +65,15 @@ export default {
     showing: {
       handler(val) {
         this.showDialog = !this.showDialog
+        debugger
         if (!this.info.id) {
-          this.title = '编辑仓库'
+          this.title = '新增仓库'
           this.aoiinfo = {
             flag: 1,
             remark: ''
           }
         } else {
-          this.title = '新增仓库'
+          this.title = '编辑仓库'
           this.aoiinfo = this.info
         }
       },
@@ -95,6 +96,7 @@ export default {
           this.$emit('change', 'up')
         })
       } else {
+        this.aoiinfo.code = Date.now()
         Create(this.aoiinfo).then(res => {
           this.$message.success('新增成功')
           this.showDialog = false
@@ -107,16 +109,16 @@ export default {
     },
     getBaseField() {
       const field = []
-      field.push({
-        field: 'code',
-        formType: 'text',
-        isNull: 1,
-        name: '仓库编码',
-        placeholder: '请输入仓库编码',
-        setting: [],
-        inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.code : ''
-      })
+      // field.push({
+      //   field: 'code',
+      //   formType: 'text',
+      //   isNull: 1,
+      //   name: '仓库编码',
+      //   placeholder: '请输入仓库编码',
+      //   setting: [],
+      //   inputTips: '',
+      //   value: this.aoiinfo ? this.aoiinfo.code : ''
+      // })
       field.push({
         field: 'name',
         formType: 'text',
@@ -131,12 +133,23 @@ export default {
         field: 'address',
         formType: 'text',
         isNull: 1,
-        width: 1,
         name: '仓库地址',
         placeholder: '请输入仓库地址',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.address : ''
+      })
+      field.push({
+        field: 'remark',
+        formType: 'textarea',
+        isNull: 0,
+        name: '说明',
+        placeholder: '请输入说明',
+        row: 3,
+        maxLength: 200,
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.remark : ''
       })
       field.push({
         field: 'flag',
@@ -152,19 +165,7 @@ export default {
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.flag : 1
       })
-      field.push({
-        field: 'remark',
-        formType: 'textarea',
-        isNull: 0,
-        name: '说明',
-        placeholder: '请输入说明',
-        row: 3,
-        maxLength: 200,
-        setting: [],
-        inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.remark : '',
-        width: 1
-      })
+
       this.fields = this.handleFields(field).list
       this.fieldsRules = this.handleFields(field).fieldRules
     },

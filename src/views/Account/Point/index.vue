@@ -215,6 +215,18 @@ export default {
         value: this.aoiinfo ? this.aoiinfo.specificLocation : ''
       })
       field.push({
+        field: 'remark',
+        formType: 'textarea',
+        isNull: 0,
+        name: '说明',
+        placeholder: '请输入',
+        row: 3,
+        maxLength: 200,
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.remark : ''
+      })
+      field.push({
         field: 'flag',
         formType: 'radio',
         isNull: 1,
@@ -228,19 +240,7 @@ export default {
         inputTips: '',
         value: this.aoiinfo.flag ? this.aoiinfo.flag : 1
       })
-      field.push({
-        field: 'remark',
-        formType: 'textarea',
-        isNull: 0,
-        name: '说明',
-        placeholder: '请输入',
-        row: 3,
-        maxLength: 200,
-        setting: [],
-        inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.remark : '',
-        width: 1
-      })
+
       this.fields = this.handleFields(field).list
       this.fieldsRules = this.handleFields(field).fieldRules
     },
