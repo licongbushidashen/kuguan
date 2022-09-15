@@ -17,7 +17,7 @@ export default [
       permissions: ['account', 'system-project']
     }),
     meta: {
-      title: 'InventoryManager.Inventorys',
+      title: 'PropertyBillManager.SpacePoint',
       icon: 'iconfont icon-kucunguanli'
     },
     children: [
@@ -27,6 +27,7 @@ export default [
         component: () => import('@/views/Account/Point'),
         meta: {
           title: '空间点位',
+          title1: 'PropertyBillManager.SpacePoint',
           icon: 'iconfont icon-kucunguanli'
         }
       }
@@ -41,7 +42,7 @@ export default [
       , '/views/Account/germicidal'),
     meta: {
       title: '台账管理',
-      title1: 'InventoryManager.CheckPlans',
+      title1: 'PropertyBillManager.Disinfection',
       icon: 'iconfont icon-huaban39'
     },
     children: [
@@ -50,7 +51,8 @@ export default [
         path: 'Account-germicidal', // 类目
         component: () => import('@/views/Account/germicidal'),
         meta: {
-          title: '消杀台账'
+          title: '消杀台账',
+          title1: 'PropertyBillManager.Disinfection'
         }
       },
       {
@@ -58,7 +60,8 @@ export default [
         path: 'Account-plant', // 类目
         component: () => import('@/views/Account/plant'),
         meta: {
-          title: '绿植台账'
+          title: '绿植台账',
+          title1: 'PropertyBillManager.GreenPlant'
         }
       },
       {
@@ -66,7 +69,8 @@ export default [
         path: 'Account-water', // 类目
         component: () => import('@/views/Account/water'),
         meta: {
-          title: '饮水机台账'
+          title: '饮水机台账',
+          title1: 'PropertyBillManager.WaterDispenser'
         }
       }
 
@@ -80,7 +84,7 @@ export default [
     meta: {
       title: '台账报表',
       icon: 'iconfont icon-baobiao',
-      title1: 'InventoryManager.CheckPlans'
+      title1: 'PropertyBillManager.Disinfection'
     },
     children: [
       {
@@ -88,12 +92,14 @@ export default [
         path: 'Account-germicidalReport', // 类目
         component: () => import('@/views/Account/germicidalReport'),
         meta: {
-          title: '消杀台账'
+          title: '消杀台账',
+          title1: 'PropertyBillManager.Disinfection.Report'
         }
       },
       {
         meta: {
-          title: '绿植台账'
+          title: '绿植台账',
+          title1: 'PropertyBillManager.GreenPlant.Report'
         },
         name: 'plantReport',
         path: 'Account-plantReport', // 类目
@@ -101,7 +107,8 @@ export default [
       },
       {
         meta: {
-          title: '饮水机台账'
+          title: '饮水机台账',
+          title1: 'PropertyBillManager.WaterDispenser.Report'
         },
         name: 'waterReport',
         path: 'Account-waterReport', // 类目

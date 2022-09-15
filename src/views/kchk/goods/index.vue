@@ -10,7 +10,7 @@
         <div class="system-nav__title">
           类目管理
           <el-button
-            v-if="allAuth['SystemSetting.GoodsCategorys.Create']"
+            v-if="allAuth['OrderSetting.GoodsCategorys.Create']"
             type="text"
             icon="el-icon-circle-plus"
             style="margin: 0px;    padding: 0px;    float: right;"
@@ -47,9 +47,9 @@
                   </div>
                   <div class="node-label-set">
 
-                    <!-- <i v-if="allAuth['SystemSetting.GoodsCategorys.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" /> -->
+                    <!-- <i v-if="allAuth['OrderSetting.GoodsCategorys.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" /> -->
                     <i
-                      v-if="allAuth['SystemSetting.GoodsCategorys.Delete']"
+                      v-if="allAuth['OrderSetting.GoodsCategorys.Delete']"
                       class="el-icon-delete"
                       @click.stop="deleteStruc(node,data)"
                     />
@@ -78,7 +78,7 @@
           <div>
             <template>
               <el-button
-                v-if="allAuth['SystemSetting.GoodsCategorys.Create'] ||allAuth['SystemSetting.GoodsCategorys.Edit']"
+                v-if="allAuth['OrderSetting.GoodsCategorys.Create'] ||allAuth['OrderSetting.GoodsCategorys.Edit']"
                 style="margin-left: 26px;    margin-top: 10px;"
                 type="primary"
                 @click="savechange"
@@ -250,7 +250,7 @@ export default {
         formType: 'textarea',
         isNull: 0,
         name: '说明',
-        placeholder: '请输入',
+        placeholder: '请输入说明',
         row: 3,
         maxLength: 200,
         setting: [],

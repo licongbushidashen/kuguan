@@ -17,6 +17,7 @@ import {
   UpdateDisinfection,
   GetSpacePointTree
 } from '@/api/account'
+import { parseTime } from '@/utils'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
@@ -138,6 +139,7 @@ export default {
     },
     saveClick(data) {
       if (!data) return
+      this.aoiinfo.antivirusDate = parseTime(this.aoiinfo.antivirusDate)
       if (this.aoiinfo.parentId2 != '') {
         this.aoiinfo.spacePointId = this.aoiinfo.parentId2.id
       } else if (this.aoiinfo.parentId1 != '') {

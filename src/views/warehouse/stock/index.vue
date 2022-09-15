@@ -15,10 +15,24 @@
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
-        <el-input v-model="inputs" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入货品/仓库名称">
-          <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
-        </el-input>
+        <div style="display: flex;    height: 54px;    line-height: 54px;padding-left: 20px;    align-items: baseline;">
+          <div style="margin-right: 20px;">
+            <label for="">货品/仓库名称</label>
+            <el-input v-model="inputs" style="width:200px;" placeholder="请输入货品/仓库名称"/>
+          </div>
 
+          <div>
+            <label for="">货品类目</label>
+            <el-select v-model="goodsCategoryId">
+              <el-option
+                v-for="(item,index) in showDepData"
+                :key="index" :label="item.name"
+                :value="item.id"
+                class="wy-select"/>
+            </el-select>
+          </div>
+          <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)">搜索</el-button>
+        </div>
       </div>
       <el-table
         v-loading="loading"
@@ -32,14 +46,15 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="60"
+          width="70"
+          align="center"
           label="序号">
 
           <template slot-scope="{ row, column, $index}">
             <span class="status-name">
               <span
                 class="index"
-                style="margin-left:10px;display: block;"
+                style="display: block;"
                 @mouseenter="row.hover = true"
                 @mouseleave="row.hover = false"
               >
@@ -119,6 +134,9 @@
 
 <script>
 import {
+  GetGoodsCategoryTreeHasRole
+} from '@/api/kchk/goods'
+import {
   InventoryPage,
   DownloadInventoryExcel
 } from '@/api/Inventory/kc'
@@ -137,6 +155,8 @@ export default {
   mixins: [pagest],
   data() {
     return {
+      goodsCategoryId: '',
+      showDepData: [],
       showing: false,
       planing: true,
       warningshow: true,
@@ -165,9 +185,21 @@ export default {
     if (this.$route.query.add == '1') {
       this.addJurisdiction()
     }
+    this.getDepTreeList()
     this.getList()
   },
   methods: {
+    getDepTreeList() {
+      this.depLoading = true
+      GetGoodsCategoryTreeHasRole()
+        .then(response => {
+          this.showDepData = response || []
+          this.depLoading = false
+        })
+        .catch(() => {
+          this.depLoading = false
+        })
+    },
     /*
    * 当checkbox选择change时事件
    */
@@ -185,6 +217,9 @@ export default {
     getList() {
       this.loading = true
       const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
+      if (this.goodsCategoryId) {
+        data.catetoryId = this.goodsCategoryId
+      }
       InventoryPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {

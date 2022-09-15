@@ -44,17 +44,17 @@
       </div>
 
       <div class="echart1">
-        <div v-if="!echartHasData1" id="axismain1" />
-        <el-empty v-if="echartHasData1" :image-size="200"/>
+        <div v-show="!echartHasData1" id="axismain1" />
+        <el-empty v-show="echartHasData1" :image-size="200"/>
       </div>
       <div class="echart2" >
         <div>
-          <div v-if="!echartHasData2" id="axismain2"/>
-          <el-empty v-if="echartHasData1" :image-size="200"/>
+          <div v-show="!echartHasData2" id="axismain2"/>
+          <el-empty v-show="echartHasData1" :image-size="200"/>
         </div>
         <div>
-          <div v-if="!echartHasData3" id="axismain3"/>
-          <el-empty v-if="echartHasData1" :image-size="200"/>
+          <div v-show="!echartHasData3" id="axismain3"/>
+          <el-empty v-show="echartHasData1" :image-size="200"/>
         </div>
       </div>
     </div>
@@ -71,9 +71,9 @@ const option = {
   },
   grid: {
     left: '20px',
-    right: '4%',
-    bottom: '5%',
-    top: '16%',
+    right: '20px',
+    bottom: '0%',
+    top: '50px',
     containLabel: true
   },
   legend: {
@@ -289,8 +289,12 @@ export default {
       const s = S
       return Y + M + D + h + m + s
     },
+    gett(date, data) {
+      const Y = date.getFullYear() + '-'
+      const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1)
+      return Y + M
+    },
     GetDataBoradChart() {
-      console.log(this.getTime(this.time[0]))
       const data = { 'catetoryId': this.os == '全部' ? null : this.os, 'beginMonth': this.getTime(this.time[0]), 'endMonth': this.getTime(this.time[1]) }
       request({
         url: '/api/zjlab/DataBoard/GetDataBoradChart',
@@ -300,14 +304,40 @@ export default {
           'Content-Type': 'application/json;charset=UTF-8'
         }
       }).then(res => {
+        debugger
         if (res.inventoryNumDto.length) {
           const arr1 = []; const arr2 = []; const arr3 = []; const time = []
+          let time1 = this.gett(this.time[0])
+          const time2 = this.gett(this.time[1])
+
+          while (time1 != time2) {
+            arr1.push(0)
+            arr2.push(0)
+            arr3.push(0)
+            time.push(time1)
+            const char = time1.split('-')
+            let m = Number(char[1]) + 1
+            let y = Number(char[0])
+            if (m > 12) {
+              y = Number(y) + 1
+            }
+            m = m > 12 ? m - 12 : m
+            time1 = y + '-' + (Number(m) < 10 ? '0' + Number(m) : Number(m))
+          }
+          arr1.push(0)
+          arr2.push(0)
+          arr3.push(0)
+          time.push(time2)
+          // res.inventoryNumDto= res.inventoryNumDto.
           for (let i = 0; i < res.inventoryNumDto.length; i++) {
             const data = res.inventoryNumDto[i]
-            arr1.push(data.outNum)
-            arr2.push(data.inNum)
-            arr3.push(data.inventory)
-            time.push(data.month)
+            time.forEach((e, index) => {
+              if (e == data.month) {
+                arr1[index] = data.outNum
+                arr2[index] = data.inNum
+                arr3[index] = data.inventory
+              }
+            })
           }
           const option1 = JSON.parse(JSON.stringify(option))
           option1.xAxis.data = time
@@ -333,11 +363,33 @@ export default {
         this.echartHasData3 = !(res.expendCostDto.length > 0)
         if (res.expendNumDto.length) {
           const arr1 = []; const arr2 = []; const time = []
+          let time1 = this.gett(this.time[0])
+          const time2 = this.gett(this.time[1])
+
+          while (time1 != time2) {
+            arr1.push(0)
+            arr2.push(0)
+            time.push(time1)
+            const char = time1.split('-')
+            let m = Number(char[1]) + 1
+            let y = Number(char[0])
+            if (m > 12) {
+              y = Number(y) + 1
+            }
+            m = m > 12 ? m - 12 : m
+            time1 = y + '-' + (Number(m) < 10 ? '0' + Number(m) : Number(m))
+          }
+          arr1.push(0)
+          arr2.push(0)
+          time.push(time2)
           for (let i = 0; i < res.expendNumDto.length; i++) {
             const data = res.expendNumDto[i]
-            arr1.push(data.totalExpend)
-            arr2.push(data.perExpend)
-            time.push(data.month)
+            time.forEach((e, index) => {
+              if (e == data.month) {
+                arr1[index] = data.totalExpend
+                arr2[index] = data.perExpend
+              }
+            })
           }
           const option1 = JSON.parse(JSON.stringify(option))
           option1.legend.data = ['总消耗', '人均消耗']
@@ -378,6 +430,7 @@ export default {
             top: '0px',
             left: 'left'
           }
+          debugger
           option1.xAxis.data = time
           option1.series[0].data = arr1
           option1.series[1].data = arr2
@@ -385,11 +438,33 @@ export default {
         }
         if (res.expendCostDto.length) {
           const arr1 = []; const arr2 = []; const time = []
+          let time1 = this.gett(this.time[0])
+          const time2 = this.gett(this.time[1])
+
+          while (time1 != time2) {
+            arr1.push(0)
+            arr2.push(0)
+            time.push(time1)
+            const char = time1.split('-')
+            let m = Number(char[1]) + 1
+            let y = Number(char[0])
+            if (m > 12) {
+              y = Number(y) + 1
+            }
+            m = m > 12 ? m - 12 : m
+            time1 = y + '-' + (Number(m) < 10 ? '0' + Number(m) : Number(m))
+          }
+          arr1.push(0)
+          arr2.push(0)
+          time.push(time2)
           for (let i = 0; i < res.expendCostDto.length; i++) {
             const data = res.expendCostDto[i]
-            arr1.push(data.totalCost)
-            arr2.push(data.perCost)
-            time.push(data.month)
+            time.forEach((e, index) => {
+              if (e == data.month) {
+                arr1[index] = data.totalCost
+                arr2[index] = data.perCost
+              }
+            })
           }
           const option1 = JSON.parse(JSON.stringify(option))
           option1.legend.data = ['总费用', '人均费用']

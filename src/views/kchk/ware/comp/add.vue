@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :title="title" style="    ">
     <create-sections title="基础信息">
-      <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick"/>
+      <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" />
     </create-sections>
     <span slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>
@@ -34,7 +34,8 @@ export default {
       default: () => {
         return {}
       }
-    }},
+    }
+  },
   data() {
     return {
       showDialog: true,
@@ -96,7 +97,7 @@ export default {
           this.$emit('change', 'up')
         })
       } else {
-        this.aoiinfo.code = Date.now()
+        this.aoiinfo.code = Date.now().toString()
         Create(this.aoiinfo).then(res => {
           this.$message.success('新增成功')
           this.showDialog = false
@@ -189,9 +190,9 @@ export default {
 </script>
 <style lang="scss" scoped>
 // /deep/.el-dialog{
-    // margin-top:2vh !important;
+// margin-top:2vh !important;
 // }
-/deep/.el-dialog__footer{
-    text-align: center !important;
+/deep/.el-dialog__footer {
+  text-align: center !important;
 }
 </style>

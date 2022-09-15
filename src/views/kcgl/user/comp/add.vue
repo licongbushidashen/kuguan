@@ -110,7 +110,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '姓名',
-        placeholder: '请输入',
+        placeholder: '请输入姓名',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.name : ''
@@ -121,7 +121,7 @@ export default {
         expres: 'mobile',
         isNull: 1,
         name: '手机号',
-        placeholder: '',
+        placeholder: '请输入手机号',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.phoneNumber : ''
@@ -132,7 +132,7 @@ export default {
         isNull: 1,
         disabled: val,
         name: '用户账号',
-        placeholder: '请输入',
+        placeholder: '请输入用户账号',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.userName : ''
@@ -144,7 +144,7 @@ export default {
           expres: 'password',
           isNull: 1,
           name: '用户密码',
-          placeholder: '请输入',
+          placeholder: '请输入用户密码',
           setting: [],
           inputTips: '',
           value: this.aoiinfo ? this.aoiinfo.password : ''
@@ -157,7 +157,7 @@ export default {
         isNull: 1,
         expres: 'email',
         name: '邮箱',
-        placeholder: '请输入',
+        placeholder: '请输入邮箱',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.email : ''

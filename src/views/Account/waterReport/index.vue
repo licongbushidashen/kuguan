@@ -3,6 +3,7 @@
     <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="饮水机台账">
       <template v-slot:ft>
         <el-button
+          v-if="allAuth['SystemSetting.WaterDispenser.ReportExport']"
           class="main-table-header-button "
           type="primary"
           icon="iconfont icon-daochu1"

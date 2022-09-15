@@ -5,13 +5,13 @@
         <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(1)"/>
       </el-input>
       <div style="float:right"><el-button
-        v-if="allAuth['SystemSetting.CompanyCategorys.Create']"
+        v-if="allAuth['OrderSetting.CompanyCategorys.Create']"
         class="main-table-header-button "
         type="primary"
         icon="el-icon-plus"
         @click="addtype(1)">新建</el-button>
         <el-button
-          v-if="allAuth['SystemSetting.CompanyCategorys.Delete']"
+          v-if="allAuth['OrderSetting.CompanyCategorys.Delete']"
           :disabled="JSON.stringify(obj)=='{}'"
           class="main-table-header-button "
           type=""
@@ -217,7 +217,7 @@ export default {
       } else {
         this.info1 = item
         this.name = item.name
-        if (!this.allAuth['SystemSetting.CompanyCategorys.Edit']) {
+        if (!this.allAuth['OrderSetting.CompanyCategorys.Edit']) {
           this.$message.error('暂无当前权限')
         }
       }

@@ -17,6 +17,7 @@ import {
   WaterDispenserUpdate,
   GetSpacePointTree
 } from '@/api/account'
+import { parseTime } from '@/utils'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
@@ -141,6 +142,9 @@ export default {
     saveClick(data) {
       console.log(this.aoiinfo, 666)
       if (!data) return
+      this.aoiinfo.fillingDate = parseTime(this.aoiinfo.fillingDate)
+      this.aoiinfo.installationDate = parseTime(this.aoiinfo.installationDate)
+      this.aoiinfo.maintenanceDate = parseTime(this.aoiinfo.maintenanceDate)
       if (this.aoiinfo.parentId2 != '') {
         this.aoiinfo.spacePointId = this.aoiinfo.parentId2.id
       } else if (this.aoiinfo.parentId1 != '') {

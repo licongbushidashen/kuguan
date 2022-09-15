@@ -107,8 +107,9 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="50"
+          width="60"
           label="序号"
+          align="center"
         >
           <template slot-scope="{ row, column, $index }">
             <span class="status-name">
@@ -181,7 +182,7 @@ import { OrderPage, GetOrder } from '@/api/kchk/order'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 import Bill from './comp/bill'
-import Type from './comp/type'
+import Type from './comp/type1'
 import { mapGetters } from 'vuex'
 import pagest from '@/mixins/pagest'
 export default {

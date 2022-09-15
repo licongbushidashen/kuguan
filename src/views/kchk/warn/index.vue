@@ -6,12 +6,28 @@
       icon-color="#2362FB"
       label="预警管理" />
     <div class="main-body">
-      <div class="main-table-header">
+
+      <div class="main-table-header" style="height:85px !important">
+        <div class="secharts">
+          <div>
+            <label for="">类型</label>
+            <el-select v-model="warningCategory" >
+              <el-option
+                v-for="(item,index) in warningCategorys"
+                :key="index"
+                :label="item.name"
+                :value="item.id"
+                class="wy-select"/>
+            </el-select>
+          </div>
+
+          <el-button type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+        </div>
         <el-tabs v-model="activeName" @tab-click="handleCurrentChange(0)">
           <el-tab-pane label="待处理" name="1">
             <span slot="label">待处理<el-badge v-if="quantity['7']>0" :value="quantity['7']" :max="99" class="item" style="    margin: 0px;"/></span>
           </el-tab-pane>
-          <el-tab-pane label="已处理" name="2">
+          <el-tab-pane label="已处理" name="0">
             <span slot="label">已处理</span>
           </el-tab-pane>
 
@@ -67,7 +83,7 @@
             <span>{{ row.orderCategory | ordername }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="orderNo" label="商品编号" />
+        <el-table-column prop="goodsCode" label="商品编号" />
         <!-- <el-table-column show-overflow-tooltip prop="name" label="单据状态">
             <template slot-scope="{ row, column, $index }">
               <span>{{ row.flag | flagname }}</span>
@@ -75,12 +91,12 @@
           </el-table-column> -->
 
 
-        <el-table-column prop="goodsCategoryName" label="商品名称" />
-        <el-table-column prop="wareHouseName" label="规格" />
-        <el-table-column prop="createUserName" label="最低库存" />
-        <el-table-column prop="creationTime" label="最高库存" />
-        <el-table-column prop="creationTime" label="结存数量" />
-        <el-table-column prop="creationTime" label="超限数量" />
+        <el-table-column prop="goodName" label="商品名称" />
+        <el-table-column prop="size" label="规格" />
+        <el-table-column prop="lowerLimit" label="最低库存" />
+        <el-table-column prop="upperLimit" label="最高库存" />
+        <el-table-column prop="stockQuantity" label="结存数量" />
+        <el-table-column prop="warningValue" label="超限数量" />
         <!-- <el-table-column
             prop="ean13"
             label="单位"
@@ -110,7 +126,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { filterTimestampToFormatTime } from '@/filters/index'
-import { TaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchStorageOut } from '@/api/kchk/order'
+import { GetLogTaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchStorageOut } from '@/api/kchk/order'
 // import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
@@ -164,6 +180,13 @@ export default {
   mixins: [pagest],
   data() {
     return {
+      warningCategory: '',
+      warningCategorys: [
+        { name: '每单预警', id: 23 },
+        { name: '月度预警', id: 21 },
+        { name: '季度预警', id: 22 },
+        { name: '库存总量', id: 11 }
+      ],
       checkedAll: [],
       activeName: '1',
       flag: '',
@@ -184,7 +207,7 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 250, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 290, // 表的高度
       list: [],
       createAction: {
         type: 'save'
@@ -262,14 +285,14 @@ export default {
         skipCount: this.currentPage
 
       }
-      data.status = Number(this.activeName)
-      if (this.orderCategory) {
-        data.stockCategory = this.orderCategory
+      data.isProcessed = !!Number(this.activeName)
+      if (this.warningCategory) {
+        data.warningCategory = this.warningCategory
       }
       if (this.startTime) {
         data.startTime = filterTimestampToFormatTime(new Date(this.startTime).getTime(), 'YYYY-MM-DD HH:mm:ss')
       }
-      TaskCenter(data)
+      GetLogTaskCenter(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
@@ -392,75 +415,82 @@ export default {
 }
 </script>
 
-  <style lang="scss" scoped>
-    /deep/.wk{
-      margin-right: 0px !important;
-    }
-    /deep/.el-table{
-      margin-top:10px !important
-    }
-  .morecondition{ padding-left:4px !important;top: -5px;
-    margin-top: 4px;
-    align-items: baseline;
-        position: absolute;
-      z-index: 9;
-      background: #fff;
-      width: 100%;
-      border: 1px solid #e6e6e6;
-      // display: flex;
-      padding: 20px;
-      >div{
-        // flex: 1;
-            display: inline-block;
-            line-height: 44px;
-            margin-left: 20px;
-        label{
-          margin-right: 10px;
-        }
+<style lang="scss" scoped>
+  /deep/.wk{
+    margin-right: 0px !important;
+  }
+  /deep/.el-table{
+    margin-top:10px !important
+  }
+.morecondition{ padding-left:4px !important;top: -5px;
+  margin-top: 4px;
+  align-items: baseline;
+      position: absolute;
+    z-index: 9;
+    background: #fff;
+    width: 100%;
+    border: 1px solid #e6e6e6;
+    // display: flex;
+    padding: 20px;
+    >div{
+      // flex: 1;
+          display: inline-block;
+          line-height: 44px;
+          margin-left: 20px;
+      label{
+        margin-right: 10px;
       }
-
-  }
-  .main {
-    height: 100%;
-
-    /deep/ .xr-header {
-      padding: 15px 30px;
     }
-  }
 
-  .main-body {
-    // height: calc(100% - 61px);
-    background-color: white;
-    border-top: 1px solid $xr-border-line-color;
-    border-bottom: 1px solid $xr-border-line-color;
-    padding:20px
-  }
-  // .main-table{
-  //       height: calc(100% - 90px ) !important;
-  // }
-  .main-table-header {
-    height: 45px;
-    background-color: white;
-    position: relative;
-    .main-table-header-button {
-      float: right;
-          margin-right: 20px;
-      margin-top: 5px;
-      margin-bottom: 6px;
-      margin-left: 21px;
-    }
-  }
+}
+.main {
+  height: 100%;
 
-  .project-reminder {
-    width: auto;
-    float: left;
-    margin-left: 20px;
-    margin-top: 10px;
+  /deep/ .xr-header {
+    padding: 15px 30px;
   }
-  @import '../styles/table.scss';
-  .buttonc {
-    color: #4f81fc;
-     cursor: pointer;
-  }
-  </style>
+}
 
+.main-body {
+  // height: calc(100% - 61px);
+  background-color: white;
+  border-top: 1px solid $xr-border-line-color;
+  border-bottom: 1px solid $xr-border-line-color;
+  padding:10px 20px 0px 20px
+}
+// .main-table{
+//       height: calc(100% - 90px ) !important;
+// }
+.main-table-header {
+  height: 45px;
+  background-color: white;
+  position: relative;
+  .main-table-header-button {
+    float: right;
+        margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 6px;
+    margin-left: 21px;
+  }
+}
+
+.project-reminder {
+  width: auto;
+  float: left;
+  margin-left: 20px;
+  margin-top: 10px;
+}
+@import '../styles/table.scss';
+.buttonc {
+  color: #4f81fc;
+   cursor: pointer;
+}
+.secharts{
+  display: flex;
+  border-bottom: 1px solid #1111;
+    padding-bottom: 8px;
+  >div{
+ margin-right: 20px;
+  }
+}
+</style>

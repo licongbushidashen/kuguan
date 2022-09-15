@@ -50,16 +50,80 @@
       </template> -->
     </xr-header>
     <div class="main-body">
-      <!-- <div class="main-table-header">
-        <el-tabs v-model="activeName" @tab-click="handleCurrentChange(0)">
-          <el-tab-pane label="待我审批" name="1"/>
-          <el-tab-pane label="待入库确认" name="2"/>
-          <el-tab-pane label="待出库确认" name="3"/>
-          <el-tab-pane label="我的已办" name="4"/>
-            <el-tab-pane label="我的审评" name="5"/>
-            <el-tab-pane label="草稿" name="0"/>
-        </el-tabs>
-      </div> -->
+      <div class="main-table-header" style="height:33px !important">
+        <div class="secharts">
+          <div>
+            <label for="">申请事项</label>
+            <el-select v-model="orderCategory" placeholder="请选择申请事项">
+              <el-option
+                v-for="(item,index) in Category"
+                :key="index"
+                :label="item.name"
+                :value="item.orderCategory"
+                class="wy-select"/>
+            </el-select>
+          </div>
+          <div style="width:20px;display:inline-block;    line-height: 32px;    margin: 0px 20px 0px 10px;">
+            <i class="wk wk-moretj" @click="morecondition=!morecondition"/>
+          </div>
+          <div v-show="morecondition" class="morecondition1">
+            <div class="morecondition">
+              <div>
+                <label for="">申请事项</label>
+                <el-select v-model="orderCategory" placeholder="请选择申请事项">
+                  <el-option
+                    v-for="(item,index) in Category"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.orderCategory"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+              <div>
+                <label for="">类型</label>
+                <el-select v-model="identification" placeholder="请选择类型">
+                  <el-option
+                    v-for="(item,index) in identifications"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.id"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+              <div>
+                <label for="">货品类目</label>
+                <el-select v-model="goodsCategoryId" placeholder="请选择货品类目">
+                  <el-option
+                    v-for="(item,index) in showDepData"
+                    :key="index" :label="item.name"
+                    :value="item.id"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+              <div>
+                <label for="">仓库</label>
+                <el-select v-model="warehouseId" placeholder="请选择仓库">
+                  <el-option
+                    v-for="(item,index) in WarehousePages"
+                    :key="index" :label="item.name"
+                    :value="item.id"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+            </div>
+            <div
+              class="morecondition2">
+              <el-button
+                class="main-table-header-button "
+                @click="Reset">重置</el-button>
+              <el-button
+                class="main-table-header-button "
+                type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+            </div>
+          </div>
+          <el-button type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+        </div>
+      </div>
 
       <el-table
         v-loading="loading"
@@ -76,6 +140,15 @@
           width="50"
           label="序号"
         >
+          <template slot="header" slot-scope="scope">
+            <div style="text-align: center; display: block;">
+              <el-checkbox
+                v-model="checkedAll"
+                :disabled="!list || !list.length"
+                @change="selectAll"
+              />
+            </div>
+          </template>
           <template slot-scope="{ row, column, $index }">
             <span class="status-name">
               <span
@@ -113,31 +186,33 @@
             <span>{{ row.identification | ident }}</span>
           </template>
         </el-table-column>
-
         <el-table-column prop="goodsCategoryName" label="所属类目" />
         <el-table-column prop="wareHouseName" label="仓库" />
         <el-table-column prop="createUserName" label="申请人" />
         <el-table-column prop="receiptDate" label="申请时间" />
         <!-- <el-table-column
-            prop="ean13"
-            label="单位"
-            width="200">
-            <template slot-scope="{ row, column, $index}">
-              <span class="buttonc" @click.stop="openplan(row)">计划管理</span>
-              <span class="buttonc" @click.stop="openwarn(row)">预警管理</span>
-            </template>
-          </el-table-column> -->
+          prop="ean13"
+          label="单位"
+          width="200">
+          <template slot-scope="{ row, column, $index}">
+            <span class="buttonc" @click.stop="openplan(row)">计划管理</span>
+            <span class="buttonc" @click.stop="openwarn(row)">预警管理</span>
+          </template>
+        </el-table-column> -->
       </el-table>
       <div class="p-contianer">
         <el-pagination
           :current-page="currentPage"
-          :page-sizes="pageSizes"
-          :page-size.sync="pageSize"
           :total="total"
+          :page-sizes="pageSizes"
+          :page-size="pageSize"
+          :pager-count="5"
           class="p-bar"
+
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"/>
+          @current-change="handleCurrentChange"
+        />
       </div>
     </div>
     <Bill :showing="jurisdictionCreateShow" :info="info" @change="getList" />
@@ -145,6 +220,13 @@
 </template>
 
 <script>
+import {
+  WarehousePage
+
+} from '@/api/kchk/warn'
+import {
+  GetGoodsCategoryTreeHasRole
+} from '@/api/kchk/goods'
 import { mapGetters } from 'vuex'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { TaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchStorageOut } from '@/api/kchk/order'
@@ -152,7 +234,6 @@ import { TaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchSto
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 import Bill from './comp/bill'
-import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
   name: 'SystemProject',
@@ -205,9 +286,48 @@ export default {
       }
     }
   },
-  mixins: [pagest],
+
+  mixins: [],
   data() {
     return {
+      warehouseId: '',
+      WarehousePages: '',
+      goodsCategoryId: '',
+      showDepData: [],
+      identification: '',
+      identifications: [
+        { name: '入库', id: 0 },
+        { name: '出库', id: 1 }
+        // {name:'入库',id:0}
+      ],
+      orderCategory: '',
+      Category: [
+        {
+          orderCategory: '11',
+          name: '采购入库'
+        }, {
+          orderCategory: '12',
+          name: '退货入库'
+        }, {
+          orderCategory: '13',
+          name: '借用还库'
+        },
+        {
+          orderCategory: '21',
+          name: '领用出库'
+        }, {
+          orderCategory: '22',
+          name: '退货出库'
+        }, {
+          orderCategory: '23',
+          name: '借用出库'
+        }, {
+          orderCategory: '24',
+          name: '销毁出库'
+        }
+
+      ],
+      checkedAll: [],
       activeName: '4',
       flag: '',
       flagName: [
@@ -227,21 +347,28 @@ export default {
       jurisdictionCreateShow: false,
       inputs: '',
       loading: false, // 加载动画
-      tableHeight: document.documentElement.clientHeight - 180, // 表的高度
+      tableHeight: document.documentElement.clientHeight - 240, // 表的高度
       list: [],
       createAction: {
         type: 'save'
       },
       currentPage: 0,
       pageSize: 15,
+      pageSizes: [15, 30, 60, 100],
       total: 0,
       obj: {},
       info: {},
       disable: false
     }
   },
+
   computed: {
-    ...mapGetters(['allAuth'])
+    ...mapGetters(['allAuth', 'quantity'])
+  },
+  watch: {
+    activeName() {
+      this.checkedAll = []
+    }
   },
   mounted() {
     var self = this
@@ -249,19 +376,71 @@ export default {
     window.onresize = function() {
       self.tableHeight = document.documentElement.clientHeight - 196
     }
-
+    this.WarehousePage()
+    this.getDepTreeList()
     this.getList()
   },
   methods: {
+    Reset() {
+      this.orderCategory = null
+      this.identification = ''
+      this.goodsCategoryId = null
+      this.warehouseId = null
+    },
+    WarehousePage() {
+      this.loading = true
+      const data = { 'maxResultCount': 1000, 'skipCount': 0 }
+      WarehousePage(data)
+        .then(res => {
+          this.WarehousePages = res.items
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+    getDepTreeList() {
+      this.depLoading = true
+      GetGoodsCategoryTreeHasRole()
+        .then(response => {
+          this.showDepData = response || []
+          this.depLoading = false
+        })
+        .catch(() => {
+          this.depLoading = false
+        })
+    },
+    /**
+     * 更改每页展示数量
+     */
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.getList()
+    },
+
     openplan(row) {
       this.planing = !this.planing
     },
     openwarn(row) {
       this.warningshow = !this.warningshow
     },
+    selectAll(e) {
+      const isChecked = e
+      if (isChecked) {
+        this.list.forEach((item) => {
+          item.checked = true
+          this.isCheckedItems = 1
+        })
+      } else {
+        this.list.forEach((item) => {
+          item.checked = false
+          this.isCheckedItems = 0
+        })
+      }
+      this.onItemCheckboxChange()
+    },
     /*
-       * 当checkbox选择change时事件
-       */
+     * 当checkbox选择change时事件
+     */
     onItemCheckboxChange() {
       this.obj = {}
       this.disable = this.list.filter(d => d.checked).length
@@ -275,19 +454,26 @@ export default {
         })
     },
     /**
-       * 获取列表数据
-       */
+     * 获取列表数据
+     */
     getList() {
       this.loading = true
       const data = {
         maxResultCount: this.pageSize,
-        skipCount: this.currentPage,
-        createName: this.inputs,
-        searchKey: this.company
+        skipCount: this.currentPage
       }
       data.status = Number(this.activeName)
       if (this.orderCategory) {
-        data.stockCategory = this.orderCategory
+        data.orderCategory = this.orderCategory
+      }
+      if (this.identification != '' && this.identification != undefined) {
+        data.identification = this.identification
+      }
+      if (this.goodsCategoryId) {
+        data.goodsCategoryId = this.goodsCategoryId
+      }
+      if (this.warehouseId) {
+        data.warehouseId = this.warehouseId
       }
       if (this.startTime) {
         data.startTime = filterTimestampToFormatTime(new Date(this.startTime).getTime(), 'YYYY-MM-DD HH:mm:ss')
@@ -308,9 +494,9 @@ export default {
         })
     },
     /**
-       * 更改当前页数
-       * @param {*} val
-       */
+     * 更改当前页数
+     * @param {*} val
+     */
     handleCurrentChange(val) {
       this.morecondition = false
       const x = val > 0 ? val - 1 : 0
@@ -319,13 +505,14 @@ export default {
     },
 
     /**
-       *  添加权限
-       */
+     *  添加权限
+     */
     addJurisdiction(val) {
       const ids = this.list.filter(d => d.checked).map(e => e.id)
       switch (val) {
         case 1:
           BatchSubmit(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -339,6 +526,7 @@ export default {
           break
         case 2:
           BatchAgree(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -352,6 +540,7 @@ export default {
           break
         case 4:
           BatchStorageOut(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -365,6 +554,7 @@ export default {
           break
         case 5:
           BatchStorageIn(ids).then(res => {
+            this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
                 this.handleCurrentChange(0)
@@ -383,8 +573,8 @@ export default {
 
     /** 列表操作 */
     /**
-       * 当某一行被点击时会触发该事件
-       */
+     * 当某一行被点击时会触发该事件
+     */
     handleRowClick(row, column, event) {
       if (column.label == '序号') {
         return
@@ -403,84 +593,114 @@ export default {
       this.dbsyShow = true
     }
     /**
-       * 编辑删除
-       */
+     * 编辑删除
+     */
     /**
-       * 导出
-       */
+     * 导出
+     */
   }
 }
 </script>
 
-  <style lang="scss" scoped>
-    /deep/.wk{
+<style lang="scss" scoped>
+  /deep/.wk{
     margin-right: 0px !important;
   }
-    /deep/.el-table{
-      margin-top:0px !important
+  /deep/.el-table{
+    margin-top:10px !important
+  }
+
+.main {
+  height: 100%;
+
+  /deep/ .xr-header {
+    padding: 15px 30px;
+  }
+}
+
+.main-body {
+  // height: calc(100% - 61px);
+  background-color: white;
+  border-top: 1px solid $xr-border-line-color;
+  border-bottom: 1px solid $xr-border-line-color;
+  padding:10px 20px 0px 20px
+}
+// .main-table{
+//       height: calc(100% - 90px ) !important;
+// }
+.main-table-header {
+  height: 45px;
+  background-color: white;
+  position: relative;
+  .main-table-header-button {
+    float: right;
+        margin-right: 20px;
+    margin-top: 5px;
+    margin-bottom: 6px;
+    margin-left: 21px;
+  }
+}
+
+.project-reminder {
+  width: auto;
+  float: left;
+  margin-left: 20px;
+  margin-top: 10px;
+}
+@import '../styles/table.scss';
+.buttonc {
+  color: #4f81fc;
+   cursor: pointer;
+}
+.secharts{
+  display: flex;
+    padding-bottom: 8px;
+
+}
+.morecondition1{
+  align-items: baseline;
+      position: absolute;
+    z-index: 9;
+    background: #fff;
+    width: 100%;
+    border: 1px solid #e6e6e6;
+  }
+  .morecondition2{
+    width: 100%;
+    padding: 0px 0 8px 8px;
+    text-align: center;
+    .main-table-header-button{
+      float: none !important;
     }
-  .morecondition{ padding-left:4px !important;top: -5px;
-    margin-top: 4px;
-    align-items: baseline;
-        position: absolute;
-      z-index: 9;
-      background: #fff;
+  }
+.morecondition{
+    display: flex;
+    padding: 20px 20px 0px 20px;
+    flex-wrap: wrap;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+    >div{
+      margin-bottom: 10px;
+    margin-right: 1.5%;
+    width: 31.33%;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    >div{
       width: 100%;
-      border: 1px solid #e6e6e6;
-      // display: flex;
-      padding: 20px;
-      >div{
-        // flex: 1;
-            display: inline-block;
-            line-height: 44px;
-            margin-left: 20px;
-        label{
-          margin-right: 10px;
-        }
+    }
+      label{
+        width: 80px;
+    display: inline-block;
+    text-align: right;
       }
-
-  }
-  .main {
-    height: 100%;
-
-    /deep/ .xr-header {
-      padding: 15px 30px;
-    }
-  }
-
-  .main-body {
-    // height: calc(100% - 61px);
-    background-color: white;
-    border-top: 1px solid $xr-border-line-color;
-    border-bottom: 1px solid $xr-border-line-color;
-    padding:0px
-  }
-  // .main-table{
-  //       height: calc(100% - 90px ) !important;
-  // }
-  .main-table-header {
-    height: 45px;
-    background-color: white;
+      label:after {
+    content: " ";
     position: relative;
-    .main-table-header-button {
-      float: right;
-          margin-right: 20px;
-      margin-top: 5px;
-      margin-bottom: 6px;
-      margin-left: 21px;
+    top: -0.5px;
+    margin: 0 8px 0 2px;
+}
     }
-  }
 
-  .project-reminder {
-    width: auto;
-    float: left;
-    margin-left: 20px;
-    margin-top: 10px;
-  }
-  @import '../styles/table.scss';
-  .buttonc {
-    color: #4f81fc;
-     cursor: pointer;
-  }
-  </style>
-
+}
+</style>

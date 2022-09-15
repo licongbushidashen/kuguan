@@ -20,7 +20,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'SystemSetting.GoodsCategorys',
+      title: 'OrderSetting.GoodsCategorys',
       icon: 's-seas'
     },
     children: [
@@ -42,7 +42,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'SystemSetting.GoodsInfos',
+      title: 'OrderSetting.GoodsInfos',
       icon: 's-seas'
     },
     children: [
@@ -62,7 +62,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'SystemSetting.Warehouses',
+      title: 'OrderSetting.Warehouses',
       icon: 's-seas'
     },
     children: [
@@ -82,7 +82,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'SystemSetting.Companys',
+      title: 'OrderSetting.Companys',
       icon: 's-seas'
     },
     children: [

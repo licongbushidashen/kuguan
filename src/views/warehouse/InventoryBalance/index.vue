@@ -50,7 +50,8 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="50"
+          width="70"
+          align="center"
           label="序号">
 
           <template slot-scope="{ row, column, $index}">

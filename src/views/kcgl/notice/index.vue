@@ -12,10 +12,10 @@
 
     <div class="main-body" style="padding: 26px;">
       <div class="main-table-header" style="    height: 90px !important;">
-        <label style="margin-left:12px">消息接口地址</label>
-        <el-input v-model="url" disabled style="padding: 10px 0px 0px 10px;" placeholder="请输入接口地址"/>
+        <label >消息接口地址</label>
+        <el-input v-model="url" disabled style="padding: 10px 0px 0px 0px;" placeholder="请输入接口地址"/>
       </div>
-      <div style="margin-bottom:5px;padding-bottom:15px;    padding-left: 12px;">
+      <div style="margin-bottom:5px;padding-bottom:15px; ">
         <span>消息通知配置</span>
 
       </div>

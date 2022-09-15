@@ -10,7 +10,7 @@
         <div class="system-nav__title">
           空间点位
           <el-button
-            v-if="allAuth['SystemSetting.GoodsCategorys.Create']"
+            v-if="allAuth['SystemSetting.SpacePoint.Edit']"
             type="text"
             icon="el-icon-circle-plus"
             style="margin: 0px;    padding: 0px;    float: right;"
@@ -45,9 +45,9 @@
                   </div>
                   <div class="node-label-set">
 
-                    <i v-if="allAuth['SystemSetting.GoodsCategorys.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" />
+                    <i v-if="allAuth['SystemSetting.SpacePoint.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" />
                     <i
-                      v-if="allAuth['SystemSetting.GoodsCategorys.Delete']"
+                      v-if="allAuth['SystemSetting.SpacePoint.Delete']"
                       class="el-icon-delete"
                       @click.stop="deleteStruc(node,data)"
                     />
@@ -75,7 +75,7 @@
             <div style="margin:20px 0px 0px 15px">
               <template>
                 <el-button
-                  v-if="allAuth['SystemSetting.GoodsCategorys.Create'] ||allAuth['SystemSetting.GoodsCategorys.Edit']"
+                  v-if="allAuth['SystemSetting.SpacePoint.Create'] ||allAuth['SystemSetting.SpacePoint.Edit']"
                   type="primary"
                   @click="savechange"
                 >保存</el-button
@@ -209,7 +209,7 @@ export default {
         formType: 'text',
         isNull: 1,
         name: '具体位置',
-        placeholder: '请输入',
+        placeholder: '请输入具体位置',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.specificLocation : ''
@@ -219,7 +219,7 @@ export default {
         formType: 'textarea',
         isNull: 0,
         name: '说明',
-        placeholder: '请输入',
+        placeholder: '请输入说明',
         row: 3,
         maxLength: 200,
         setting: [],

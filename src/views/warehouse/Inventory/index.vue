@@ -37,7 +37,8 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="50"
+          width="60"
+          align="center"
           label="序号"
         >
           <template slot-scope="{ row, column, $index }">
@@ -86,11 +87,12 @@
           width="250">
           <template slot-scope="scope">
             <el-button
+              v-if="allAuth['InventoryManager.CheckPlanDetails']"
               type="text"
               size="small"
               @click="handleClick('edit', scope.row)">盘点明细</el-button>
             <el-button
-              v-if="scope.row.flag==2 "
+              v-if="scope.row.flag==2 &&allAuth['InventoryManager.CheckPlanDetails.DealWith'] "
               type="text"
               size="small"
               @click="handleClick('copy', scope.row)">盈亏处理</el-button>

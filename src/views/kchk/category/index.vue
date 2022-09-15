@@ -6,13 +6,13 @@
       label="货品管理" >
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['SystemSetting.GoodsInfos.Create']"
+          v-if="allAuth['OrderSetting.GoodsInfos.Create']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
           @click="addJurisdiction">新建</el-button>
         <el-button
-          v-if="allAuth['SystemSetting.GoodsInfos.Import']"
+          v-if="allAuth['OrderSetting.GoodsInfos.Import']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
@@ -23,7 +23,7 @@
           icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
         <el-button
-          v-if="allAuth['SystemSetting.GoodsInfos.Delete']"
+          v-if="allAuth['OrderSetting.GoodsInfos.Delete']"
           :disabled="JSON.stringify(obj)=='{}'"
           class="main-table-header-button "
           type=""
@@ -37,7 +37,7 @@
           <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
         </el-input>
         <el-button
-          v-if="allAuth['SystemSetting.WarningRules.Create']"
+          v-if="allAuth['OrderSetting.WarningRules.Create']"
           class="main-table-header-button xr-btn--orange  "
           type="primary" @click="openwarn('branth')">批量预警设置</el-button>
       </div>
@@ -110,8 +110,8 @@
           label="操作"
           width="200">
           <template slot-scope="{ row, column, $index}">
-            <span v-if="allAuth['SystemSetting.WarningRules.Create']" class="buttonc" @click.stop="openplan(row)">计划管理</span>
-            <span v-if="allAuth['SystemSetting.WarningRules.Create']" class="buttonc" @click.stop="openwarn(row)">预警管理</span>
+            <span v-if="allAuth['OrderSetting.WarningRules.Create']" class="buttonc" @click.stop="openplan(row)">计划管理</span>
+            <span v-if="allAuth['OrderSetting.WarningRules.Create']" class="buttonc" @click.stop="openwarn(row)">预警管理</span>
           </template>
         </el-table-column>
 
@@ -217,7 +217,7 @@ export default {
       this.bulkImportShow = true
     },
     openplan(row) {
-      if (!this.allAuth['SystemSetting.WarningRules.Edit']) {
+      if (!this.allAuth['OrderSetting.WarningRules.Edit']) {
         this.$message.error('没有改按钮权限')
         return
       }
@@ -228,7 +228,7 @@ export default {
       })
     },
     openwarn(row) {
-      if (!this.allAuth['SystemSetting.WarningRules.Edit']) {
+      if (!this.allAuth['OrderSetting.WarningRules.Edit']) {
         this.$message.error('没有改按钮权限')
         return
       }
@@ -329,7 +329,7 @@ export default {
      * 当某一行被点击时会触发该事件
      */
     handleRowClick(row, column, event) {
-      if (!this.allAuth['SystemSetting.GoodsInfos.Edit']) {
+      if (!this.allAuth['OrderSetting.GoodsInfos.Edit']) {
         this.$message.error('无编辑当前权限')
         return
       }

@@ -174,7 +174,7 @@ export default {
           fontSize: '17px'
         }
       }
-      if (JSON.stringify(this.allAuth).indexOf('SystemSetting') != -1) {
+      if (JSON.stringify(this.allAuth).indexOf('OrderSetting') != -1) {
         tempsItems.kchk = {
           title: '出入库管理',
           type: 6,

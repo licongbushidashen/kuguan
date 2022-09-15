@@ -18,9 +18,9 @@ import Vue from 'vue'
 const filterAsyncRouter = function(routers, authInfo) {
   const arr = []
   for (let i = 0; i < routers.length; i++) {
-    if (authInfo[routers[i].meta.title]) {
+    if (authInfo[routers[i].meta.title1]) {
       arr.push(routers[i])
-    } else if (authInfo[routers[i].meta.title1]) {
+    } else if (authInfo[routers[i].meta.title]) {
       arr.push(routers[i])
     }
   }
@@ -60,12 +60,12 @@ const perfectRouter = function(authInfo, result) {
   for (let index = 0; index < asyncRouterMap.length; index++) {
     const mainRouter = asyncRouterMap[index]
     const accessedRouters = filterAsyncRouter(mainRouter.router, authInfo)
+    console.log(accessedRouters)
     for (
       let childIndex = 0;
       childIndex < accessedRouters.length;
       childIndex++
     ) {
-      console.log(accessedRouters)
       const element = accessedRouters[childIndex]
       if (element.children && element.children.length > 0) {
         const firstChild = element.children[0]
@@ -128,14 +128,14 @@ const perfectRouter = function(authInfo, result) {
 const permission = {
   state: {
     addRouters: [],
-    crmRouters: [],
-    taskExamineRouters: [],
-    workLogRouters: [],
-    addressBookRouters: [],
-    projectRouters: [],
-    biRouters: [],
-    manageRouters: [],
-    hrmRouters: [],
+    // crmRouters: [],
+    // taskExamineRouters: [],
+    // workLogRouters: [],
+    // addressBookRouters: [],
+    // projectRouters: [],
+    // biRouters: [],
+    // manageRouters: [],
+    // hrmRouters: [],
     kchkRouters: [],
     handleRouters: [],
     kcglRouters: [],

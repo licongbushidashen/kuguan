@@ -3,7 +3,7 @@
     <xr-header icon-class="iconfont icon-huaban39" icon-color="#2362fb" label="绿植台账">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['InventoryManager.CheckPlans.Create']"
+          v-if="allAuth['SystemSetting.GreenPlant.Create']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
@@ -11,12 +11,13 @@
         >新建</el-button
         >
         <el-button
-          v-if="allAuth['SystemSetting.GoodsInfos.Import']"
+          v-if="allAuth['SystemSetting.GreenPlant.Import']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
           @click="bulkImportClick">导入</el-button>
         <el-button
+          v-if="allAuth['SystemSetting.GreenPlant.Export']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"
@@ -45,7 +46,8 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="50"
+          width="70"
+          align="center"
           label="序号"
         >
           <template slot-scope="{ row, column, $index }">

@@ -20,21 +20,21 @@
         class="openif"
         @click="opende(item,index,item.field)"
       >
-        {{ fieldFrom[item.field] }}
+        <span :style="fieldFrom[item.field]?'':'    font-size: 13px;    color: rgb(204, 207, 214);'">{{ fieldFrom[item.field] ||'请选择'+item.name }}</span>
       </div>
       <div
         v-if="item.formType == 'leave'"
         class="openif"
         @click.stop="opende1(item,index,item.field)"
       >
-        {{ fieldFrom[item.field] }}
+        <span :style="fieldFrom[item.field]?'':'    font-size: 13px;    color: rgb(204, 207, 214);'">{{ fieldFrom[item.field] ||'请选择'+item.name }}</span>
       </div>
       <div
         v-if="item.formType == 'leave1'"
         class="openif"
         @click.stop="opende2(item,index,item.field)"
       >
-        {{ fieldFrom[item.field] }}
+        <span :style="fieldFrom[item.field]?'':'    font-size: 13px;    color: rgb(204, 207, 214);'">{{ fieldFrom[item.field] ||'请选择'+item.name }}</span>
       </div>
       <el-select
         v-else-if="item.formType == 'seleteload'"

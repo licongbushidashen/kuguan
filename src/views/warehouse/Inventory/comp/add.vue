@@ -16,6 +16,7 @@ import {
   Create,
   Update
 } from '@/api/Inventory/kc'
+import { parseTime } from '@/utils'
 import { GetGoodsCategoryTreeHasRole } from '@/api/kchk/goods'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
@@ -105,6 +106,8 @@ export default {
       //   this.aoiinfo.endTime = this.aoiinfo.endTime + ' 00:00:00'
       // }
       // this.aoiinfo.goodsCategoryId = this.aoiinfo.goodsCategoryName
+      this.aoiinfo.startTime = parseTime(this.aoiinfo.startTime)
+      this.aoiinfo.endTime = parseTime(this.aoiinfo.endTime)
       delete this.aoiinfo.goodsCategoryName
       if (this.aoiinfo.id) {
         Update(this.aoiinfo).then(res => {

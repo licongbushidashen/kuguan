@@ -1,6 +1,7 @@
 <template>
   <div class="role-authorization">
-    <xr-header ref="xrHeader" label="权限管理" icon-class="iconfont icon-quanxianguanli1" icon-color="#2362fb" font-color="#fff" />
+    <xr-header ref="xrHeader" label="权限管理" icon-class="iconfont icon-quanxianguanli1" icon-color="#2362fb"
+      font-color="#fff" />
     <div :class="{'is-tabs' : roleTabShow}" class="role-box">
       <!-- 左边导航 -->
       <div v-loading="roleMenuLoading" class="nav">
@@ -9,7 +10,8 @@
           <el-button type="text" icon="el-icon-circle-plus" class="add-btn" @click="newRoleBtn">创建角色</el-button>
         </div>
         <div class="role-nav-box">
-          <div v-for="(item, index) in roleList" :key="index" :class="{'is-select' : item.id == roleActive.id}" class="menu-item" @click="roleMenuSelect(item)">
+          <div v-for="(item, index) in roleList" :key="index" :class="{'is-select' : item.id == roleActive.id}"
+            class="menu-item" @click="roleMenuSelect(item)">
             {{ item.name }}
             <div class="icon-close">
               <el-dropdown trigger="click" @command="roleHandleClick">
@@ -24,7 +26,8 @@
         </div>
       </div>
       <!-- 角色编辑 -->
-      <el-dialog :title="roleTitle" :visible.sync="newRoleVisible" :before-close="newRoleClose" :close-on-click-modal="false" width="30%">
+      <el-dialog :title="roleTitle" :visible.sync="newRoleVisible" :before-close="newRoleClose"
+        :close-on-click-modal="false" width="30%">
         <label class="label-title">角色名称</label>
         <el-input v-model="role.name" :maxlength="256" class="input-role" />
         <span slot="footer" class="dialog-footer">
@@ -45,29 +48,27 @@
                 <!-- <el-input v-model="inputs" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入姓名/账号">
                   <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
                 </el-input> -->
-                <el-button
-                  :disabled="roleList.length === 0" size="medium" class="xr-btn--orange" type="primary"
+                <el-button :disabled="roleList.length === 0" size="medium" class="xr-btn--orange" type="primary"
                   @click="addEmployees"> 关联用户 </el-button>
               </flexbox>
               <el-table :data="tableData" :height="tableHeight" style="width: 100%">
-                <el-table-column
-                  label="序号"
-                  width="50">
+                <el-table-column label="序号" width="50">
                   <template slot-scope="{ row, column, $index }">
                     <span style="    text-align: center;"> {{ $index + 1 }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column v-for="(item, index) in tableList" :prop="item.field" :label="item.label" :key="index" show-overflow-tooltip />
+                <el-table-column v-for="(item, index) in tableList" :prop="item.field" :label="item.label" :key="index"
+                  show-overflow-tooltip />
                 <el-table-column label="操作">
                   <template slot-scope="scope">
                     <!-- <i class="wk wk-edit content-table-span" title="编辑角色" @click="editUserRole(scope.row)" /> -->
-                    <i class="wk wk-delete content-table-span" title="删除" @click="employeeHandleClick('delete',scope.row)" />
+                    <i class="wk wk-delete content-table-span" title="删除"
+                      @click="employeeHandleClick('delete',scope.row)" />
                   </template>
                 </el-table-column>
               </el-table>
               <div class="p-contianer">
-                <el-pagination
-                  :current-page="currentPage" :page-sizes="pageSizes" :page-size.sync="pageSize"
+                <el-pagination :current-page="currentPage" :page-sizes="pageSizes" :page-size.sync="pageSize"
                   :total="total" class="p-bar" background layout="prev, pager, next, sizes, total, jumper"
                   @size-change="handleSizeChange" @current-change="handleCurrentChange" />
               </div>
@@ -112,16 +113,21 @@
             </div>
 
           </el-tab-pane> -->
-          <el-tab-pane v-if="roleActive.name!='admin'" label="功能权限" name="rule1"><!-- v-if="roleActive && showRuleSet" -->    <!-- 权限管理 -->
+          <el-tab-pane label="功能权限" name="rule1">
+            <!-- v-if="roleActive && showRuleSet" -->
+            <!-- 权限管理 -->
 
 
-            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box" style="padding-left:17px;overflow-y: scroll;">
+            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box"
+              style="padding-left:17px;overflow-y: scroll;">
 
-              <div style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
+              <div
+                style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
 
-                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit(1)"> 保存 </el-button>
+                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary"
+                  class="jurisdiction-edit" @click="ruleSubmit(1)"> 保存 </el-button>
               </div>
-              <div >
+              <div>
                 <!-- <div v-for="(item,index) in allrole" :key="index" style="">
                   <el-checkbox :indeterminate="item.indeterminate" v-model="item.isGranted" @change="handleCheckAllChange(item,index)">{{ item.displayName }}</el-checkbox>
                   <br style="">
@@ -134,38 +140,30 @@
 
                   </div>
                 </div> -->
-                <el-tree
-                  ref="tree1"
-                  :data="allrole"
-                  :props="defaultProps1"
-                  show-checkbox
-                  default-expand-all
-                  node-key="id"
-                  highlight-current/>
+                <el-tree ref="tree1" :data="allrole" :props="defaultProps1" show-checkbox default-expand-all
+                  node-key="id" highlight-current />
               </div>
             </div>
 
 
           </el-tab-pane>
-          <el-tab-pane v-if="roleActive.name!='admin'" label="数据权限" name="rule2"><!-- v-if="roleActive && showRuleSet" -->
+          <el-tab-pane v-if="roleActive.name!='admin'" label="数据权限" name="rule2">
+            <!-- v-if="roleActive && showRuleSet" -->
             <!-- 权限管理 -->
 
-            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box" style="padding-left:17px;overflow-y: scroll;">
+            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box"
+              style="padding-left:17px;overflow-y: scroll;">
 
-              <div style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
+              <div
+                style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
 
-                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary" class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
+                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary"
+                  class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
               </div>
 
-              <div >
-                <el-tree
-                  ref="tree"
-                  :data="data"
-                  :props="defaultProps"
-                  show-checkbox
-                  default-expand-all
-                  node-key="id"
-                  highlight-current/>
+              <div>
+                <el-tree ref="tree" :data="data" :props="defaultProps" show-checkbox default-expand-all node-key="id"
+                  highlight-current />
               </div>
             </div>
 
@@ -175,7 +173,7 @@
     </div>
     <!-- 关联员工 -->
     <!-- <relate-empoyee :visible.sync="relateEmpoyeeShow" :role-id="roleId" :show-dep-data="showDepData" @save="employeesSave" /> -->
-    <Type :role-id="roleActive.name" :typeling="typeling" :url="url" :name="name" @change="typevalu"/>
+    <Type :role-id="roleActive.name" :typeling="typeling" :url="url" :name="name" @change="typevalu" />
     <!-- 字段授权 -->
     <field-set-dialog :visible.sync="setFieldShow" :role-id="roleId" :label="setFieldLabel" />
     <!-- 角色编辑 -->
@@ -336,7 +334,7 @@ export default {
       if (this.roleActive) {
         return (
           this.roleActive.remark != 'admin' &&
-            this.roleActive.remark != 'project'
+          this.roleActive.remark != 'project'
         )
       }
 
@@ -444,8 +442,8 @@ export default {
       const arr = [{ name: val.name, isGranted: val.isGranted }]
       const len = this.allrole[index].permissions[index1].permissions.length
       for (let j = 0; j < this.allrole[index].permissions[index1].permissions.length; j++) { // 第二层全选反选
-        if (this.allrole[index].permissions[index1].permissions[j].isGranted)tickCount++
-        if (!this.allrole[index].permissions[index1].permissions[j].isGranted)unTickCount++
+        if (this.allrole[index].permissions[index1].permissions[j].isGranted) tickCount++
+        if (!this.allrole[index].permissions[index1].permissions[j].isGranted) unTickCount++
       }
       if (len == tickCount) {
         this.allrole[index].permissions[index1].indeterminate = false
@@ -465,8 +463,8 @@ export default {
 
       const len1 = this.allrole[index].permissions.length
       for (let i = 0; i < len1; i++) {
-        if (!this.allrole[index].permissions[i].indeterminate)unTickCount1++
-        else if (this.allrole[index].permissions[i].isGranted)tickCount1++
+        if (!this.allrole[index].permissions[i].indeterminate) unTickCount1++
+        else if (this.allrole[index].permissions[i].isGranted) tickCount1++
       }
       if (len1 == tickCount1) {
         this.allrole[index].indeterminate = true
@@ -514,8 +512,8 @@ export default {
       }
       if (index == 1) {
         for (var i = 0; i < arr.length; i++) {
-          if (!arr[i].indeterminate)unTickCount++
-          else if (arr[i].isGranted)tickCount++
+          if (!arr[i].indeterminate) unTickCount++
+          else if (arr[i].isGranted) tickCount++
         }
         if (len == tickCount) {
           return { indeterminate: true, isGranted: true }
@@ -530,8 +528,8 @@ export default {
         }
       } else {
         for (var i = 0; i < arr.length; i++) {
-          if (arr[i].isGranted)tickCount++
-          if (!arr[i].isGranted)unTickCount++
+          if (arr[i].isGranted) tickCount++
+          if (!arr[i].isGranted) unTickCount++
         }
         if (len == tickCount) {
           return { indeterminate: false, isGranted: true }
@@ -783,7 +781,7 @@ export default {
         this.showDepDataTemp.forEach((item, index) => {
           this.organizationUnitsFindChildren(item, index, this.showDepDataTemp.length)
         })
-      }).catch(() => {})
+      }).catch(() => { })
     },
     // 子部门
     organizationUnitsFindChildren(item, index, len) {
@@ -1156,7 +1154,7 @@ export default {
       return ['leads', 'customer', 'contacts', 'business', 'contract', 'receivables', 'receivablesPlan', 'product',
         'visit', 'invoice'
       ].includes(type) &&
-          this.ruleMenuIndex === 'data'
+        this.ruleMenuIndex === 'data'
     },
 
     /**
@@ -1178,332 +1176,345 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .role-authorization {
-    padding: 0 15px;
-    height: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
+.role-authorization {
+  padding: 0 15px;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
 
-  .title {
-    font-size: 18px;
-    height: 40px;
-    padding: 0 20px;
-    line-height: 40px;
-    margin: 10px 0;
-    color: #333;
-  }
+.title {
+  font-size: 18px;
+  height: 40px;
+  padding: 0 20px;
+  line-height: 40px;
+  margin: 10px 0;
+  color: #333;
+}
 
-  .role-box {
-    height: calc(100% - 60px);
-    overflow: hidden;
-    position: relative;
+.role-box {
+  height: calc(100% - 60px);
+  overflow: hidden;
+  position: relative;
 
-    &.is-tabs {
-      .role-nav-box {
-        padding-top: 0;
-        height: calc(100% - 100px);
-      }
+  &.is-tabs {
+    .role-nav-box {
+      padding-top: 0;
+      height: calc(100% - 100px);
     }
   }
+}
 
-  .nav {
-    width: 280px;
-    background: #fff;
-    border: 1px solid $xr-border-line-color;
-    border-radius: $xr-border-radius-base;
-    height: 100%;
+.nav {
+  width: 280px;
+  background: #fff;
+  border: 1px solid $xr-border-line-color;
+  border-radius: $xr-border-radius-base;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.nav__hd {
+  position: relative;
+  padding: 20px 15px;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid $xr-border-line-color;
+
+  .el-button {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 13px;
+    right: 15px;
+  }
+}
+
+.content-box {
+  background: #fff;
+  border: 1px solid $xr-border-line-color;
+  border-radius: $xr-border-radius-base;
+  margin-left: 295px;
+  height: 100%;
+  overflow: hidden;
+  padding-top: 10px;
+  position: relative;
+}
+
+.content-table {
+  overflow: hidden;
+}
+
+.content-table>.el-button {
+  float: right;
+  margin-bottom: 15px;
+  margin-right: 30px;
+}
+
+.content-box .content-table-span {
+  color: #2362FB;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.content-table-header {
+  padding: 0 15px 5px;
+
+  .content-table-header-reminder {
+    flex: 1;
+    margin-right: 5px;
+  }
+}
+
+/* 权限管理 */
+.jurisdiction-content {
+  height: calc(100% - 61px);
+  position: relative;
+  overflow: hidden;
+}
+
+.content-left {
+  height: 100%;
+  margin-right: 250px;
+  overflow: hidden;
+}
+
+.content-right {
+  width: 250px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+}
+
+.jurisdiction-box {
+  // padding-bottom: 15px;
+  height: calc(100% - 61px);
+  overflow: hidden;
+  position: relative;
+
+  .tree-top {
+    padding: 0 0 20px 20px;
+    border-bottom: solid 1px $xr-border-line-color;
   }
 
-  .nav__hd {
-    position: relative;
-    padding: 20px 15px;
-    font-size: 16px;
-    font-weight: 600;
-    border-bottom: 1px solid $xr-border-line-color;
+  .tree-content {
+    display: flex;
+    height: calc(100% - 40px);
 
-    .el-button {
-      position: absolute;
-      top: 13px;
-      right: 15px;
+    &>div {
+      flex: 1 1 50%;
+      overflow-y: auto;
     }
-  }
 
-  .content-box {
-    background: #fff;
-    border: 1px solid $xr-border-line-color;
-    border-radius: $xr-border-radius-base;
-    margin-left: 295px;
-    height: 100%;
-    overflow: hidden;
-    padding-top: 10px;
-    position: relative;
-  }
+    .qx {
+      padding: 20px;
+      border-right: solid 1px $xr-border-line-color;
 
-  .content-table {
-    overflow: hidden;
-  }
-
-  .content-table>.el-button {
-    float: right;
-    margin-bottom: 15px;
-    margin-right: 30px;
-  }
-
-  .content-box .content-table-span {
-    color: #2362FB;
-    margin-left: 5px;
-    cursor: pointer;
-  }
-
-  .content-table-header {
-    padding: 0 15px 5px;
-
-    .content-table-header-reminder {
-      flex: 1;
-      margin-right: 5px;
-    }
-  }
-
-  /* 权限管理 */
-  .jurisdiction-content {
-    height: calc(100% - 61px);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .content-left {
-    height: 100%;
-    margin-right: 250px;
-    overflow: hidden;
-  }
-
-  .content-right {
-    width: 250px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-  }
-
-  .jurisdiction-box {
-    // padding-bottom: 15px;
-    height: calc(100% - 61px);
-    overflow: hidden;
-    position: relative;
-    .tree-top {
-      padding: 0 0 20px 20px;
-      border-bottom: solid 1px $xr-border-line-color;
-    }
-    .tree-content {
-      display: flex;
-      height: calc(100% - 40px);
-      &>div {
-        flex: 1 1 50%;
-        overflow-y: auto;
+      /deep/ .el-checkbox {
+        display: flex;
+        align-items: center;
+        width: 100%;
       }
-      .qx {
-        padding: 20px;
-        border-right: solid 1px $xr-border-line-color;
-        /deep/ .el-checkbox {
-          display: flex;
-          align-items: center;
-          width: 100%;
-        }
-        /deep/ .el-checkbox__label {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-      }
-      /deep/ .custom-tree-node {
+
+      /deep/ .el-checkbox__label {
         flex: 1;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
       }
     }
-  }
 
-  .jurisdiction-content-checkbox {
-    border-right: 1px dashed $xr-border-line-color;
-    height: calc(100% - 47px);
-    overflow-y: scroll;
-    padding: 20px;
-
-    /deep/ .el-tree-node__content:hover {
-      background-color: white;
-      color: $xr-color-primary;
+    /deep/ .custom-tree-node {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   }
- /deep/ .el-tree-node__content{
-  margin-bottom: 10px;
- }
-
-  .jurisdiction-content-checkbox .el-tree /deep/ .el-tree-node>.el-tree-node__content {
-    margin-bottom: 20px;
-    width: 150px;
-  }
-
-  .jurisdiction-content-checkbox /deep/ .el-tree .el-tree-node {
-    white-space: inherit;
-    margin-bottom: 5px;
-  }
-
-  .jurisdiction-content-checkbox /deep/ .el-tree>.el-tree-node>.el-tree-node__children>.is-expanded>.el-tree-node__children>.is-expanded {
-    display: inline-block;
-  }
-
-  .role-authorization /deep/ .el-tree-node__expand-icon {
-    // display: none;
-  }
-
-  .data-radio {
-    padding: 5px 30px;
-  }
-
-  .data-radio .el-radio {
-    display: block;
-    margin: 20px 0;
-  }
-
-  /* 新建角色 */
-  .input-role {
-    padding: 10px 0 20px;
-    width: 100%;
-  }
-.quanxian{
- background: #F5F5F7;
-    line-height: 10px;
-    padding: 12px;
-    height: 33px;
-    display: inline-block;
-    margin-right:20px
 }
-.quanxian.active{
-    background:#334763;
-    color: #fff;
-}
-  .role-nav-box {
-    line-height: 30px;
-    overflow-y: auto;
-    padding: 20px 0;
-    height: calc(100% - 50px);
-  }
 
-  // 菜单
-  .menu-item {
-    color: #333;
-    font-size: 13px;
-    padding: 0 15px;
-    height: 40px;
-    line-height: 40px;
-    cursor: pointer;
-    position: relative;
+.jurisdiction-content-checkbox {
+  border-right: 1px dashed $xr-border-line-color;
+  height: calc(100% - 47px);
+  overflow-y: scroll;
+  padding: 20px;
 
-    .icon-close {
-      position: absolute;
-      top: 0;
-      right: 8px;
-      z-index: 1;
-      display: none;
-    }
-  }
-
-  .menu-item:hover,
-  .menu-item.is-select {
-    background-color: $xr--background-color-base;
-  }
-
-  .menu-item:hover::before,
-  .menu-item.is-select::before {
-    content: ' ';
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 2px;
-    background-color: #5383ed;
-  }
-
-  .role-nav-box .menu-item:hover .icon-close {
-    display: block;
-    float: right;
-  }
-
-  .jurisdiction-edit {
-    text-align: right;
-    padding: 10px 30px;
-    position: absolute;
-    top: 0;
-    right: 20px;
-    z-index: 3;
-  }
-
-  /** 分页布局 */
-  .p-contianer {
-    position: relative;
+  /deep/ .el-tree-node__content:hover {
     background-color: white;
-    height: 44px;
-
-    .p-bar {
-      float: right;
-      margin: 5px 100px 0 0;
-      font-size: 14px !important;
-    }
+    color: $xr-color-primary;
   }
-
-  // .el-tabs /deep/ .el-tabs__nav-wrap::after {
-  //   display: none !important;
-  // }
-
-  .el-tabs /deep/ .el-tabs__header {
-    padding: 0 17px;
-    margin: 0 0 15px !important;
-  }
-
-  .el-tabs /deep/ .el-tabs__item {
-    font-size: 13px !important;
-    height: 50px !important;
-    line-height: 50px !important;
-  }
-
-  .node-label {
-    font-weight: bold;
-    font-size: 15px;
-    position: relative;
-
-    .el-button {
-      position: absolute;
-      top: -8px;
-      right: -80px;
-
-      /deep/ span {
-        margin-left: 3px;
-      }
-    }
-  }
-
-  .common-node-label {
-    position: relative;
-
-    .el-button {
-      position: absolute;
-      top: -8px;
-      right: -105px;
-
-      /deep/ span {
-        margin-left: 3px;
-      }
-    }
-  }
-.el-checkbox{
-      margin-bottom: 20px !important;
-      min-width:150px !important
 }
-  @import '../styles/table.scss';
+
+/deep/ .el-tree-node__content {
+  margin-bottom: 10px;
+}
+
+.jurisdiction-content-checkbox .el-tree /deep/ .el-tree-node>.el-tree-node__content {
+  margin-bottom: 20px;
+  width: 150px;
+}
+
+.jurisdiction-content-checkbox /deep/ .el-tree .el-tree-node {
+  white-space: inherit;
+  margin-bottom: 5px;
+}
+
+.jurisdiction-content-checkbox /deep/ .el-tree>.el-tree-node>.el-tree-node__children>.is-expanded>.el-tree-node__children>.is-expanded {
+  display: inline-block;
+}
+
+.role-authorization /deep/ .el-tree-node__expand-icon {
+  // display: none;
+}
+
+.data-radio {
+  padding: 5px 30px;
+}
+
+.data-radio .el-radio {
+  display: block;
+  margin: 20px 0;
+}
+
+/* 新建角色 */
+.input-role {
+  padding: 10px 0 20px;
+  width: 100%;
+}
+
+.quanxian {
+  background: #F5F5F7;
+  line-height: 10px;
+  padding: 12px;
+  height: 33px;
+  display: inline-block;
+  margin-right: 20px
+}
+
+.quanxian.active {
+  background: #334763;
+  color: #fff;
+}
+
+.role-nav-box {
+  line-height: 30px;
+  overflow-y: auto;
+  padding: 20px 0;
+  height: calc(100% - 50px);
+}
+
+// 菜单
+.menu-item {
+  color: #333;
+  font-size: 13px;
+  padding: 0 15px;
+  height: 40px;
+  line-height: 40px;
+  cursor: pointer;
+  position: relative;
+
+  .icon-close {
+    position: absolute;
+    top: 0;
+    right: 8px;
+    z-index: 1;
+    display: none;
+  }
+}
+
+.menu-item:hover,
+.menu-item.is-select {
+  background-color: $xr--background-color-base;
+}
+
+.menu-item:hover::before,
+.menu-item.is-select::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #5383ed;
+}
+
+.role-nav-box .menu-item:hover .icon-close {
+  display: block;
+  float: right;
+}
+
+.jurisdiction-edit {
+  text-align: right;
+  padding: 10px 30px;
+  position: absolute;
+  top: 0;
+  right: 20px;
+  z-index: 3;
+}
+
+/** 分页布局 */
+.p-contianer {
+  position: relative;
+  background-color: white;
+  height: 44px;
+
+  .p-bar {
+    float: right;
+    margin: 5px 100px 0 0;
+    font-size: 14px !important;
+  }
+}
+
+// .el-tabs /deep/ .el-tabs__nav-wrap::after {
+//   display: none !important;
+// }
+
+.el-tabs /deep/ .el-tabs__header {
+  padding: 0 17px;
+  margin: 0 0 15px !important;
+}
+
+.el-tabs /deep/ .el-tabs__item {
+  font-size: 13px !important;
+  height: 50px !important;
+  line-height: 50px !important;
+}
+
+.node-label {
+  font-weight: bold;
+  font-size: 15px;
+  position: relative;
+
+  .el-button {
+    position: absolute;
+    top: -8px;
+    right: -80px;
+
+    /deep/ span {
+      margin-left: 3px;
+    }
+  }
+}
+
+.common-node-label {
+  position: relative;
+
+  .el-button {
+    position: absolute;
+    top: -8px;
+    right: -105px;
+
+    /deep/ span {
+      margin-left: 3px;
+    }
+  }
+}
+
+.el-checkbox {
+  margin-bottom: 20px !important;
+  min-width: 150px !important
+}
+
+@import '../styles/table.scss';
 </style>

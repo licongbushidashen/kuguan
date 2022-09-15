@@ -3,6 +3,7 @@
     <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="绿植台账">
       <template v-slot:ft>
         <el-button
+          v-if="allAuth['SystemSetting.GreenPlant.ReportExport']"
           class="main-table-header-button "
           type="primary"
           icon="iconfont icon-daochu1"
@@ -31,7 +32,8 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="50"
+          width="70"
+          align="center"
           label="序号"
         >
           <template slot-scope="{ row, column, $index }">

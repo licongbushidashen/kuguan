@@ -12,11 +12,12 @@
             </div>
 
             <div v-else :class="erroring?orderCategory?'':'errorshow':''" class=" wy-body-info-one-left-val wy-body-info-one-left-puts">
-              <el-select v-model="orderCategory" >
+              <el-select v-model="orderCategory" placeholder="请选择出库类型">
                 <el-option
                   v-for="(item,index) in Category"
-                  :key="index" :label="item.name"
-                  :value="item.orderCategory"
+                  :key="index"
+                  :label="item.name" :value="item.orderCategory"
+
                   class="wy-select"/>
               </el-select>
             </div>
@@ -40,11 +41,12 @@
               {{ objs.typeName }}
             </div>
             <div v-else :class="erroring?objs.typeId?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" >
-              <el-select v-model="objs.typeId" @change="listn">
+              <el-select v-model="objs.typeId" placeholder="请选择货品类目" @change="listn">
                 <el-option
                   v-for="(item,index) in showDepData"
-                  :key="index" :label="item.name"
-                  :value="item.id"
+                  :key="index"
+                  :label="item.name" :value="item.id"
+
                   class="wy-select"/>
               </el-select>
             </div>
@@ -57,7 +59,7 @@
               {{ objs.dutyUserName }}
             </div>
             <div v-else :class="erroring?objs.dutyUserName?'':'errorshow':''" class="wy-body-info-one-left-val  wk changers" @click="opende('dutyUser')">
-              <div :style="objs.dutyUserName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;"> {{ objs.dutyUserName ||'请选择' }}</div>
+              <div :style="objs.dutyUserName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;"> {{ objs.dutyUserName ||'请选择类目负责人' }}</div>
             </div>
           </div>
         </div>
@@ -70,7 +72,7 @@
               {{ objs.ckName }}
             </div>
             <div v-else :class="erroring?objs.ckName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('ck')">
-              <div :style="objs.ckName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;"> {{ objs.ckName ||'请选择' }}</div>
+              <div :style="objs.ckName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;"> {{ objs.ckName ||'请选择类目负责人' }}</div>
             </div>
           </div>
           <div class="wy-body-info-one-right">
@@ -82,7 +84,7 @@
             </div>
             <div v-else :class="erroring?objs.wldwName?'':'errorshow':''" class="wy-body-info-one-left-val  wk changers" @click="opende('wldw')">
               <div :style="objs.wldwName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">
-                {{ objs.wldwName ||'请选择' }}
+                {{ objs.wldwName ||'请选择往来单位' }}
               </div>
             </div>
           </div>
@@ -96,7 +98,7 @@
               {{ objs.jfkhName }}
             </div>
             <div v-else :class="erroring?objs.jfkhName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('jfkh')">
-              <div :style="objs.jfkhNumber?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择' }}</div>
+              <div :style="objs.jfkhNumber?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择经费卡号' }}</div>
             </div>
           </div>
           <div class="wy-body-info-one-right">
@@ -173,10 +175,10 @@
           >
             <template slot-scope="scope">
               <div v-if="!butoom1">
-                <div style="    font-size: 13px;    color: #cccfd6;">{{ scope.row.name || scope.row.goodsName || '请选择' }}</div>
+                <div style="    font-size: 13px;    color: #cccfd6;">{{ scope.row.name || scope.row.goodsName || '请选择货品名称' }}</div>
               </div>
               <div v-else style="    border: 1px solid #d9d9d9;    min-height: 30px;    line-height: 30px;    padding-left: 12px;    border-radius: 5px;" @click="opende('goods',scope.$index)">
-                <div :style="(scope.row.name || scope.row.goodsName)?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;" >{{ scope.row.name || scope.row.goodsName || '请选择' }}</div>
+                <div :style="(scope.row.name || scope.row.goodsName)?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;" >{{ scope.row.name || scope.row.goodsName || '请选择货品名称' }}</div>
               </div>
             </template>
           </el-table-column>
@@ -695,18 +697,7 @@ export default{
         UpdateOrder(obj, this.info.order.id).then(res => {
           this.$store.dispatch('TaskCenterCount')
           this.$message.success('修改成功')
-          if (!f) {
-            this.showDialog = false
-            this.time = Date.now()
-          } else {
-            if (!this.save) {
-              this.objs = {}
-              this.orderCategory = ''
-              this.fileList = []
-              this.list = []
-              this.time = Date.now()
-            }
-          }
+
           this.$emit('change', 0)
         })
       } else {
@@ -714,9 +705,38 @@ export default{
           this.$store.dispatch('TaskCenterCount')
           this.$message.success('新增成功')
           if (!f) {
+            this.$message.success('新增成功')
             this.showDialog = false
+            this.$emit('change', 0)
+          } else {
+            if (!this.save) {
+              this.$message.success('新增成功')
+              this.time = Date.now()
+              this.orderCategory = ''
+              this.createUser = {
+                createUserName: '',
+                createUserId: ''
+              }
+              this.list = []
+              this.fileList = []
+              this.objs = {
+                wldwName: '',
+                wldwId: '',
+                ckName: '',
+                ckId: '',
+                typeName: '',
+                typeId: '',
+                jfkhName: '',
+                jfkhNumber: '',
+                jfkhId: '',
+                dutyUserName: '',
+                dutyUserId: '',
+                remark: ''
+              }
+            } else {
+              this.$message.success('新增成功,请继续添加')
+            }
           }
-          this.$emit('change', 0)
         })
       }
     },

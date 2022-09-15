@@ -50,7 +50,79 @@
       </template>
     </xr-header>
     <div class="main-body">
-      <div class="main-table-header">
+      <div class="main-table-header" style="height:85px !important">
+        <div class="secharts">
+          <div>
+            <label for="">申请事项</label>
+            <el-select v-model="orderCategory" placeholder="请选择申请事项">
+              <el-option
+                v-for="(item,index) in Category"
+                :key="index"
+                :label="item.name"
+                :value="item.orderCategory"
+                class="wy-select"/>
+            </el-select>
+          </div>
+          <div style="width:20px;display:inline-block;    line-height: 32px;    margin: 0px 20px 0px 10px;">
+            <i class="wk wk-moretj" @click="morecondition=!morecondition"/>
+          </div>
+          <div v-show="morecondition" class="morecondition1">
+            <div class="morecondition">
+              <div>
+                <label for="">申请事项</label>
+                <el-select v-model="orderCategory" placeholder="请选择申请事项">
+                  <el-option
+                    v-for="(item,index) in Category"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.orderCategory"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+              <div>
+                <label for="">类型</label>
+                <el-select v-model="identification" placeholder="请选择类型">
+                  <el-option
+                    v-for="(item,index) in identifications"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.id"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+              <div>
+                <label for="">货品类目</label>
+                <el-select v-model="goodsCategoryId" placeholder="请选择货品类目">
+                  <el-option
+                    v-for="(item,index) in showDepData"
+                    :key="index" :label="item.name"
+                    :value="item.id"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+              <div>
+                <label for="">仓库</label>
+                <el-select v-model="warehouseId" placeholder="请选择仓库">
+                  <el-option
+                    v-for="(item,index) in WarehousePages"
+                    :key="index" :label="item.name"
+                    :value="item.id"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+            </div>
+            <div
+              class="morecondition2">
+              <el-button
+                class="main-table-header-button "
+                @click="Reset">重置</el-button>
+              <el-button
+                class="main-table-header-button "
+                type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+            </div>
+          </div>
+          <el-button type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+        </div>
         <el-tabs v-model="activeName" @tab-click="handleCurrentChange(0)">
           <el-tab-pane label="待我审批" name="1">
             <span slot="label">待我审批<el-badge v-if="quantity['3']>0" :value="quantity['3']" :max="99" class="item" style="    margin: 0px;"/></span>
@@ -166,6 +238,13 @@
 </template>
 
 <script>
+import {
+  WarehousePage
+
+} from '@/api/kchk/warn'
+import {
+  GetGoodsCategoryTreeHasRole
+} from '@/api/kchk/goods'
 import { mapGetters } from 'vuex'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { TaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchStorageOut } from '@/api/kchk/order'
@@ -229,6 +308,43 @@ export default {
   mixins: [],
   data() {
     return {
+      warehouseId: '',
+      WarehousePages: '',
+      goodsCategoryId: '',
+      showDepData: [],
+      identification: '',
+      identifications: [
+        { name: '入库', id: 0 },
+        { name: '出库', id: 1 }
+        // {name:'入库',id:0}
+      ],
+      orderCategory: '',
+      Category: [
+        {
+          orderCategory: '11',
+          name: '采购入库'
+        }, {
+          orderCategory: '12',
+          name: '退货入库'
+        }, {
+          orderCategory: '13',
+          name: '借用还库'
+        },
+        {
+          orderCategory: '21',
+          name: '领用出库'
+        }, {
+          orderCategory: '22',
+          name: '退货出库'
+        }, {
+          orderCategory: '23',
+          name: '借用出库'
+        }, {
+          orderCategory: '24',
+          name: '销毁出库'
+        }
+
+      ],
       checkedAll: [],
       activeName: '1',
       flag: '',
@@ -278,10 +394,34 @@ export default {
     window.onresize = function() {
       self.tableHeight = document.documentElement.clientHeight - 196
     }
-
+    this.WarehousePage()
+    this.getDepTreeList()
     this.getList()
   },
   methods: {
+
+    WarehousePage() {
+      this.loading = true
+      const data = { 'maxResultCount': 1000, 'skipCount': 0 }
+      WarehousePage(data)
+        .then(res => {
+          this.WarehousePages = res.items
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+    getDepTreeList() {
+      this.depLoading = true
+      GetGoodsCategoryTreeHasRole()
+        .then(response => {
+          this.showDepData = response || []
+          this.depLoading = false
+        })
+        .catch(() => {
+          this.depLoading = false
+        })
+    },
     /**
      * 更改每页展示数量
      */
@@ -329,16 +469,32 @@ export default {
     /**
      * 获取列表数据
      */
+    Reset() {
+      this.orderCategory = null
+      this.identification = ''
+      this.goodsCategoryId = null
+      this.warehouseId = null
+    },
     getList() {
       this.loading = true
       const data = {
         maxResultCount: this.pageSize,
         skipCount: this.currentPage
-
       }
       data.status = Number(this.activeName)
       if (this.orderCategory) {
-        data.stockCategory = this.orderCategory
+        data.orderCategory = this.orderCategory
+      }
+      debugger
+
+      if (this.identification != '' && this.identification != undefined) {
+        data.identification = this.identification
+      }
+      if (this.goodsCategoryId) {
+        data.goodsCategoryId = this.goodsCategoryId
+      }
+      if (this.warehouseId) {
+        data.warehouseId = this.warehouseId
       }
       if (this.startTime) {
         data.startTime = filterTimestampToFormatTime(new Date(this.startTime).getTime(), 'YYYY-MM-DD HH:mm:ss')
@@ -474,27 +630,7 @@ export default {
   /deep/.el-table{
     margin-top:10px !important
   }
-.morecondition{ padding-left:4px !important;top: -5px;
-  margin-top: 4px;
-  align-items: baseline;
-      position: absolute;
-    z-index: 9;
-    background: #fff;
-    width: 100%;
-    border: 1px solid #e6e6e6;
-    // display: flex;
-    padding: 20px;
-    >div{
-      // flex: 1;
-          display: inline-block;
-          line-height: 44px;
-          margin-left: 20px;
-      label{
-        margin-right: 10px;
-      }
-    }
 
-}
 .main {
   height: 100%;
 
@@ -508,7 +644,7 @@ export default {
   background-color: white;
   border-top: 1px solid $xr-border-line-color;
   border-bottom: 1px solid $xr-border-line-color;
-  padding:20px
+  padding:10px 20px 0px 20px
 }
 // .main-table{
 //       height: calc(100% - 90px ) !important;
@@ -536,5 +672,57 @@ export default {
 .buttonc {
   color: #4f81fc;
    cursor: pointer;
+}
+.secharts{
+  display: flex;
+  border-bottom: 1px solid #1111;
+    padding-bottom: 8px;
+
+}
+.morecondition1{
+  align-items: baseline;
+      position: absolute;
+    z-index: 9;
+    background: #fff;
+    width: 100%;
+    border: 1px solid #e6e6e6;
+  }
+  .morecondition2{
+    width: 100%;
+    padding: 0px 0 8px 8px;
+    text-align: center;
+    .main-table-header-button{
+      float: none !important;
+    }
+  }
+.morecondition{
+    display: flex;
+    padding: 20px 20px 0px 20px;
+    flex-wrap: wrap;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+    >div{
+      margin-bottom: 10px;
+    margin-right: 1.5%;
+    width: 31.33%;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    >div{
+      width: 100%;
+    }
+      label{
+        width: 80px;
+    display: inline-block;
+    text-align: right;
+      }
+      label:after {
+    content: " ";
+    position: relative;
+    top: -0.5px;
+    margin: 0 8px 0 2px;
+}
+    }
+
 }
 </style>

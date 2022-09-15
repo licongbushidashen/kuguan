@@ -11,12 +11,13 @@
         >新建</el-button
         >
         <el-button
-          v-if="allAuth['SystemSetting.GoodsInfos.Import']"
+          v-if="allAuth['SystemSetting.WaterDispenser.Import']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
           @click="bulkImportClick">导入</el-button>
         <el-button
+          v-if="allAuth['SystemSetting.WaterDispenser.Export']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"
@@ -46,7 +47,8 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="50"
+          width="70"
+          align="center"
           label="序号"
         >
           <template slot-scope="{ row, column, $index }">

@@ -108,8 +108,9 @@
         <el-table-column
           show-overflow-tooltip
           type="index"
-          width="50"
+          width="60"
           label="序号"
+          align="center"
         >
           <template slot-scope="{ row, column, $index }">
             <span class="status-name">
@@ -172,7 +173,8 @@
     </div>
     <Bill :showing="jurisdictionCreateShow" :info="info" :ffts="ffts" @change="getList"/>
 
-    <Type :placeholder="placeholder" :typeling="typeling" :p="p" :url="url" :name="name" @change="typevalu"/>
+    <!-- <Type :placeholder="placeholder" :typeling="typeling" :p="p" :url="url" :name="name" @change="typevalu"/> -->
+    <Type1 :placeholder="placeholder" :typeling="typeling" :p="p" :url="url" :name="name" @change="typevalu"/>
   </div>
 </template>
 
@@ -185,6 +187,7 @@ import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 import Bill from './comp/bill'
 import Type from './comp/type'
+import Type1 from './comp/type1'
 import pagest from '@/mixins/pagest'
 export default {
   /** 系统管理 的 项目管理 */
@@ -193,7 +196,8 @@ export default {
     XrHeader,
     CreateSections,
     Bill,
-    Type
+    Type,
+    Type1
     // Ccware
   },
   filters: {
@@ -274,6 +278,7 @@ export default {
       p: '',
       placeholder: '',
       typeling: false,
+      typeling1: false,
       url: '',
       name: '',
       ffts: false

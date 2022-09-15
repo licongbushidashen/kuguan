@@ -6,13 +6,13 @@
       label="仓库管理" >
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['SystemSetting.Warehouses.Create']"
+          v-if="allAuth['OrderSetting.Warehouses.Create']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
           @click="addJurisdiction">新建</el-button>
         <el-button
-          v-if="allAuth['SystemSetting.Warehouses.Import']"
+          v-if="allAuth['OrderSetting.Warehouses.Import']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
@@ -23,7 +23,7 @@
           icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
         <el-button
-          v-if="allAuth['SystemSetting.Warehouses.Delete']"
+          v-if="allAuth['OrderSetting.Warehouses.Delete']"
           :disabled="JSON.stringify(obj)=='{}'"
           class="main-table-header-button "
           type=""
@@ -296,7 +296,7 @@ export default {
       if (column.label == '序号') {
         return
       }
-      if (!this.allAuth['SystemSetting.Warehouses.Edit']) {
+      if (!this.allAuth['OrderSetting.Warehouses.Edit']) {
         this.$message.error('无详情权限')
         return
       }
