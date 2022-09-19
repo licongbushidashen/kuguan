@@ -10,7 +10,7 @@
         <div class="system-nav__title">
           空间点位
           <el-button
-            v-if="allAuth['SystemSetting.SpacePoint.Edit']"
+            v-if="allAuth['PropertyBillManager.SpacePoint.Edit']"
             type="text"
             icon="el-icon-circle-plus"
             style="margin: 0px;    padding: 0px;    float: right;"
@@ -45,9 +45,9 @@
                   </div>
                   <div class="node-label-set">
 
-                    <i v-if="allAuth['SystemSetting.SpacePoint.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" />
+                    <i v-if="allAuth['PropertyBillManager.SpacePoint.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" />
                     <i
-                      v-if="allAuth['SystemSetting.SpacePoint.Delete']"
+                      v-if="allAuth['PropertyBillManager.SpacePoint.Delete']"
                       class="el-icon-delete"
                       @click.stop="deleteStruc(node,data)"
                     />
@@ -75,7 +75,7 @@
             <div style="margin:20px 0px 0px 15px">
               <template>
                 <el-button
-                  v-if="allAuth['SystemSetting.SpacePoint.Create'] ||allAuth['SystemSetting.SpacePoint.Edit']"
+                  v-if="allAuth['PropertyBillManager.SpacePoint.Create'] ||allAuth['PropertyBillManager.SpacePoint.Edit']"
                   type="primary"
                   @click="savechange"
                 >保存</el-button
@@ -196,7 +196,7 @@ export default {
       field.push({
         field: 'parentName',
         formType: 'leave1',
-        isNull: 1,
+        isNull: 0,
         name: '上级目录',
         placeholder: '',
         disabled: false,
@@ -354,6 +354,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+/deep/ .is-current >div{
+  >div{
+    padding-left: 4px  !important;
+  }
+ &::before{
+  content: ' ';
+    background: #3e6bea;
+    height: 100%;
+    display: inline-block;
+    width: 3px;
+    position: relative;
+ }
+}
 @import '@/views/login/index.scss';
 /deep/.el-tree-node__content:hover{
   background: #F6F8FA !important;

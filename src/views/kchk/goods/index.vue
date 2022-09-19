@@ -377,6 +377,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/ .is-current >div{
+  >div{
+    padding-left: 4px  !important;
+  }
+ &::before{
+  content: ' ';
+    background: #3e6bea;
+    height: 100%;
+    display: inline-block;
+    width: 3px;
+    position: relative;
+ }
+}
 @import '@/views/login/index.scss';
 /deep/.el-tree-node__content:hover{
   background: #F6F8FA !important;

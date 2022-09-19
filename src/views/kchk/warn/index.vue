@@ -10,8 +10,7 @@
       <div class="main-table-header" style="height:85px !important">
         <div class="secharts">
           <div>
-            <label for="">类型</label>
-            <el-select v-model="warningCategory" >
+            <el-select v-model="warningCategory" placeholder="请选择预警类型">
               <el-option
                 v-for="(item,index) in warningCategorys"
                 :key="index"

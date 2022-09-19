@@ -158,6 +158,7 @@ table {
 }
 .el-button--primary{
   border: 0px !important;
+  background: #2362fb!important;
 }
 .el-table th > .cell,.el-table td > .cell{
   font-size: 14px !important;
@@ -219,4 +220,26 @@ table {
 }
 .el-tabs__nav-wrap::after{
   height: 1px !important;
+}
+ .sidebar-container .el-menu-item.is-active {
+  background: #f1f2f6 !important;
+}
+.el-button--primary:focus, .el-button--primary:hover{
+  background: #2362fb !important;
+}
+.el-submenu .menu-wrapper.nest-menu .el-menu-item .menu-item-content{
+height: 36px  !important;
+line-height: 36px !important;
+}
+.app-main{
+  padding: 0px 20px;
+}
+.main-body {
+  border: 0px  !important;
+}
+.el-menu-item{
+  height: auto !important;
+}
+.xr-header {
+  padding: 15px 4px !important;
 }

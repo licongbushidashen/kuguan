@@ -128,6 +128,23 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import './variables.scss';
+/deep/ .is-active  .el-menu-item{
+         height: 36px !important;
+margin: 5px 0px;
+   }
+   /deep/ .is-active .menu-wrapper.nest-menu .menu-item-content{
+height: 36px !important;
+line-height: 36px !important;
+         }
+/deep/ .is-active .el-submenu__title{
+   background-color: #f1f2f6 !important;
+   .side-bar-label,i{
+     color:rgba(0, 0, 0, 0.65) !important;
+   }
+}
+/deep/ .el-submenu__title:hover{
+      background-color: #f1f2f6 !important;
+}
 .el-menu--collapse{
   .menu-wrapper .el-menu-item{
     padding-left: 13px !important;
@@ -146,19 +163,17 @@ export default {
       padding-left: 13px !important;
 
   }
-  .menu-wrapper .el-menu-item.is-active{
-
-    margin-left: 14px !important;
-    margin-right: 14px !important;
-    >div{
-      padding-left: 9px !important;
-    border-radius: 4px !important;
-    }
-  }
+  // .menu-wrapper .el-menu-item.is-active{
+  //   margin-left: 14px !important;
+  //   margin-right: 14px !important;
+  //   >div{
+  //     padding-left: 9px !important;
+  //   border-radius: 4px !important;
+  //   }
+  // }
 }
 .menu-wrapper.nest-menu .el-menu-item.is-active>div{
-  background-color :#fff !important;
-      padding-left: 51px !important;
+  background-color :#f1f2f6 !important;
       border-radius: 0px !important;
 }
 .menu-wrapper {
@@ -167,33 +182,33 @@ export default {
     top: 5px !important;
       }
 
-  /deep/.el-menu-item.is-active{
-  color: rgba(0, 0, 0, 0.85) !important;
-    margin: 0px !important;
-    padding: 0px !important;
-    background: rgb(0, 21, 41) !important;
+//   /deep/.el-menu-item.is-active{
+//   color: rgba(0, 0, 0, 0.85) !important;
+//     margin: 0px !important;
+//     padding: 0px !important;
+//     background: rgb(0, 21, 41) !important;
 
-    .el-submenu__title+ul>div{
-      background-color :#fff !important;
-      padding-left: 51px !important;
-      border-radius: 0px !important;
-    }
-    >div{
-      background-color :#fff !important;
-      padding-left: 31px !important;
-      border-radius: 0px !important;
-      >span{
-        color: #000000d9 !important;
-      }
-      >i{
-        color: #000000d9 !important;
-      }
-      .el-badge{
-        right: 54px !important;
-    top: 5px !important;
-      }
-    }
-}
+//     .el-submenu__title+ul>div{
+//       background-color :#fff !important;
+//       padding-left: 51px !important;
+//       border-radius: 0px !important;
+//     }
+//     >div{
+//       background-color :#fff !important;
+//       padding-left: 31px !important;
+//       border-radius: 0px !important;
+//       >span{
+//         color: #000000d9 !important;
+//       }
+//       >i{
+//         color: #000000d9 !important;
+//       }
+//       .el-badge{
+//         right: 54px !important;
+//     top: 5px !important;
+//       }
+//     }
+// }
   /deep/ .el-submenu__title {
     height: auto;
     line-height: normal;
@@ -214,32 +229,34 @@ export default {
   height: auto;
   line-height: normal;
   padding: 0 14px;
-  background-color: #001529 !important;
+
   color: #bebec0;
 }
 
-.el-menu-item:not(.is-select) {
-  color: $menuText !important;
-}
+// .el-menu-item:not(.is-select) {
+//   color: $menuText !important;
+// }
 
 // element自带的有问题 is-active 换成 is-select
-.el-menu-item.is-select {
-  .menu-item-content {
-    background-color: #2362fb !important;
-    color: white !important;
-    /deep/ i {
-      color: white !important;
-    }
-  }
+// .el-menu-item.is-select {
+//   .menu-item-content {
+//     background-color: #2362fb !important;
+//     color: white !important;
+//     /deep/ i {
+//       color: white !important;
+//     }
+//   }
+// }
+.el-menu-item:hover, .el-menu-item:focus{
+  background: #f1f2f6 !important;
 }
-
 .el-menu-item:hover {
-  .menu-item-content {
-    background-color: rgba($color: #fff, $alpha: 0.1);
-    color: white;
-    /deep/ i {
-      color: white !important;
-    }
-  }
+
+  // .menu-item-content {
+  //   color: white;
+  //   /deep/ i {
+  //     color: white !important;
+  //   }
+  // }
 }
 </style>

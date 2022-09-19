@@ -1,17 +1,33 @@
 <template>
   <div class="role-authorization">
-    <xr-header ref="xrHeader" label="权限管理" icon-class="iconfont icon-quanxianguanli1" icon-color="#2362fb"
-      font-color="#fff" />
-    <div :class="{'is-tabs' : roleTabShow}" class="role-box">
+    <xr-header
+      ref="xrHeader"
+      label="权限管理"
+      icon-class="iconfont icon-quanxianguanli1"
+      icon-color="#2362fb"
+      font-color="#fff"
+    />
+    <div :class="{ 'is-tabs': roleTabShow }" class="role-box">
       <!-- 左边导航 -->
       <div v-loading="roleMenuLoading" class="nav">
         <div class="nav__hd">
           <!-- {{ title }} -->系统管理角色
-          <el-button type="text" icon="el-icon-circle-plus" class="add-btn" @click="newRoleBtn">创建角色</el-button>
+          <el-button
+            type="text"
+            icon="el-icon-circle-plus"
+            class="add-btn"
+            @click="newRoleBtn"
+          >创建角色</el-button
+          >
         </div>
         <div class="role-nav-box">
-          <div v-for="(item, index) in roleList" :key="index" :class="{'is-select' : item.id == roleActive.id}"
-            class="menu-item" @click="roleMenuSelect(item)">
+          <div
+            v-for="(item, index) in roleList"
+            :key="index"
+            :class="{ 'is-select': item.id == roleActive.id }"
+            class="menu-item"
+            @click="roleMenuSelect(item)"
+          >
             {{ item.name }}
             <div class="icon-close">
               <el-dropdown trigger="click" @command="roleHandleClick">
@@ -26,8 +42,13 @@
         </div>
       </div>
       <!-- 角色编辑 -->
-      <el-dialog :title="roleTitle" :visible.sync="newRoleVisible" :before-close="newRoleClose"
-        :close-on-click-modal="false" width="30%">
+      <el-dialog
+        :title="roleTitle"
+        :visible.sync="newRoleVisible"
+        :before-close="newRoleClose"
+        :close-on-click-modal="false"
+        width="30%"
+      >
         <label class="label-title">角色名称</label>
         <el-input v-model="role.name" :maxlength="256" class="input-role" />
         <span slot="footer" class="dialog-footer">
@@ -43,34 +64,64 @@
             <div v-loading="userLoading" class="content-table">
               <flexbox class="content-table-header">
                 <div class="content-table-header-reminder">
-                  <reminder v-if="showReminder" :content="getReminderContent()" />
+                  <reminder
+                    v-if="showReminder"
+                    :content="getReminderContent()"
+                  />
                 </div>
                 <!-- <el-input v-model="inputs" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入姓名/账号">
                   <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
                 </el-input> -->
-                <el-button :disabled="roleList.length === 0" size="medium" class="xr-btn--orange" type="primary"
-                  @click="addEmployees"> 关联用户 </el-button>
+                <el-button
+                  :disabled="roleList.length === 0"
+                  size="medium"
+                  class="xr-btn--orange"
+                  type="primary"
+                  @click="addEmployees"
+                >
+                  关联用户
+                </el-button>
               </flexbox>
-              <el-table :data="tableData" :height="tableHeight" style="width: 100%">
+              <el-table
+                :data="tableData"
+                :height="tableHeight"
+                style="width: 100%"
+              >
                 <el-table-column label="序号" width="50">
                   <template slot-scope="{ row, column, $index }">
-                    <span style="    text-align: center;"> {{ $index + 1 }}</span>
+                    <span style="text-align: center"> {{ $index + 1 }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column v-for="(item, index) in tableList" :prop="item.field" :label="item.label" :key="index"
-                  show-overflow-tooltip />
+                <el-table-column
+                  v-for="(item, index) in tableList"
+                  :prop="item.field"
+                  :label="item.label"
+                  :key="index"
+                  show-overflow-tooltip
+                />
                 <el-table-column label="操作">
                   <template slot-scope="scope">
                     <!-- <i class="wk wk-edit content-table-span" title="编辑角色" @click="editUserRole(scope.row)" /> -->
-                    <i class="wk wk-delete content-table-span" title="删除"
-                      @click="employeeHandleClick('delete',scope.row)" />
+                    <i
+                      class="wk wk-delete content-table-span"
+                      title="删除"
+                      @click="employeeHandleClick('delete', scope.row)"
+                    />
                   </template>
                 </el-table-column>
               </el-table>
               <div class="p-contianer">
-                <el-pagination :current-page="currentPage" :page-sizes="pageSizes" :page-size.sync="pageSize"
-                  :total="total" class="p-bar" background layout="prev, pager, next, sizes, total, jumper"
-                  @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+                <el-pagination
+                  :current-page="currentPage"
+                  :page-sizes="pageSizes"
+                  :page-size.sync="pageSize"
+                  :total="total"
+                  class="p-bar"
+                  background
+                  layout="prev, pager, next, sizes, total, jumper"
+                  @size-change="handleSizeChange"
+                  @current-change="handleCurrentChange"
+                />
               </div>
             </div>
           </el-tab-pane>
@@ -113,19 +164,36 @@
             </div>
 
           </el-tab-pane> -->
-          <el-tab-pane label="功能权限" name="rule1">
+          <el-tab-pane v-if="roleActive.name != 'admin'" label="功能权限" name="rule1">
             <!-- v-if="roleActive && showRuleSet" -->
             <!-- 权限管理 -->
 
-
-            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box"
-              style="padding-left:17px;overflow-y: scroll;">
-
+            <div
+              v-loading="ruleLoading"
+              :style="{ height: treeHeight + 'px' }"
+              class="jurisdiction-box"
+              style="padding-left: 17px; overflow-y: scroll"
+            >
               <div
-                style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
-
-                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary"
-                  class="jurisdiction-edit" @click="ruleSubmit(1)"> 保存 </el-button>
+                style="
+                  margin-bottom: 20px;
+                  background: #fff;
+                  z-index: 999;
+                  width: 100%;
+                  position: sticky;
+                  top: 0px;
+                "
+              >
+                <el-button
+                  v-if="roleActive"
+                  :disabled="roleList.length === 0"
+                  size="medium"
+                  type="primary"
+                  class="jurisdiction-edit"
+                  @click="ruleSubmit(1)"
+                >
+                  保存
+                </el-button>
               </div>
               <div>
                 <!-- <div v-for="(item,index) in allrole" :key="index" style="">
@@ -140,46 +208,91 @@
 
                   </div>
                 </div> -->
-                <el-tree ref="tree1" :data="allrole" :props="defaultProps1" show-checkbox default-expand-all
-                  node-key="id" highlight-current />
+                <el-tree
+                  ref="tree1"
+                  :data="allrole"
+                  :props="defaultProps1"
+                  show-checkbox
+                  node-key="id"
+                  highlight-current
+                />
               </div>
             </div>
-
-
           </el-tab-pane>
-          <el-tab-pane v-if="roleActive.name!='admin'" label="数据权限" name="rule2">
+          <el-tab-pane
+            v-if="roleActive.name != 'admin'"
+            label="数据权限"
+            name="rule2"
+          >
             <!-- v-if="roleActive && showRuleSet" -->
             <!-- 权限管理 -->
 
-            <div v-loading="ruleLoading" :style="{ height: treeHeight + 'px'}" class="jurisdiction-box"
-              style="padding-left:17px;overflow-y: scroll;">
-
+            <div
+              v-loading="ruleLoading"
+              :style="{ height: treeHeight + 'px' }"
+              class="jurisdiction-box"
+              style="padding-left: 17px; overflow-y: scroll"
+            >
               <div
-                style="    margin-bottom: 20px;    background: #fff;    z-index: 999;    width: 100%;    position: sticky;    top: 0px;">
-
-                <el-button v-if="roleActive" :disabled="roleList.length === 0" size="medium" type="primary"
-                  class="jurisdiction-edit" @click="ruleSubmit"> 保存 </el-button>
+                style="
+                  margin-bottom: 20px;
+                  background: #fff;
+                  z-index: 999;
+                  width: 100%;
+                  position: sticky;
+                  top: 0px;
+                "
+              >
+                <el-button
+                  v-if="roleActive"
+                  :disabled="roleList.length === 0"
+                  size="medium"
+                  type="primary"
+                  class="jurisdiction-edit"
+                  @click="ruleSubmit"
+                >
+                  保存
+                </el-button>
               </div>
 
               <div>
-                <el-tree ref="tree" :data="data" :props="defaultProps" show-checkbox default-expand-all node-key="id"
-                  highlight-current />
+                <el-tree
+                  ref="tree"
+                  :data="data"
+                  :props="defaultProps"
+                  show-checkbox
+                  default-expand-all
+                  node-key="id"
+                  highlight-current
+                />
               </div>
             </div>
-
           </el-tab-pane>
         </el-tabs>
       </div>
     </div>
     <!-- 关联员工 -->
     <!-- <relate-empoyee :visible.sync="relateEmpoyeeShow" :role-id="roleId" :show-dep-data="showDepData" @save="employeesSave" /> -->
-    <Type :role-id="roleActive.name" :typeling="typeling" :url="url" :name="name" @change="typevalu" />
+    <Type
+      :role-id="roleActive.name"
+      :typeling="typeling"
+      :url="url"
+      :name="name"
+      @change="typevalu"
+    />
     <!-- 字段授权 -->
-    <field-set-dialog :visible.sync="setFieldShow" :role-id="roleId" :label="setFieldLabel" />
+    <field-set-dialog
+      :visible.sync="setFieldShow"
+      :role-id="roleId"
+      :label="setFieldLabel"
+    />
     <!-- 角色编辑 -->
     <!-- <edit-role-dialog v-if="editRoleDialogShow" :user-show="editRoleType === 'copyRole'" :selection-list="selectionList" :visible.sync="editRoleDialogShow" @change="getUserList" /> -->
-    <role-range-set-dialog v-if="setRoleRangeShow" :visible.sync="setRoleRangeShow" :role-id="roleId" />
-
+    <role-range-set-dialog
+      v-if="setRoleRangeShow"
+      :visible.sync="setRoleRangeShow"
+      :role-id="roleId"
+    />
   </div>
 </template>
 
@@ -192,10 +305,12 @@ import {
   permissions,
   updatapermissions
 } from '@/api/admin/role'
+import { usersIdroles } from '@/api/admin/rmt'
 import {
-  usersIdroles
-} from '@/api/admin/rmt'
-import { GetTree, GetGoodsCategoryIds, EditDataPerMission } from '@/api/kchk/goods'
+  GetTree,
+  GetGoodsCategoryIds,
+  EditDataPerMission
+} from '@/api/kchk/goods'
 import RelateEmpoyee from './components/RelateEmpoyee'
 import FieldSetDialog from './components/FieldSetDialog'
 import RoleRangeSetDialog from './components/RoleRangeSetDialog'
@@ -204,9 +319,7 @@ import XrHeader from '@/components/XrHeader'
 // import EditRoleDialog from '../amt/components/EditRoleDialog'
 import Type from './components/type.vue'
 import crmTypeModel from '@/views/crm/model/crmTypeModel'
-import {
-  objDeepCopy
-} from '@/utils'
+import { objDeepCopy } from '@/utils'
 import {
   identityRolesAll,
   identityRoles,
@@ -262,8 +375,14 @@ export default {
       pageSizes: [15, 30, 45, 60],
       total: 0,
       tableList: [
-        { label: '姓名', field: 'name' },
-        { label: '账号', field: 'userName' }
+        {
+          label: '姓名',
+          field: 'name'
+        },
+        {
+          label: '账号',
+          field: 'userName'
+        }
         // { label: '角色', field: 'post' }
       ],
       // 新建角色
@@ -390,10 +509,15 @@ export default {
       } else {
         const arr = [...val, ...this.nowrole]
         const res = new Map()
-        arr.filter((item) => !res.has(item.name) && res.set(item.name, item.isGranted))
+        arr.filter(
+          item => !res.has(item.name) && res.set(item.name, item.isGranted)
+        )
         const obj = []
         for (const [k, v] of res) {
-          obj.push({ name: k, isGranted: v })
+          obj.push({
+            name: k,
+            isGranted: v
+          })
         }
         this.nowrole = obj
       }
@@ -402,12 +526,25 @@ export default {
       const flag = val.isGranted
       this.allrole[index].indeterminate = false
       const arr = []
-      for (let i = 0; i < this.allrole[index].permissions.length; i++) { // 第一层全选反选
+      for (let i = 0; i < this.allrole[index].permissions.length; i++) {
+        // 第一层全选反选
         this.allrole[index].permissions[i].isGranted = flag
-        arr.push({ name: this.allrole[index].permissions[i].name, isGranted: this.allrole[index].permissions[i].isGranted })
-        for (let j = 0; j < this.allrole[index].permissions[i].permissions.length; j++) { // 第二层全选反选
+        arr.push({
+          name: this.allrole[index].permissions[i].name,
+          isGranted: this.allrole[index].permissions[i].isGranted
+        })
+        for (
+          let j = 0;
+          j < this.allrole[index].permissions[i].permissions.length;
+          j++
+        ) {
+          // 第二层全选反选
           this.allrole[index].permissions[i].permissions[j].isGranted = flag
-          arr.push({ name: this.allrole[index].permissions[i].permissions[j].name, isGranted: this.allrole[index].permissions[i].permissions[j].isGranted })
+          arr.push({
+            name: this.allrole[index].permissions[i].permissions[j].name,
+            isGranted: this.allrole[index].permissions[i].permissions[j]
+              .isGranted
+          })
         }
       }
       this.checkedarr(arr)
@@ -417,14 +554,25 @@ export default {
       const arr = []
       let num = 0
       this.allrole[index].permissions[index1].indeterminate = false
-      for (let i = 0; i < this.allrole[index].permissions.length; i++) { // 第一层全选反选
+      for (let i = 0; i < this.allrole[index].permissions.length; i++) {
+        // 第一层全选反选
         if (this.allrole[index].permissions[i].isGranted == false) {
           num++
           this.allrole[index].indeterminate = true
         }
-        for (let j = 0; j < this.allrole[index].permissions[index1].permissions.length; j++) { // 第二层全选反选
-          arr.push({ name: this.allrole[index].permissions[index1].permissions[j].name, isGranted: flag })
-          this.allrole[index].permissions[index1].permissions[j].isGranted = flag
+        for (
+          let j = 0;
+          j < this.allrole[index].permissions[index1].permissions.length;
+          j++
+        ) {
+          // 第二层全选反选
+          arr.push({
+            name: this.allrole[index].permissions[index1].permissions[j].name,
+            isGranted: flag
+          })
+          this.allrole[index].permissions[index1].permissions[
+            j
+          ].isGranted = flag
         }
       }
       if (num == this.allrole[index].permissions.length) {
@@ -436,59 +584,23 @@ export default {
       }
       this.checkedarr(arr)
     },
-    handleCheckAllChange2(val, index, index1, index2) {
-      let tickCount = 0
-      let unTickCount = 0
-      const arr = [{ name: val.name, isGranted: val.isGranted }]
-      const len = this.allrole[index].permissions[index1].permissions.length
-      for (let j = 0; j < this.allrole[index].permissions[index1].permissions.length; j++) { // 第二层全选反选
-        if (this.allrole[index].permissions[index1].permissions[j].isGranted) tickCount++
-        if (!this.allrole[index].permissions[index1].permissions[j].isGranted) unTickCount++
-      }
-      if (len == tickCount) {
-        this.allrole[index].permissions[index1].indeterminate = false
-        this.allrole[index].permissions[index1].isGranted = true
-        arr.push({ name: this.allrole[index].permissions[index1].name, isGranted: this.allrole[index].permissions[index1].isGranted })
-      } else if (len == unTickCount) {
-        this.allrole[index].permissions[index1].indeterminate = false
-        this.allrole[index].permissions[index1].isGranted = false
-        arr.push({ name: this.allrole[index].permissions[index1].name, isGranted: this.allrole[index].permissions[index1].isGranted })
-      } else {
-        this.allrole[index].permissions[index1].indeterminate = true
-        this.allrole[index].permissions[index1].isGranted = true
-        arr.push({ name: this.allrole[index].permissions[index1].name, isGranted: this.allrole[index].permissions[index1].isGranted })
-      }
-      let tickCount1 = 0
-      let unTickCount1 = 0
-
-      const len1 = this.allrole[index].permissions.length
-      for (let i = 0; i < len1; i++) {
-        if (!this.allrole[index].permissions[i].indeterminate) unTickCount1++
-        else if (this.allrole[index].permissions[i].isGranted) tickCount1++
-      }
-      if (len1 == tickCount1) {
-        this.allrole[index].indeterminate = true
-        this.allrole[index].isGranted = true
-      } else if (len1 == unTickCount1) {
-        this.allrole[index].indeterminate = false
-        this.allrole[index].isGranted = true
-      } else {
-        this.allrole[index].indeterminate = true
-        this.allrole[index].isGranted = true
-      }
-      this.checkedarr(arr)
-    },
     handleCheckAllChange4() {
       this.allroleActive = []
       for (let i = 0; i < this.allrole.length; i++) {
         let flag = 0
-        for (let j = 0; j < this.allrole[i].permissions.length; j++) { // 第二层全选反选
+        for (let j = 0; j < this.allrole[i].permissions.length; j++) {
+          // 第二层全选反选
           if (this.allrole[i].permissions[j].permissions.length > 0) {
-            const obj = this.GrantedArray(this.allrole[i].permissions[j].permissions)
+            const obj = this.GrantedArray(
+              this.allrole[i].permissions[j].permissions
+            )
             if (obj.isGranted) {
               flag = 1
             }
-            this.allrole[i].permissions[j] = { ...this.allrole[i].permissions[j], ...obj }
+            this.allrole[i].permissions[j] = {
+              ...this.allrole[i].permissions[j],
+              ...obj
+            }
           } else {
             if (this.allrole[i].permissions[j].isGranted) {
               flag = 1
@@ -497,7 +609,10 @@ export default {
         }
 
         const obj = this.GrantedArray(this.allrole[i].permissions, 1, flag)
-        this.allrole[i] = { ...this.allrole[i], ...obj }
+        this.allrole[i] = {
+          ...this.allrole[i],
+          ...obj
+        }
       }
     },
     GrantedArray(arr, index, flag) {
@@ -516,15 +631,27 @@ export default {
           else if (arr[i].isGranted) tickCount++
         }
         if (len == tickCount) {
-          return { indeterminate: true, isGranted: true }
+          return {
+            indeterminate: true,
+            isGranted: true
+          }
         } else if (len == unTickCount) {
           if (flag == 0) {
-            return { indeterminate: false, isGranted: false }
+            return {
+              indeterminate: false,
+              isGranted: false
+            }
           } else {
-            return { indeterminate: false, isGranted: true }
+            return {
+              indeterminate: false,
+              isGranted: true
+            }
           }
         } else {
-          return { indeterminate: true, isGranted: false }
+          return {
+            indeterminate: true,
+            isGranted: false
+          }
         }
       } else {
         for (var i = 0; i < arr.length; i++) {
@@ -532,52 +659,65 @@ export default {
           if (!arr[i].isGranted) unTickCount++
         }
         if (len == tickCount) {
-          return { indeterminate: false, isGranted: true }
+          return {
+            indeterminate: false,
+            isGranted: true
+          }
         } else if (len == unTickCount) {
-          return { indeterminate: false, isGranted: false }
+          return {
+            indeterminate: false,
+            isGranted: false
+          }
         } else {
           if (index == 1) {
-            return { indeterminate: true, isGranted: true }
+            return {
+              indeterminate: true,
+              isGranted: true
+            }
           } else {
-            return { indeterminate: true, isGranted: true }
+            return {
+              indeterminate: true,
+              isGranted: true
+            }
           }
         }
       }
     },
-    handleCheckedCitiesChange(value) {
-
-    },
+    handleCheckedCitiesChange(value) {},
     // 获取角色管理左边栏列表
     identityRoles() {
       this.roleMenuLoading = true
-      identityRoles().then(res => {
-        this.roleList = res.items
-        this.roleActive = res.items[0]
-        this.roleMenuLoading = false
-        this.getUserList()
-        this.permissionsRole()
-        this.getRoleOrganization()
-        this.getgoodsCategoryIds()
-      }).catch(() => {
-        this.roleMenuLoading = false
-      })
+      identityRoles()
+        .then(res => {
+          this.roleList = res.items
+          this.roleActive = res.items[0]
+          this.roleMenuLoading = false
+          this.getUserList()
+          this.permissionsRole()
+          this.getRoleOrganization()
+          this.getgoodsCategoryIds()
+        })
+        .catch(() => {
+          this.roleMenuLoading = false
+        })
     },
     /**
-       * 获取所有角色列表
-       */
+     * 获取所有角色列表
+     */
     getRoleList() {
-      identityRolesAll().then(res => {
-        this.allRoleList = res.items
-      }).catch(() => {
-      })
+      identityRolesAll()
+        .then(res => {
+          this.allRoleList = res.items
+        })
+        .catch(() => {})
     },
     // 关闭
     newRoleClose() {
       this.newRoleVisible = false
     },
     /**
-       * 新建角色
-       */
+     * 新建角色
+     */
     newRoleBtn() {
       this.roleTitle = '新建角色'
       this.newRoleVisible = true
@@ -611,16 +751,16 @@ export default {
       }
     },
     /**
-       * 角色编辑
-       */
+     * 角色编辑
+     */
     roleEditBtn(val) {
       this.roleTitle = '编辑角色'
       this.role = JSON.parse(JSON.stringify(val))
       this.newRoleVisible = true
     },
     /**
-       * 角色操作
-       */
+     * 角色操作
+     */
     roleDropdownClick(value) {
       this.dropdownHandleRole = value
     },
@@ -634,8 +774,8 @@ export default {
       }
     },
     /**
-       * 删除
-       */
+     * 删除
+     */
     roleDelect(val) {
       this.$confirm('此操作将永久删除是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -662,8 +802,8 @@ export default {
         })
     },
     /**
-       * 角色列表点击
-       */
+     * 角色列表点击
+     */
     roleMenuSelect(val) {
       this.nowrole = []
       this.roleActive = val
@@ -680,28 +820,32 @@ export default {
       })
     },
     permissionsRole() {
-      permissions(`?providerName=R&providerKey=${this.roleActive.name}`).then(res => {
-        for (let i = 0; i < res.groups.length; i++) {
-          const data = res.groups[i]
-          const arr = []
-          for (let j = 0; j < data.permissions.length; j++) {
-            const add = data.permissions[j]
-            if (!add.parentName) {
-              add.permissions = []
-              arr.push(add)
-            } else {
-              arr[arr.length - 1].permissions.push(add)
+      permissions(`?providerName=R&providerKey=${this.roleActive.name}`).then(
+        res => {
+          for (let i = 0; i < res.groups.length; i++) {
+            const data = res.groups[i]
+            const arr = []
+            for (let j = 0; j < data.permissions.length; j++) {
+              const add = data.permissions[j]
+              if (!add.parentName) {
+                add.permissions = []
+                arr.push(add)
+              } else {
+                arr[arr.length - 1].permissions.push(add)
+              }
             }
+            res.groups[i].permissions = arr
           }
-          res.groups[i].permissions = arr
+          this.allrole = JSON.parse(
+            JSON.stringify(res.groups).replace(/name/g, 'id')
+          )
+          this.allroleActive = []
+          this.pushids(this.allrole)
+          this.$nextTick(() => {
+            this.$refs.tree1.setCheckedKeys(this.allroleActive)
+          })
         }
-        this.allrole = JSON.parse(JSON.stringify(res.groups).replace(/name/g, 'id'))
-        this.allroleActive = []
-        this.pushids(this.allrole)
-        this.$nextTick(() => {
-          this.$refs.tree1.setCheckedKeys(this.allroleActive)
-        })
-      })
+      )
     },
     // pushs(){
     //   for
@@ -718,8 +862,8 @@ export default {
       }
     },
     /**
-       * 员工列表
-       */
+     * 员工列表
+     */
     getUserList() {
       if (!this.roleActive) {
         this.tableData = []
@@ -729,18 +873,19 @@ export default {
 
       this.userLoading = true
       /**
-         * page: this.currentPage,
-            limit: this.pageSize,
-            roleId: this.roleActive.roleId,
-            realname: this.searchInput
-         * **/
+           * page: this.currentPage,
+              limit: this.pageSize,
+              roleId: this.roleActive.roleId,
+              realname: this.searchInput
+           * **/
       getRoleUsers({
         id: this.roleActive.id
-      }).then(res => {
-        this.tableData = res.items
-        this.total = res.totalCount
-        this.userLoading = false
       })
+        .then(res => {
+          this.tableData = res.items
+          this.total = res.totalCount
+          this.userLoading = false
+        })
         .catch(() => {
           this.userLoading = false
         })
@@ -751,7 +896,9 @@ export default {
         id: item.id,
         list: []
       }
-      rolesOrganization({ id: item.id }).then(res => {
+      rolesOrganization({
+        id: item.id
+      }).then(res => {
         res.items.forEach((ite, ind) => {
           this.selectionList.list.push(ite.name)
         })
@@ -759,8 +906,8 @@ export default {
       })
     },
     /**
-       * 关联员工
-       */
+     * 关联员工
+     */
     addEmployees() {
       this.typeling = !this.typeling
       this.url = '/api/identity/users'
@@ -768,35 +915,44 @@ export default {
     },
 
     /**
-       * 关联员工确定
-       */
+     * 关联员工确定
+     */
     employeesSave(val) {
       this.relateEmpoyeeShow = false
       this.getUserList()
     },
     // 根目录部门
     organizationUnitsRootNode(node, resolve) {
-      organizationUnitsRootNode().then(res => {
-        this.showDepDataTemp = res.items || []
-        this.showDepDataTemp.forEach((item, index) => {
-          this.organizationUnitsFindChildren(item, index, this.showDepDataTemp.length)
+      organizationUnitsRootNode()
+        .then(res => {
+          this.showDepDataTemp = res.items || []
+          this.showDepDataTemp.forEach((item, index) => {
+            this.organizationUnitsFindChildren(
+              item,
+              index,
+              this.showDepDataTemp.length
+            )
+          })
         })
-      }).catch(() => { })
+        .catch(() => {})
     },
     // 子部门
     organizationUnitsFindChildren(item, index, len) {
-      organizationUnitsFindChildren({ id: item.id }).then(res => {
-        this.showDepDataTemp[index].children = res.items
-        if (len - 1 == index) {
-          this.showDepData = objDeepCopy(this.showDepDataTemp)
-          this.crumbsList.push({
-            label: '全部',
-            list: this.showDepData
-          })
-          this.currentCrumbs = this.crumbsList[this.crumbsList.length - 1]
-        }
-      }).catch(() => {
+      organizationUnitsFindChildren({
+        id: item.id
       })
+        .then(res => {
+          this.showDepDataTemp[index].children = res.items
+          if (len - 1 == index) {
+            this.showDepData = objDeepCopy(this.showDepDataTemp)
+            this.crumbsList.push({
+              label: '全部',
+              list: this.showDepData
+            })
+            this.currentCrumbs = this.crumbsList[this.crumbsList.length - 1]
+          }
+        })
+        .catch(() => {})
     },
     // 下级
     subordinate(item, index) {
@@ -820,15 +976,19 @@ export default {
     // 查询角色下的部门
     getRoleOrganization() {
       this.ruleLoading = true
-      getRoleOrganization({ id: this.roleActive.id }).then(res => {
-        this.checkList = []
-        res.items.forEach((item, index) => {
-          this.checkList.push(item.id)
-        })
-        this.ruleLoading = false
-      }).catch(() => {
-        this.ruleLoading = false
+      getRoleOrganization({
+        id: this.roleActive.id
       })
+        .then(res => {
+          this.checkList = []
+          res.items.forEach((item, index) => {
+            this.checkList.push(item.id)
+          })
+          this.ruleLoading = false
+        })
+        .catch(() => {
+          this.ruleLoading = false
+        })
     },
     // 权限提交
     ruleSubmit(val) {
@@ -845,21 +1005,37 @@ export default {
         const active = new Set(this.allroleActive)
         for (const item of arr) {
           if (item.isGranted != undefined) {
-            obj.push({ name: item.id, isGranted: true })
+            obj.push({
+              name: item.id,
+              isGranted: true
+            })
             active.delete(item.id)
           }
         }
         [...active].forEach(e => {
-          obj.push({ name: e, isGranted: false })
+          obj.push({
+            name: e,
+            isGranted: false
+          })
         })
-        updatapermissions(`?providerName=R&providerKey=${this.roleActive.name}`, { permissions: obj }).then(res => {
-          this.$message.success('保存成功！')
-          this.ruleLoading = false
-        }).catch(() => {
-          this.ruleLoading = false
-        })
+        updatapermissions(
+          `?providerName=R&providerKey=${this.roleActive.name}`,
+          {
+            permissions: obj
+          }
+        )
+          .then(res => {
+            this.$message.success('保存成功！')
+            this.ruleLoading = false
+          })
+          .catch(() => {
+            this.ruleLoading = false
+          })
       } else {
-        EditDataPerMission({ roleName: this.roleActive.name, goodsCategoryIds: this.$refs.tree.getCheckedKeys() }).then(res => {
+        EditDataPerMission({
+          roleName: this.roleActive.name,
+          goodsCategoryIds: this.$refs.tree.getCheckedKeys()
+        }).then(res => {
           if (res) {
             this.$message.success('保存成功！')
             this.ruleLoading = false
@@ -880,10 +1056,9 @@ export default {
       }
     },
 
-
     /**
-       * 复制
-       */
+     * 复制
+     */
     ticketsBtn(val) {
       this.$confirm('确定此操作?', '提示', {
         confirmButtonText: '确定',
@@ -906,10 +1081,9 @@ export default {
         })
     },
 
-
     /**
-       * tree 增加disabled
-       */
+     * tree 增加disabled
+     */
     addDisabledToTree(tree) {
       tree.forEach(item => {
         item.disabled = item.remarks !== 'label-92'
@@ -920,8 +1094,8 @@ export default {
     },
 
     /**
-       * 删除
-       */
+     * 删除
+     */
     employeeHandleClick(type, val) {
       if (type === 'delete') {
         this.$confirm('此操作将永久删除是否继续?', '提示', {
@@ -932,15 +1106,19 @@ export default {
           .then(() => {
             this.userLoading = true
             usersIdroles(
-              { roleNames: [] },
-              val.id,
-            ).then(res => {
-              this.userLoading = false
-              this.getUserList()
-              this.$message.success('删除成功')
-            }).catch(() => {
-              this.userLoading = false
-            })
+              {
+                roleNames: []
+              },
+              val.id
+            )
+              .then(res => {
+                this.userLoading = false
+                this.getUserList()
+                this.$message.success('删除成功')
+              })
+              .catch(() => {
+                this.userLoading = false
+              })
           })
           .catch(() => {
             this.$message({
@@ -956,10 +1134,12 @@ export default {
     },
 
     /**
-       * 角色切换
-       */
+     * 角色切换
+     */
     roleTabChange() {
-      this.roleList = this.allRoleList.filter(item => item.label == this.tabType)
+      this.roleList = this.allRoleList.filter(
+        item => item.label == this.tabType
+      )
       if (this.roleList.length) {
         this.roleActive = this.roleList[0]
         this.getRoleRulesInfo()
@@ -969,11 +1149,9 @@ export default {
       this.refreshUserList()
     },
 
-
-
     /**
-       * 角色说明文字
-       */
+     * 角色说明文字
+     */
     getReminderContent() {
       if (this.roleActive && this.roleActive.remark == 'project') {
         return '项目管理员拥有“项目管理”模块所有权限，能看到并维护所有项目信息'
@@ -982,11 +1160,15 @@ export default {
     },
 
     /**
-       * 获取权限信息 需在roleActive获取之后
-       */
+     * 获取权限信息 需在roleActive获取之后
+     */
     getRoleRulesInfo() {
       if (this.roleActive && this.ruleMenuList.length) {
-        if (this.pid == 2 || this.pid == 10 || (this.pid == 9 && this.tabType == '92')) {
+        if (
+          this.pid == 2 ||
+          this.pid == 10 ||
+          (this.pid == 9 && this.tabType == '92')
+        ) {
           const lastItem = this.ruleMenuList[this.ruleMenuList.length - 1]
           if (lastItem.type != 'data') {
             this.ruleMenuList.push({
@@ -1032,8 +1214,8 @@ export default {
     },
 
     /**
-       * 获得check的实际数据
-       */
+     * 获得check的实际数据
+     */
     getRoleRules(array, tree) {
       if (!array) {
         array = []
@@ -1042,7 +1224,9 @@ export default {
       var hasRemove = false
       var copyArray = this.copyItem(array)
       for (
-        let firstIndex = 0; firstIndex < tree.childMenu.length; firstIndex++
+        let firstIndex = 0;
+        firstIndex < tree.childMenu.length;
+        firstIndex++
       ) {
         const firstItem = tree.childMenu[firstIndex]
 
@@ -1057,7 +1241,9 @@ export default {
           const element = array[index]
           var temps = []
           for (
-            let secondIndex = 0; secondIndex < firstItem.childMenu.length; secondIndex++
+            let secondIndex = 0;
+            secondIndex < firstItem.childMenu.length;
+            secondIndex++
           ) {
             const secondItem = firstItem.childMenu[secondIndex]
             if (secondItem.id == element) {
@@ -1114,32 +1300,32 @@ export default {
     },
 
     /**
-       * 头部搜索
-       */
+     * 头部搜索
+     */
     headerSearch(search) {
       this.searchInput = search
       this.refreshUserList()
     },
 
     /**
-       * 刷新员工列表
-       */
+     * 刷新员工列表
+     */
     refreshUserList() {
       this.currentPage = 0
       this.getUserList()
     },
 
     /**
-       * 更改每页展示数量
-       */
+     * 更改每页展示数量
+     */
     handleSizeChange(val) {
       this.pageSize = val
       this.refreshUserList()
     },
 
     /**
-       * 更改当前页数
-       */
+     * 更改当前页数
+     */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
       this.currentPage = x ? x * this.pageSize : x
@@ -1147,27 +1333,37 @@ export default {
     },
 
     /**
-       * 是否能字段设置
-       */
+     * 是否能字段设置
+     */
     canSetField(type) {
       if (this.pid == 10) return false
-      return ['leads', 'customer', 'contacts', 'business', 'contract', 'receivables', 'receivablesPlan', 'product',
-        'visit', 'invoice'
-      ].includes(type) &&
-        this.ruleMenuIndex === 'data'
+      return (
+        [
+          'leads',
+          'customer',
+          'contacts',
+          'business',
+          'contract',
+          'receivables',
+          'receivablesPlan',
+          'product',
+          'visit',
+          'invoice'
+        ].includes(type) && this.ruleMenuIndex === 'data'
+      )
     },
 
     /**
-       * 权限设置
-       */
+     * 权限设置
+     */
     fieldSetClick(node) {
       this.setFieldLabel = crmTypeModel[node.data.realm]
       this.setFieldShow = true
     },
 
     /**
-       * 权限设置
-       */
+     * 权限设置
+     */
     checkRangeSetClick(node) {
       this.setRoleRangeShow = true
     }
@@ -1177,7 +1373,7 @@ export default {
 
 <style lang="scss" scoped>
 .role-authorization {
-  padding: 0 15px;
+  // padding: 0 15px;
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;
@@ -1245,14 +1441,14 @@ export default {
   overflow: hidden;
 }
 
-.content-table>.el-button {
+.content-table > .el-button {
   float: right;
   margin-bottom: 15px;
   margin-right: 30px;
 }
 
 .content-box .content-table-span {
-  color: #2362FB;
+  color: #2362fb;
   margin-left: 5px;
   cursor: pointer;
 }
@@ -1302,7 +1498,7 @@ export default {
     display: flex;
     height: calc(100% - 40px);
 
-    &>div {
+    & > div {
       flex: 1 1 50%;
       overflow-y: auto;
     }
@@ -1350,7 +1546,11 @@ export default {
   margin-bottom: 10px;
 }
 
-.jurisdiction-content-checkbox .el-tree /deep/ .el-tree-node>.el-tree-node__content {
+.jurisdiction-content-checkbox
+  .el-tree
+  /deep/
+  .el-tree-node
+  > .el-tree-node__content {
   margin-bottom: 20px;
   width: 150px;
 }
@@ -1360,7 +1560,14 @@ export default {
   margin-bottom: 5px;
 }
 
-.jurisdiction-content-checkbox /deep/ .el-tree>.el-tree-node>.el-tree-node__children>.is-expanded>.el-tree-node__children>.is-expanded {
+.jurisdiction-content-checkbox
+  /deep/
+  .el-tree
+  > .el-tree-node
+  > .el-tree-node__children
+  > .is-expanded
+  > .el-tree-node__children
+  > .is-expanded {
   display: inline-block;
 }
 
@@ -1384,12 +1591,12 @@ export default {
 }
 
 .quanxian {
-  background: #F5F5F7;
+  background: #f5f5f7;
   line-height: 10px;
   padding: 12px;
   height: 33px;
   display: inline-block;
-  margin-right: 20px
+  margin-right: 20px;
 }
 
 .quanxian.active {
@@ -1513,7 +1720,7 @@ export default {
 
 .el-checkbox {
   margin-bottom: 20px !important;
-  min-width: 150px !important
+  min-width: 150px !important;
 }
 
 @import '../styles/table.scss';

@@ -53,7 +53,6 @@
       <div class="main-table-header" style="height:85px !important">
         <div class="secharts">
           <div>
-            <label for="">申请事项</label>
             <el-select v-model="orderCategory" placeholder="请选择申请事项">
               <el-option
                 v-for="(item,index) in Category"

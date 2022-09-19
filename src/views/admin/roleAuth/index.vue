@@ -1025,7 +1025,7 @@ export default {
 
 <style lang="scss" scoped>
 .role-authorization {
-  padding: 0 15px;
+  // padding: 0 15px;
   height: 100%;
   box-sizing: border-box;
   overflow: hidden;

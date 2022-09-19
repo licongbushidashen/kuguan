@@ -53,7 +53,6 @@
       <div class="main-table-header" style="height:33px !important">
         <div class="secharts">
           <div>
-            <label for="">申请事项</label>
             <el-select v-model="orderCategory" placeholder="请选择申请事项">
               <el-option
                 v-for="(item,index) in Category"
@@ -176,7 +175,7 @@
         </el-table-column>
         <el-table-column show-overflow-tooltip prop="name" label="单据状态">
           <template slot-scope="{ row, column, $index }">
-            <span>{{ row.flag | flagname }}</span>
+            <span>{{ row | flagname }}</span>
           </template>
         </el-table-column>
 
@@ -271,17 +270,21 @@ export default {
       }
     },
     flagname: function(value) {
-      if (value == 0) {
+      if (value.flag == 0) {
         return '草稿'
-      } else if (value == 1) {
+      } else if (value.flag == 1) {
         return '审批中'
-      } else if (value == 2) {
+      } else if (value.flag == 2) {
         return '审批通过'
-      } else if (value == 3) {
+      } else if (value.flag == 3) {
         return '驳回'
-      } else if (value == 4) {
-        return '已入库'
-      } else if (value == 5) {
+      } else if (value.flag == 4) {
+        if (value.orderCategory == 11 || value.orderCategory == 12 || value.orderCategory == 13) {
+          return '已入库'
+        } else {
+          return '已出库'
+        }
+      } else if (value.flag == 5) {
         return '已作废'
       }
     }

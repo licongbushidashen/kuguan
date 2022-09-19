@@ -1,31 +1,5 @@
 <template>
-  <div class="sidebar-container">
-    <div
-      :style="{
-        'padding-top': createButtonTitle != '' ? '40px' : '25px',
-        'background-color': variables.menuBg
-      }"
-      class="create-button-container"
-    >
-      <el-popover
-        v-if="createButtonTitle != ''"
-        :offset="addOffset"
-        :visible-arrow="false"
-        :disabled="!$slots.add"
-        placement="right"
-        popper-class="no-padding-popover"
-        trigger="hover"
-      >
-        <slot name="add" />
-        <div slot="reference" class="create-button" @click="quicklyCreate">
-          <div v-show="!buttonCollapse" class="button-name">
-            {{ createButtonTitle }}
-          </div>
-          <div v-show="!buttonCollapse" class="button-line" />
-          <i :class="createButtonIcon" class="button-mark" />
-        </div>
-      </el-popover>
-    </div>
+  <div class="sidebar-container" style="border-right:1px solid #f1f2f6;">
     <el-scrollbar
       :style="{
         'border-right-color': variables.menuBg,
@@ -36,10 +10,9 @@
       <el-menu
         :default-active="activeMenu"
         :collapse="collapse"
-        :background-color="variables.menuBg"
-        :text-color="variables.menuText"
-        :active-text-color="variables.menuActiveText"
         :style="{ paddingBottom: paddingBottom }"
+        text-color="#000000a6"
+        active-text-color="#2970ff"
         mode="vertical"
         class="el-menu-vertical"
         @select="handleSelect"
@@ -56,7 +29,7 @@
     </el-scrollbar>
     <slot name="bottom" />
     <div
-      :style="{ 'background-color': variables.menuBg }"
+      :style="{ 'background-color': '#f1f2f6 '}"
       class="sidebar-bottom"
     >
       <slot name="sidebar-bottom" />
@@ -177,7 +150,8 @@ export default {
   width: auto;
   height: 100%;
   position: relative;
-  background-color: $menuBg;
+  // background-color: $menuBg;
+    background-color: #fff;
   overflow: auto;
   flex-shrink: 0;
 
@@ -207,7 +181,9 @@ export default {
   overflow-y: overlay;
   overflow-x: hidden;
   padding-bottom: 48px;
-  border-right-color: $menuBg;
+  // border-right-color: $menuBg;
+  border-right: 0px;
+  background: #fff;
 }
 
 .el-menu-vertical.el-menu--collapse {
@@ -276,14 +252,14 @@ export default {
 // 底部按钮
 .sidebar-bottom {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+    bottom: 7px;
+    right: 0px;
+    width: 28px;
   // height: 48px;
 
   &-content {
     position: relative;
-    height: 48px;
+    height: 28px;
   }
 
   .copyright {
@@ -302,7 +278,7 @@ export default {
 .collapse-button {
   position: absolute;
   top: 0;
-  padding: 18px 20px;
+  padding: 8px 2px;
   cursor: pointer;
 }
 
