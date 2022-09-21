@@ -381,6 +381,7 @@ export default {
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
     },
     typevalu(row) {
+      debugger
       this.info = row
       this.info.pl = true
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow

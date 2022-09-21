@@ -194,6 +194,7 @@
 </template>
 
 <script>
+import { parseTime } from '@/utils'
 import {
   GoodsInOutDetail,
   DownloadGoodsInventoryExcel
@@ -289,6 +290,12 @@ export default {
       }
       GoodsInOutDetail(data)
         .then(res => {
+          res.items.forEach(e => {
+            e.goodsTime = parseTime(
+              e.goodsTime,
+              '{y}-{m}-{d}'
+            )
+          })
           this.list = res.items
           this.total = res.totalCount
           this.loading = false

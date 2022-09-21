@@ -100,6 +100,19 @@
           prop="size"
           label="商品规格"
         />
+
+        <el-table-column
+          prop="num"
+          label="货品数量"
+        />
+        <el-table-column
+          prop="amount"
+          label="货品金额"
+        />
+        <el-table-column
+          prop="warehouseName"
+          label="货品仓库"
+        />
         <el-table-column
           v-for="(item,index) in tableHader"
           :key="index"
@@ -246,15 +259,15 @@ export default {
         .then(res => {
           debugger
           this.tableHader = new Set()
-          for (let i = 0; i < res.items.length; i++) {
-            res.items[i].warehouseData = res.items[i].warehouseData.reverse()
-            res.items[i].warehouseData.forEach(e => {
-              res.items[i][e.warehouseName + '1'] = e.num
-              res.items[i][e.warehouseName + '2'] = e.amount
-              this.tableHader.add(e.warehouseName)
-            })
-          }
-          this.tableHader = [...this.tableHader]
+          // for (let i = 0; i < res.items.length; i++) {
+          //   res.items[i].warehouseData = res.items[i].warehouseData.reverse()
+          //   res.items[i].warehouseData.forEach(e => {
+          //     res.items[i][e.warehouseName + '1'] = e.num
+          //     res.items[i][e.warehouseName + '2'] = e.amount
+          //     this.tableHader.add(e.warehouseName)
+          //   })
+          // }
+          // this.tableHader = [...this.tableHader]
           this.list = res.items
           this.total = res.totalCount
           this.loading = false

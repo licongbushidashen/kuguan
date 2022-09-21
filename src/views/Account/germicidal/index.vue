@@ -3,7 +3,7 @@
     <xr-header icon-class="iconfont icon-huaban39" icon-color="#2362fb" label="消杀台账">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['SystemSetting.Disinfection.Create']"
+          v-if="allAuth['PropertyBillManager.Disinfection.Create']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
@@ -11,13 +11,13 @@
         >新建</el-button
         >
         <el-button
-          v-if="allAuth['SystemSetting.Disinfection.Import']"
+          v-if="allAuth['PropertyBillManager.Disinfection.Import']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
           @click="bulkImportClick">导入</el-button>
         <el-button
-          v-if="allAuth['SystemSetting.Disinfection.Export']"
+          v-if="allAuth['PropertyBillManager.Disinfection.Export']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"

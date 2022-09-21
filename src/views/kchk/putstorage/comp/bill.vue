@@ -316,7 +316,7 @@
             <div class="field__label">
               申请时间
             </div>
-            <div v-if="!butoom1" class="wy-body-info-one-left-val ">
+            <div v-if="!butoom1" class="wy-body-info-one-left-val">
               {{ time|filterTimestampToFormatTime('YYYY-MM-DD HH:mm') }}
             </div>
             <div v-else class="wy-body-info-one-left-val ">
@@ -472,6 +472,7 @@ export default{
   watch: {
     showing: {
       handler(val) {
+        debugger
         this.butoom1 = true
         this.time = Date.now()
         this.orderCategory = ''
@@ -524,7 +525,9 @@ export default{
             createUserName: this.info.order.createUserName,
             createUserId: this.info.order.creatorId
           }
-          this.time = new Date(this.info.order.receiptDate).getTime()
+          if (!this.info.order.ffs) {
+            this.time = new Date(this.info.order.receiptDate).getTime()
+          }
           const list = this.info.detailList
           for (let i = 0; i < list.length; i++) {
             const row = list[i]
@@ -629,7 +632,8 @@ export default{
       this.depLoading = true
       GetGoodsCategoryTreeHasRole()
         .then(response => {
-          this.showDepData = response || []
+          const res = response.filter(e => e.flag)
+          this.showDepData = res || []
           this.depLoading = false
         })
         .catch(() => {

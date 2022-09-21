@@ -626,7 +626,8 @@ export default{
       this.depLoading = true
       GetGoodsCategoryTreeHasRole()
         .then(response => {
-          this.showDepData = response || []
+          const res = response.filter(e => e.flag)
+          this.showDepData = res || []
           this.depLoading = false
         })
         .catch(() => {

@@ -79,7 +79,8 @@ const app = {
             resData.forEach(e => {
               obj[e.status] = e.count
             })
-            commit('SET_CRMROUTERSNUM1', obj['1'])
+            commit('SET_CRMROUTERSNUM1', obj['2'])
+            commit('SET_CRMROUTERSNUM12', obj['7'])
             commit('SET_quantity', obj)
             resolve(response)
           })

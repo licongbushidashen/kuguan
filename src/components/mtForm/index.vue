@@ -175,7 +175,7 @@
         :disabled="item.disabled"
         :placeholder="item.placeholder"
         :append-to-body="false"
-        :value-format="item.format?item.format:'yyyy-MM-dd HH:mm:ss'"
+        :format="item.format?item.format:'yyyy-MM-dd HH:mm:ss'"
         :type="item.date?item.date:'datetime'"
         :picker-options="{disabledDate(time){return time.getTime() <new Date(fieldFrom['startTime']).getTime() ;}}"
         class="input-width"

@@ -23,10 +23,10 @@
           <el-button type="primary" @click="handleCurrentChange(0)">搜索</el-button>
         </div>
         <el-tabs v-model="activeName" @tab-click="handleCurrentChange(0)">
-          <el-tab-pane label="待处理" name="1">
+          <el-tab-pane label="待处理" name="0">
             <span slot="label">待处理<el-badge v-if="quantity['7']>0" :value="quantity['7']" :max="99" class="item" style="    margin: 0px;"/></span>
           </el-tab-pane>
-          <el-tab-pane label="已处理" name="0">
+          <el-tab-pane label="已处理" name="1">
             <span slot="label">已处理</span>
           </el-tab-pane>
 
@@ -77,11 +77,11 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="类型">
+        <!-- <el-table-column prop="address" label="类型">
           <template slot-scope="{ row, column, $index }">
             <span>{{ row.orderCategory | ordername }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="goodsCode" label="商品编号" />
         <!-- <el-table-column show-overflow-tooltip prop="name" label="单据状态">
             <template slot-scope="{ row, column, $index }">
@@ -187,7 +187,7 @@ export default {
         { name: '库存总量', id: 11 }
       ],
       checkedAll: [],
-      activeName: '1',
+      activeName: '0',
       flag: '',
       flagName: [
         { name: '草稿', value: 0 },
@@ -293,11 +293,11 @@ export default {
       }
       GetLogTaskCenter(data)
         .then(res => {
-          for (let i = 0; i < res.items.length; i++) {
-            res.items[i].hover = false
-            res.items[i].checked = false
+          for (let i = 0; i < res.length; i++) {
+            res[i].hover = false
+            res[i].checked = false
           }
-          this.list = res.items
+          this.list = res
           this.total = res.totalCount
           this.loading = false
         })

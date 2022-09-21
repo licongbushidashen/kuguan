@@ -469,7 +469,8 @@ export default {
       if (this.orderCategory) {
         data.orderCategory = this.orderCategory
       }
-      if (this.identification != '' && this.identification != undefined) {
+      debugger
+      if (this.identification !== '' && this.identification !== undefined) {
         data.identification = this.identification
       }
       if (this.goodsCategoryId) {

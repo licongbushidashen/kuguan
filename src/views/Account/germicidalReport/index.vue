@@ -3,7 +3,7 @@
     <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="消杀台账">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['SystemSetting.Disinfection.ReportExport']"
+          v-if="allAuth['PropertyBillManager.Disinfection.ReportExport']"
           class="main-table-header-button "
           type="primary"
           icon="iconfont icon-daochu1"
@@ -246,6 +246,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  /deep/.el-table__footer-wrapper tbody td.el-table__cell{
+    background-color:#fff !important;
+  }
 /deep/.el-range-editor.el-input__inner{
   // padding: 0px 10px !important;
 }

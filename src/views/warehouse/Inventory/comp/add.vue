@@ -186,7 +186,7 @@ export default {
       field.push({
         field: 'startTime',
         formType: 'datetime',
-        format: 'yyyy-MM-dd HH:mm',
+        format: 'yyyy-MM-dd',
         isNull: 1,
         name: '开始时间',
         placeholder: '请选择开始时间',
@@ -198,7 +198,7 @@ export default {
       field.push({
         field: 'endTime',
         formType: 'datetime1',
-        format: 'yyyy-MM-dd HH:mm',
+        format: 'yyyy-MM-dd',
         isNull: 1,
         name: '结束时间',
         placeholder: '请选择结束时间',

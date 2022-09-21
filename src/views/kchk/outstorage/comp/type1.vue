@@ -343,6 +343,7 @@ export default {
       if (isCheckedItems.length > 0) {
         if (this.name == 'gldj1') {
           GetOrder(this.row.id).then(res => {
+            res.order.ffs = true
             this.$emit('change', res, this.name)
             // const arr = res.detailList
             // for (let i = 0; i < arr.length; i++) {

@@ -140,7 +140,6 @@ export default {
     },
 
     saveClick(data) {
-      console.log(this.aoiinfo, 666)
       if (!data) return
       this.aoiinfo.fillingDate = parseTime(this.aoiinfo.fillingDate)
       this.aoiinfo.installationDate = parseTime(this.aoiinfo.installationDate)

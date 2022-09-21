@@ -3,7 +3,7 @@
     <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="饮水机台账">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['SystemSetting.WaterDispenser.ReportExport']"
+          v-if="allAuth['PropertyBillManager.WaterDispenser.ReportExport']"
           class="main-table-header-button "
           type="primary"
           icon="iconfont icon-daochu1"
@@ -146,7 +146,7 @@ export default {
       const data = `?beginTime=${parseTime(this.time[0])}&endTime=${parseTime(this.time[1])}`
       WaterDispenserGetBooks(data)
         .then(res => {
-          const list = []
+          let list = {}
           const tableH = []
           this.tableH = [{ name: '空间点位', props: 'size' }]
           const tableHName = new Set()
@@ -165,10 +165,11 @@ export default {
               }
             })
             obj.size = '总计'
-            list.push(obj)
+            list = { ...list, ...obj }
           }
+          console.log(list, 111)
           this.tableH = [...this.tableH, ...tableH]
-          this.list = list
+          this.list = [list]
           this.loading = false
         })
         .catch(() => {

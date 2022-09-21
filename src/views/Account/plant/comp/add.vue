@@ -177,8 +177,8 @@ export default {
         formType: 'datetime',
         format: 'yyyy-MM-dd HH:mm',
         isNull: 1,
-        name: '消杀日期',
-        placeholder: '请选择日期',
+        name: '填写日期',
+        placeholder: '请选择填写日期',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.fillingDate : ''

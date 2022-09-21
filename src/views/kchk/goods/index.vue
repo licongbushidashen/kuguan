@@ -142,7 +142,8 @@ export default {
         code: ''
       },
       apiInfo: {},
-      fzrId: ''
+      fzrId: '',
+      flag: 1
     }
   },
   computed: {
@@ -189,13 +190,19 @@ export default {
     },
     saveClick(data) {
       if (!data) return
+      if (this.flag == 0) {
+        return
+      }
+      this.flag = 0
       if (this.aoiinfo.id) {
         UpdateGoodsCategory(this.aoiinfo).then(res => {
+          this.flag = 1
           this.$message.success('修改成功')
         })
       } else {
         this.aoiinfo.code = Date.now() + '' + Math.floor(Math.random() * 10)
         CreateGoodsCategory(this.aoiinfo).then(res => {
+          this.flag = 1
           this.$message.success('新增成功')
           this.node_had.childNodes = []
           this.getDepTreeList(this.node_had, this.resolve_had)

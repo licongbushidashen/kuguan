@@ -174,6 +174,12 @@ const permission = {
       messageItem.children[0].meta.num = num
       Vue.set(state.handleRouters, 0, messageItem)
     },
+    SET_CRMROUTERSNUM12: (state, num) => {
+      const messageItem = state.handleRouters[3]
+
+      messageItem.children[0].meta.num = num
+      Vue.set(state.handleRouters, 3, messageItem)
+    },
     SET_GROUPSLIST: (state, data) => {
       state.groupsList = data
     }
