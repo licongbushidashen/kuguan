@@ -27,6 +27,7 @@
                 <el-button slot="append" icon="el-icon-search" @click="changes"/>
               </el-input>
               <el-tree
+                v-if="tree1"
                 ref="tree"
                 :props="props"
                 :load="getDepTreeList"
@@ -117,6 +118,7 @@ export default {
   mixins: [GenerateRulesMixin],
   data() {
     return {
+      tree1: true,
       keywords: '',
       props: {
         label: 'name',
@@ -183,10 +185,11 @@ export default {
           this.$message.success('修改成功')
         })
       } else {
+        this.tree1 = false
         CreateSpacePoint(this.aoiinfo).then(res => {
+          console.log(this.aoiinfo, 255)
           this.$message.success('新增成功')
-          this.node_had.childNodes = []
-          this.getDepTreeList(this.node_had, this.resolve_had)
+          this.tree1 = true
         })
       }
     },
@@ -255,7 +258,6 @@ export default {
 
         fieldForm[item.field] = item.value
       })
-      console.log(fieldForm)
       return {
         list: objDeepCopy(list),
         fieldRules: fieldRules
@@ -277,25 +279,21 @@ export default {
       }
     },
     deleteStruc(node, data) {
-      this.$confirm(`此操作将删除${data.name}类目，是否继续？`, '提示', {
+      this.$confirm(`此操作将删除${data.specificLocation}类目，是否继续？`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(() => {
+          this.tree1 = false
           this.loading = true
-          const x = { [data.id]: data.code }
+          const x = { [data.id]: data.specificLocation }
           Delete(x)
             .then(res => {
+              this.tree1 = true
               if (res.data.failCount == 0) {
                 this.$message.success('删除成功')
-                const parent = node.parent
-                const children = parent.childNodes || parent.data
-                const index = children.findIndex(d => d.data.id === data.id)
-                this.aoiinfo = children[index + 1].data || { flag: 1 }
-                children.splice(index, 1)
                 this.loading = false
-                this.getDepTreeList(this.node_had, this.resolve_had)
               } else {
                 const arr = res.data.failMsg.map(e => {
                   return e + '<br/>'
@@ -321,7 +319,9 @@ export default {
     // 获取树形列表
     getDepTreeList(node, resolve) {
       this.depLoading = true
+
       const data = node.level === 0 ? {} : { parentId: node.data.id }
+      console.log(data)
       GetSpacePointTree(data)
         .then(response => {
           this.node_had = node
@@ -329,16 +329,10 @@ export default {
           response.forEach(e => {
             e.hasChild = !e.hasChild
           })
-          console.log(this.aoiinfo)
           if (node.level === 0) {
             this.aoiinfo == response ? response[0] : { flag: 1 }
           }
-          if (node.level > 0) {
-            resolve(response || [])
-          } else {
-            resolve(response || [])
-          }
-
+          resolve(response || [])
           this.showDepData = response || []
           this.depLoading = false
         })
@@ -346,20 +340,15 @@ export default {
           this.depLoading = false
         })
     }
-
-
-
   }
 }
 </script>
 
 <style lang="scss" scoped>
+/deep/.is-current.is-focusable>.el-tree-node__content{
 
-/deep/ .is-current >div{
-  >div{
-    padding-left: 4px  !important;
-  }
- &::before{
+
+  &::before{
   content: ' ';
     background: #3e6bea;
     height: 100%;
@@ -367,6 +356,15 @@ export default {
     width: 3px;
     position: relative;
  }
+}
+/deep/.el-tree-node__children{
+  padding:0px !important;
+  .is-current .el-tree-node__content{
+    padding-left: 0px !important;
+    .is-current{
+      padding-left: 30px
+    }
+  }
 }
 @import '@/views/login/index.scss';
 /deep/.el-tree-node__content:hover{

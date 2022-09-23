@@ -15,24 +15,63 @@
     </xr-header>
     <div class="main-body">
       <div class="main-table-header" style="padding-left:20px">
-        <label for="">类目名称</label>
-        <el-select v-model="categoryName" clearable style="width:200px;padding: 10px 0px 0px 10px;" >
+        <el-select v-model="categoryName" clearable style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请选择类目名称">
           <el-option
             v-for="(item,index) in showDepData"
             :key="index"
             :label="item.name" :value="item.id"
             class="wy-select"/>
         </el-select>
-        <label for="" style="margin-left:10px">货品名称</label>
-        <el-input v-model="goodsName" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入货品名称"/>
-        <label for="" style="margin:0px 10px">时间范围</label>
-        <el-date-picker
-          v-model="time"
-          style="    vertical-align: bottom;"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"/>
+
+
+        <div
+          style="
+            width: 20px;
+            display: inline-block;
+            line-height: 32px;
+            margin: 0px 20px 0px 10px;
+          "
+        >
+          <i class="wk wk-moretj" @click="morecondition = !morecondition" />
+
+        </div>
+        <div v-show="morecondition" class="morecondition1">
+          <div class="morecondition">
+            <div>
+              <label for="" style="margin-left:10px">类目名称</label>
+              <el-select v-model="categoryName" clearable style="width:200px;" placeholder="请选择类目名称" >
+                <el-option
+                  v-for="(item,index) in showDepData"
+                  :key="index"
+                  :label="item.name" :value="item.id"
+                  class="wy-select"/>
+              </el-select>
+            </div>
+            <div>
+              <label for="" style="margin-left:10px">货品名称</label>
+              <el-input v-model="goodsName" style="width:200px;" placeholder="请输入货品名称"/>
+            </div>
+            <div>
+              <label for="" style="margin:0px 10px">时间范围</label>
+              <el-date-picker
+                v-model="time"
+                style="    vertical-align: bottom;"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"/>
+            </div>
+          </div>
+          <div
+            class="morecondition2">
+            <el-button
+              class="main-table-header-button "
+              @click="Reset">重置</el-button>
+            <el-button
+              class="main-table-header-button "
+              type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+          </div>
+        </div>
         <el-button type="primary" @click="handleCurrentChange(0)">搜索</el-button>
       </div>
       <el-table
@@ -217,6 +256,7 @@ export default {
   mixins: [pagest],
   data() {
     return {
+      morecondition: false,
       showDepData: [],
       categoryName: '',
       goodsName: '',
@@ -257,6 +297,14 @@ export default {
     this.getList()
   },
   methods: {
+    Reset() {
+      this.goodsName = ''
+      this.categoryName = ''
+      const date = new Date()
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+      this.time = [year + '-' + month + '-' + '01', date]
+    },
     GetGoodsCategoryTreeHasRole() {
       GetGoodsCategoryTreeHasRole()
         .then(response => {
@@ -320,6 +368,7 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
+      this.morecondition = false
       const x = val > 0 ? val - 1 : 0
       this.currentPage = x ? x * this.pageSize : x
       this.getList()
@@ -409,4 +458,53 @@ export default {
   color:#4f81fc;
    cursor: pointer;
 }
+</style>
+<style lang="scss">
+
+.morecondition2{
+    width: 100%;
+    padding: 0px 0 8px 8px;
+    text-align: center;
+    .main-table-header-button{
+      float: none !important;
+    }
+  }
+.morecondition{
+    display: flex;
+    padding: 20px 20px 0px 20px;
+    flex-wrap: wrap;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+    >div{
+      margin-bottom: 10px;
+    margin-right: 1.5%;
+    width: 31.33%;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    >div{
+      width: 100%;
+    }
+      label{
+        // width: 80px;
+    display: inline-block;
+    text-align: right;
+      }
+      label:after {
+    content: " ";
+    position: relative;
+    top: -0.5px;
+    margin: 0 8px 0 2px;
+}
+    }
+
+}
+.morecondition1{
+  align-items: baseline;
+      position: absolute;
+    z-index: 9;
+    background: #fff;
+    width: 100%;
+    border: 1px solid #e6e6e6;
+  }
 </style>

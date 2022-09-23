@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="shows" :close-on-click-modal="false" :append-to-body="true" title="上级类目">
+  <el-dialog :visible.sync="shows" :close-on-click-modal="false" :append-to-body="true" :before-close="handleClose" title="上级类目" >
     <div class="grounds">
       <div >
         <el-input v-model="keywords" style="margin-bottom:20px">
@@ -70,6 +70,9 @@ export default {
     this.getDepTreeList()
   },
   methods: {
+    handleClose() {
+      this.$emit('onshow')
+    },
     onchecked(val) {
       this.showDataList.forEach((e, index) => {
         if (e.checked && val != index) {

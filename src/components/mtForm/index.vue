@@ -438,6 +438,8 @@ export default {
       }
     },
     opende1(row, idnex, name) {
+      debugger
+
       this.leaveing = true
     },
     opende2(row, idnex, name) {
@@ -475,6 +477,8 @@ export default {
        * 常规组件change事件
        */
     commonChange(item, index, value, j) {
+      debugger
+
       this.$emit('change', item, index, value, this.parentIndex, j)
     },
     onSubmit(ruleForm) {

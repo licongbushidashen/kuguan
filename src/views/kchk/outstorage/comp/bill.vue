@@ -626,7 +626,8 @@ export default{
       this.depLoading = true
       GetGoodsCategoryTreeHasRole()
         .then(response => {
-          const res = response.filter(e => e.flag)
+          // const res = response.filter(e => e.flag)
+          const res = response
           this.showDepData = res || []
           this.depLoading = false
         })
@@ -676,6 +677,15 @@ export default{
       for (let i = 0; i < this.list.length; i++) {
         const d = this.list[i]
         arr.push({ goodsId: d.goodsId || d.id, goodsCode: d.code || d.goodsCode, unitId: d.unitId, unitPrice: d.unitPrice, quantity: d.quantity, amountMoney: d.amountMoney, DefaultUnitId: d.DefaultUnitId })
+      }
+      const jy = this.showDepData.filter(e => e.id == this.objs.typeId)
+      debugger
+
+      if (jy[0].flag == '0') {
+        this.erroring = true
+        this.objs.typeId = ''
+        this.$message.error(jy[0].name + '该类目已被禁用,请重新选择')
+        return
       }
       const obj = {
         order: {

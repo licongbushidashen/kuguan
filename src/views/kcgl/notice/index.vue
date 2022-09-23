@@ -147,6 +147,7 @@
           <el-table-column
             show-overflow-tooltip
             prop="messageTypeName"
+            width="140"
             label="消息类型">
             <template slot-scope="{ row, column }">
               <el-select v-model="row.messageType">
@@ -157,6 +158,7 @@
           <el-table-column
             prop="templateId"
             label="中台消息模板ID"
+            width="140"
           >
             <template slot-scope="{ row, column }">
               <el-input v-model="row.templateId"/>
@@ -165,6 +167,7 @@
           <el-table-column
             prop="isOpen"
             label="是否开启"
+            width="140"
           >
             <template slot-scope="{ row, column }">
               <el-select v-model="row.isOpen">
@@ -176,6 +179,7 @@
           <el-table-column
             prop="remark"
             label="备注"
+            width="300"
           >
             <template slot-scope="{ row, column }">
               <el-input

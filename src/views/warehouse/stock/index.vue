@@ -17,19 +17,38 @@
       <div class="main-table-header">
         <div style="display: flex;    height: 54px;    line-height: 54px;padding-left: 20px;    align-items: baseline;">
           <div style="margin-right: 20px;">
-            <label for="">货品/仓库名称</label>
             <el-input v-model="inputs" style="width:200px;" placeholder="请输入货品/仓库名称"/>
           </div>
+          <div style="width:20px;display:inline-block;    line-height: 32px;    margin: 0px 20px 0px 10px;">
+            <i class="wk wk-moretj" @click="morecondition=!morecondition"/>
+          </div>
+          <div v-show="morecondition" class="morecondition1">
+            <div class="morecondition">
+              <div style="margin-right: 20px;">
+                <label for="">货品/仓库名称</label>
+                <el-input v-model="inputs" style="width:200px;" placeholder="请输入货品/仓库名称"/>
+              </div>
 
-          <div>
-            <label for="">货品类目</label>
-            <el-select v-model="goodsCategoryId">
-              <el-option
-                v-for="(item,index) in showDepData"
-                :key="index" :label="item.name"
-                :value="item.id"
-                class="wy-select"/>
-            </el-select>
+              <div>
+                <label for="">货品类目</label>
+                <el-select v-model="goodsCategoryId">
+                  <el-option
+                    v-for="(item,index) in showDepData"
+                    :key="index" :label="item.name"
+                    :value="item.id"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+            </div>
+            <div
+              class="morecondition2">
+              <el-button
+                class="main-table-header-button "
+                @click="Reset">重置</el-button>
+              <el-button
+                class="main-table-header-button "
+                type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+            </div>
           </div>
           <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)">搜索</el-button>
         </div>
@@ -155,6 +174,7 @@ export default {
   mixins: [pagest],
   data() {
     return {
+      morecondition: false,
       goodsCategoryId: '',
       showDepData: [],
       showing: false,
@@ -189,6 +209,10 @@ export default {
     this.getList()
   },
   methods: {
+    Reset() {
+      this.goodsCategoryId = ''
+      this.inputs = ''
+    },
     getDepTreeList() {
       this.depLoading = true
       GetGoodsCategoryTreeHasRole()
@@ -239,6 +263,7 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
+      this.morecondition = false
       const x = val > 0 ? val - 1 : 0
       this.currentPage = x ? x * this.pageSize : x
       this.getList()
@@ -322,5 +347,51 @@ export default {
 .buttonc{
   color:#4f81fc;
    cursor: pointer;
+}
+.morecondition1{
+  align-items: baseline;
+      position: absolute;
+    z-index: 9;
+    background: #fff;
+    width: 100%;
+    border: 1px solid #e6e6e6;
+  }
+  .morecondition2{
+    width: 100%;
+    padding: 0px 0 8px 8px;
+    text-align: center;
+    .main-table-header-button{
+      float: none !important;
+    }
+  }
+.morecondition{
+    display: flex;
+    padding: 20px 20px 0px 20px;
+    flex-wrap: wrap;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+    >div{
+      margin-bottom: 10px;
+    margin-right: 1.5%;
+    width: 31.33%;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    >div{
+      width: 100%;
+    }
+      label{
+        // width: 80px;
+    display: inline-block;
+    text-align: right;
+      }
+      label:after {
+    content: " ";
+    position: relative;
+    top: -0.5px;
+    margin: 0 8px 0 2px;
+}
+    }
+
 }
 </style>
