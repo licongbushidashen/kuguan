@@ -116,3 +116,15 @@ export function BatchALL(data, url) {
     }
   })
 }
+
+// 批量知晓
+export function DealWithWarningRule(data) {
+  return request({
+    url: '/api/zjlab/WarningRule/DealWithWarningRule',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

@@ -73,13 +73,14 @@
                 @mouseleave="row.hover = false"
               >
                 <el-checkbox
-                  v-show="row.hover || row.checked"
+
                   v-model="row.checked"
                   @change="onItemCheckboxChange"
                 />
+                <!-- v-show="row.hover || row.checked"
                 <span v-show="!row.hover && !row.checked" class="text">{{
                   $index+1
-                }}</span>
+                }}</span> -->
               </span>
 
             </span>

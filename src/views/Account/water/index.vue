@@ -44,33 +44,7 @@
         highlight-current-row
         @row-click="handleRowClick"
       >
-        <el-table-column
-          show-overflow-tooltip
-          type="index"
-          width="70"
-          align="center"
-          label="序号"
-        >
-          <template slot-scope="{ row, column, $index }">
-            <span class="status-name">
-              <span
-                class="index"
-                style="text-align: center; display: block;"
-                @mouseenter="row.hover = true"
-                @mouseleave="row.hover = false"
-              >
-                <el-checkbox
-                  v-show="row.hover || row.checked"
-                  v-model="row.checked"
-                  @change="onItemCheckboxChange"
-                />
-                <span v-show="!row.hover && !row.checked" class="text">{{
-                  $index + 1
-                }}</span>
-              </span>
-            </span>
-          </template>
-        </el-table-column>
+
         <el-table-column
           show-overflow-tooltip
           prop="fillingDate"

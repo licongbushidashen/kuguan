@@ -15,9 +15,9 @@
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
-        <div style="display: flex;    height: 54px;    line-height: 54px;padding-left: 20px;    align-items: baseline;">
+        <div style="display: flex;    height: 54px;    line-height: 54px;  align-items: baseline;">
           <div style="margin-right: 20px;">
-            <el-input v-model="inputs" style="width:200px;" placeholder="请输入货品/仓库名称"/>
+            <el-input v-model="inputs" style="width:200px;margin-left: 10px;" placeholder="请输入货品/仓库名称"/>
           </div>
           <div style="width:20px;display:inline-block;    line-height: 32px;    margin: 0px 20px 0px 10px;">
             <i class="wk wk-moretj" @click="morecondition=!morecondition"/>
@@ -62,30 +62,7 @@
         highlight-current-row
 
         @row-click="handleRowClick">
-        <el-table-column
-          show-overflow-tooltip
-          type="index"
-          width="70"
-          align="center"
-          label="序号">
 
-          <template slot-scope="{ row, column, $index}">
-            <span class="status-name">
-              <span
-                class="index"
-                style="display: block;"
-                @mouseenter="row.hover = true"
-                @mouseleave="row.hover = false"
-              >
-
-                <span class="text">{{
-                  $index+1
-                }}</span>
-              </span>
-
-            </span>
-          </template>
-        </el-table-column>
         <el-table-column
           show-overflow-tooltip
           prop="goodsName"

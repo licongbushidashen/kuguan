@@ -14,7 +14,7 @@
       </template>
     </xr-header>
     <div class="main-body">
-      <div class="main-table-header" style="padding-left:20px">
+      <div class="main-table-header" >
         <el-select v-model="categoryName" clearable style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入类目名称">
           <el-option
             v-for="(item,index) in showDepData"
@@ -75,7 +75,7 @@
         highlight-current-row
 
         @row-click="handleRowClick">
-        <el-table-column
+        <!-- <el-table-column
           show-overflow-tooltip
           type="index"
           width="70"
@@ -102,7 +102,7 @@
 
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           show-overflow-tooltip
           prop="goodsCode"

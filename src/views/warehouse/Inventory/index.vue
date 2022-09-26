@@ -38,7 +38,7 @@
         class="main-table"
         highlight-current-row
       >
-        <el-table-column
+        <!-- <el-table-column
           show-overflow-tooltip
           type="index"
           width="60"
@@ -64,7 +64,7 @@
               </span>
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column show-overflow-tooltip prop="flag" label="状态">
           <template slot-scope="{ row, column, $index }">
             <span>{{ row.flag | flagname }}</span>

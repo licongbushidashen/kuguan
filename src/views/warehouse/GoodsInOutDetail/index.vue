@@ -14,7 +14,7 @@
       </template>
     </xr-header>
     <div class="main-body">
-      <div class="main-table-header" style="padding-left:20px">
+      <div class="main-table-header" >
         <el-select v-model="categoryName" clearable style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请选择类目名称">
           <el-option
             v-for="(item,index) in showDepData"
@@ -55,6 +55,7 @@
               <label for="" style="margin:0px 10px">时间范围</label>
               <el-date-picker
                 v-model="time"
+                :clearable="false"
                 style="    vertical-align: bottom;"
                 type="daterange"
                 range-separator="至"
@@ -83,7 +84,7 @@
         highlight-current-row
 
         @row-click="handleRowClick">
-        <el-table-column
+        <!-- <el-table-column
           show-overflow-tooltip
           type="index"
           width="70"
@@ -110,7 +111,7 @@
 
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           show-overflow-tooltip
           prop="goodsCode"
@@ -506,5 +507,6 @@ export default {
     background: #fff;
     width: 100%;
     border: 1px solid #e6e6e6;
+    top:0px
   }
 </style>

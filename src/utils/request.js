@@ -53,8 +53,8 @@ const confirmMessage = debounce(1000, message => {
 var https = ''
 var httpAuto = ''
 if (process.env.NODE_ENV === 'production') {
-  https = 'https://wms.demo.wy5u.com'
-  httpAuto = 'https://wms-auth.demo.wy5u.com'
+  https = 'wms-test.zhejianglab.com'
+  httpAuto = 'wms-auth-test.zhejianglab.com'
 } else {
   https = 'https://wms.demo.wy5u.com'
   // https = 'http://identity.zisu.edu.cn'
@@ -157,25 +157,6 @@ service.interceptors.response.use(
       }
       // eslint-disable-next-line no-constant-condition
     } else if (!res.access_token && false) {
-      // 302	登录已失效
-      if (res.code === 302) {
-        if (res.data && res.data.extra === 1) {
-          confirmMessage(
-            `您的账号${
-              res.data.extraTime
-            }在别处登录。如非本人操作，则密码可能已泄漏，建议修改密码`
-          )
-        } else {
-          clearCacheEnterLogin()
-        }
-      } else if (res.code === 1005) {
-        router.push('/welcome')
-      } else {
-        if (res.msg) {
-          errorMessage(res.msg)
-        }
-      }
-      return Promise.reject(res)
     } else {
       return res
     }

@@ -337,7 +337,7 @@
       </div>
       <div v-if="typebutton==1">
         <el-button v-if="allAuth['OrderSetting.Orders.BatchAgree']" type="primary" @click="Batch('/api/zjlab/Order/BatchAgree')">同 意</el-button>
-        <el-button v-if="allAuth['OrderSetting.Orders.BatchReject']" @click="Batch('/api/zjlab/Order/BatchReject')">驳 回</el-button>
+        <el-button v-if="allAuth['OrderSetting.Orders.BatchReject']" @click="Batch('/api/zjlab/Order/BatchRject')">驳 回</el-button>
       </div>
       <div v-if="typebutton==2">
         <el-button v-if="allAuth['OrderSetting.Orders.BatchStorageIn'] &&!objs.identification" type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认入库</el-button>

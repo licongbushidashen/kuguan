@@ -805,6 +805,10 @@ export default {
      * 角色列表点击
      */
     roleMenuSelect(val) {
+      console.log(val, 'command')
+      if (val.name == 'admin') {
+        this.mainMenuIndex = 'user'
+      }
       this.nowrole = []
       this.roleActive = val
       this.getgoodsCategoryIds()

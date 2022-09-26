@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :title="title" style="    ">
     <create-sections>
-      <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" />
+      <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick" />
     </create-sections>
     <span slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>
@@ -13,12 +13,12 @@
 import { mapGetters } from 'vuex'
 import { objDeepCopy } from '@/utils'
 import {
-  Create,
-  Update
-} from '@/api/kchk/warn'
+  CreateSpacePoint
+} from '@/api/account'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
+
 export default {
   components: {
     CreateSections,
@@ -43,11 +43,7 @@ export default {
       maxlength: 300,
       checkedAll: [],
       fieldsRules: {}, // 字段列表需要验证,
-      aoiinfo: {
-        flag: 1,
-        remark: ''
-
-      },
+      aoiinfo: { flag: 1, dutyUserName: '' },
       tree: [],
       fields: {},
       isSave: false,
@@ -66,16 +62,9 @@ export default {
     showing: {
       handler(val) {
         this.showDialog = !this.showDialog
-        debugger
-        if (!this.info.id) {
-          this.title = '新增仓库'
-          this.aoiinfo = {
-            flag: 1,
-            remark: ''
-          }
-        } else {
-          this.title = '编辑仓库'
-          this.aoiinfo = this.info
+        this.title = '新增点位'
+        this.aoiinfo = {
+          flag: 1, dutyUserName: ''
         }
       },
       deep: true,
@@ -87,58 +76,49 @@ export default {
     this.getBaseField()
   },
   methods: {
+
+    formChange(item, index, value) {
+      if (index == 'dutyUserName') {
+        this.aoiinfo.dutyUserId = item.id
+        this.aoiinfo.dutyUserName = item.name
+      }
+      // this.aoiinfo[item.field] = value
+    },
     saveClick(data) {
       if (!data) return
-      this.aoiinfo.dutyUserId = this.userInfo.id
-      if (this.aoiinfo.id) {
-        Update(this.aoiinfo).then(res => {
-          this.$message.success('修改成功')
-          this.showDialog = false
-          this.$emit('change', 'up')
-        })
-      } else {
-        this.aoiinfo.code = Date.now().toString()
-        Create(this.aoiinfo).then(res => {
-          this.$message.success('新增成功')
-          this.showDialog = false
-          this.$emit('change', 'add')
-        })
-      }
+      CreateSpacePoint(this.aoiinfo).then(res => {
+        console.log(this.aoiinfo, 255)
+        this.$message.success('新增成功')
+        this.showDialog = false
+        this.$emit('change')
+      })
     },
     savechange() {
       this.isSave = !this.isSave
     },
     getBaseField() {
       const field = []
-      // field.push({
-      //   field: 'code',
-      //   formType: 'text',
-      //   isNull: 1,
-      //   name: '仓库编码',
-      //   placeholder: '请输入仓库编码',
-      //   setting: [],
-      //   inputTips: '',
-      //   value: this.aoiinfo ? this.aoiinfo.code : ''
-      // })
+
       field.push({
-        field: 'name',
-        formType: 'text',
-        isNull: 1,
-        name: '仓库名称',
-        placeholder: '请输入仓库名称',
+        field: 'parentName',
+        formType: 'leave1',
+        isNull: 0,
+        name: '上级目录',
+        placeholder: '',
+        disabled: false,
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.name : ''
+        value: this.aoiinfo ? this.aoiinfo.parentName : ''
       })
       field.push({
-        field: 'address',
+        field: 'specificLocation',
         formType: 'text',
         isNull: 1,
-        name: '仓库地址',
-        placeholder: '请输入仓库地址',
+        name: '具体位置',
+        placeholder: '请输入具体位置',
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.address : ''
+        value: this.aoiinfo ? this.aoiinfo.specificLocation : ''
       })
       field.push({
         field: 'remark',
@@ -164,15 +144,15 @@ export default {
         optionL: 'name',
         optionV: 'id',
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.flag : 1
+        value: this.aoiinfo.flag ? this.aoiinfo.flag : 1
       })
 
       this.fields = this.handleFields(field).list
       this.fieldsRules = this.handleFields(field).fieldRules
     },
     /**
-     * 调整字段
-     */
+         * 调整字段
+         */
     handleFields(list) {
       const fieldRules = {}
       const fieldForm = {}
@@ -188,11 +168,13 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-// /deep/.el-dialog{
-// margin-top:2vh !important;
-// }
-/deep/.el-dialog__footer {
-  text-align: center !important;
-}
-</style>
+    <style lang="scss" scoped>
+    // /deep/.el-dialog{
+    // margin-top:2vh !important;
+    // }
+    /deep/.el-dialog__footer {
+      text-align: center !important;
+    }
+    </style>
+
+

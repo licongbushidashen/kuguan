@@ -90,6 +90,16 @@
                 </el-select>
               </div>
               <div>
+                <label for="">单据状态</label>
+                <el-select v-model="flag" placeholder="请选择货品类目" @change="flagchange">
+                  <el-option
+                    v-for="(item,index) in flagName"
+                    :key="index" :label="item.name"
+                    :value="item.value"
+                    class="wy-select"/>
+                </el-select>
+              </div>
+              <div>
                 <label for="">货品类目</label>
                 <el-select v-model="goodsCategoryId" placeholder="请选择货品类目">
                   <el-option
@@ -133,7 +143,7 @@
         highlight-current-row
         @row-click="handleRowClick"
       >
-        <el-table-column
+        <!-- <el-table-column
           show-overflow-tooltip
           type="index"
           width="50"
@@ -167,7 +177,7 @@
               </span>
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="address" label="申请事项">
           <template slot-scope="{ row, column, $index }">
             <span>{{ row.orderCategory | ordername }}</span>
@@ -338,7 +348,9 @@ export default {
         { name: '审批中', value: 1 },
         { name: '审批通过', value: 2 },
         { name: '驳回', value: 3 },
-        { name: '已作废', value: 5 }
+        { name: '已入库', value: 4 },
+        { name: '已作废', value: 5 },
+        { name: '已出库', value: 6 }
       ],
       morecondition: false,
       company: '',
@@ -384,11 +396,19 @@ export default {
     this.getList()
   },
   methods: {
+    flagchange() {
+      if (this.flag == 6) {
+        this.identification = 1
+      } else if (this.flag == 4) {
+        this.identification = 0
+      }
+    },
     Reset() {
       this.orderCategory = null
-      this.identification = ''
+      this.identification = null
       this.goodsCategoryId = null
       this.warehouseId = null
+      this.flag = null
     },
     WarehousePage() {
       this.loading = true
@@ -469,9 +489,21 @@ export default {
       if (this.orderCategory) {
         data.orderCategory = this.orderCategory
       }
-      if (this.identification != '' && this.identification != undefined) {
+      if (this.identification === 0 || this.identification == 1) {
         data.identification = this.identification
       }
+      if (this.flag != null) {
+        data.flag = this.flag
+        if (this.flag == 6) {
+          data.flag = 4
+          data.identification = 1
+          this.identification = 1
+        } else if (this.flag == 4) {
+          this.identification = 0
+          data.identification = 0
+        }
+      }
+
       if (this.goodsCategoryId) {
         data.goodsCategoryId = this.goodsCategoryId
       }

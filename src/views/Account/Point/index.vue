@@ -14,7 +14,7 @@
             type="text"
             icon="el-icon-circle-plus"
             style="margin: 0px;    padding: 0px;    float: right;"
-            @click="changeDepClick()"
+            @click="addJurisdiction()"
           >创建点位</el-button
           >
 
@@ -88,7 +88,7 @@
         </div>
       </div>
     </div>
-
+    <add :showing="jurisdictionCreateShow" :info="aoiinfo" @change="getlist"/>
   </div>
 </template>
 
@@ -102,6 +102,7 @@ import {
   UpdateSpacePoint,
   Delete
 } from '@/api/account'
+import add from './comp'
 import CreateSections from '@/components/CreateSections'
 import XrHeader from '@/components/XrHeader'
 import mtForm from '@/components/mtForm/index'
@@ -113,11 +114,13 @@ export default {
   components: {
     XrHeader,
     CreateSections,
-    mtForm
+    mtForm,
+    add
   },
   mixins: [GenerateRulesMixin],
   data() {
     return {
+      jurisdictionCreateShow: false,
       tree1: true,
       keywords: '',
       props: {
@@ -154,6 +157,16 @@ export default {
     // this.getDepTreeList()
   },
   methods: {
+    getlist() {
+      this.tree1 = false
+      this.$nextTick(() => {
+        this.tree1 = true
+      })
+    },
+    addJurisdiction() {
+      this.aoiinfo = { flag: 1, dutyUserName: '' }
+      this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+    },
     changes() {
       if (this.keywords != '') {
         GetKeySpacePointTree(this.keywords).then(response => {

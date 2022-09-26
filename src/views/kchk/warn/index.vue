@@ -4,7 +4,19 @@
     <xr-header
       icon-class="wk wk-bell"
       icon-color="#2362FB"
-      label="预警管理" />
+      label="预警管理" >
+      <template v-slot:ft>
+        <div style="    display: flex;    justify-content: end;">
+          <div>
+            <el-button
+              v-if="activeName==0&&allAuth['TaskCenterSetting.TaskCenterDealWithWarningRule']"
+              :disabled="!disable"
+              style="margin:0px 0px 10px 0px"
+              type="primary" @click="addJurisdiction(1)">批量处理</el-button>
+          </div>
+        </div>
+      </template>
+    </xr-header>
     <div class="main-body">
 
       <div class="main-table-header" style="height:85px !important">
@@ -66,13 +78,13 @@
                 @mouseleave="row.hover = false"
               >
                 <el-checkbox
-                  v-show="row.hover || row.checked"
+
                   v-model="row.checked"
                   @change="onItemCheckboxChange"
                 />
-                <span v-show="!row.hover && !row.checked" class="text">{{
+                <!-- <span v-show="!row.hover && !row.checked" class="text">{{
                   $index + 1
-                }}</span>
+                }}</span> -->
               </span>
             </span>
           </template>
@@ -125,7 +137,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { filterTimestampToFormatTime } from '@/filters/index'
-import { GetLogTaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchStorageOut } from '@/api/kchk/order'
+import { GetLogTaskCenter, GetOrder, DealWithWarningRule } from '@/api/kchk/order'
 // import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
@@ -323,7 +335,7 @@ export default {
       const ids = this.list.filter(d => d.checked).map(e => e.id)
       switch (val) {
         case 1:
-          BatchSubmit(ids).then(res => {
+          DealWithWarningRule(ids).then(res => {
             this.$store.dispatch('TaskCenterCount')
             res.forEach(e => {
               if (e.code) {
@@ -336,48 +348,7 @@ export default {
             })
           })
           break
-        case 2:
-          BatchAgree(ids).then(res => {
-            this.$store.dispatch('TaskCenterCount')
-            res.forEach(e => {
-              if (e.code) {
-                this.handleCurrentChange(0)
-                this.showDialog = false
-                this.$message.success(e.message)
-              } else {
-                this.$message.error(e.message)
-              }
-            })
-          })
-          break
-        case 4:
-          BatchStorageOut(ids).then(res => {
-            this.$store.dispatch('TaskCenterCount')
-            res.forEach(e => {
-              if (e.code) {
-                this.handleCurrentChange(0)
-                this.showDialog = false
-                this.$message.success(e.message)
-              } else {
-                this.$message.error(e.message)
-              }
-            })
-          })
-          break
-        case 5:
-          BatchStorageIn(ids).then(res => {
-            this.$store.dispatch('TaskCenterCount')
-            res.forEach(e => {
-              if (e.code) {
-                this.handleCurrentChange(0)
-                this.showDialog = false
-                this.$message.success(e.message)
-              } else {
-                this.$message.error(e.message)
-              }
-            })
-          })
-          break
+
         default:
           break
       }

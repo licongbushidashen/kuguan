@@ -1,6 +1,6 @@
 <template>
   <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" style="    " title="新建盘点">
-    <create-sections title="基础信息">
+    <create-sections>
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
     </create-sections>
     <span slot="footer" class="dialog-footer" style="text-align: center !important;margin-bottom: 20px !important;">

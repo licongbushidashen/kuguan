@@ -44,7 +44,7 @@
         highlight-current-row
         @row-click="handleRowClick"
       >
-        <el-table-column
+        <!-- <el-table-column
           show-overflow-tooltip
           type="index"
           width="70"
@@ -70,7 +70,7 @@
               </span>
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           show-overflow-tooltip
           prop="antivirusDate"

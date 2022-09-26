@@ -29,7 +29,7 @@
         highlight-current-row
         @row-click="handleRowClick"
       >
-        <el-table-column
+        <!-- <el-table-column
           show-overflow-tooltip
           type="index"
           width="70"
@@ -44,18 +44,14 @@
                 @mouseenter="row.hover = true"
                 @mouseleave="row.hover = false"
               >
-                <!-- <el-checkbox
-                  v-show="row.hover || row.checked"
-                  v-model="row.checked"
-                  @change="onItemCheckboxChange"
-                /> -->
+
                 <span class="text">{{
                   $index + 1
                 }}</span>
               </span>
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column v-for="(item,index) in tableH" :prop="item.props" :label="item.name" :key="index"/>
 
       </el-table>

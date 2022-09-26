@@ -4,7 +4,7 @@
       <mtForm :file-list="attachmentList" :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
     </create-sections>
     <create-sections title="单位管理" style="margin:0px;" class="create-sections1">
-      <div style="float: right;">
+      <div>
         <el-button
           style="margin-top:10px"
           type="primary"
@@ -446,6 +446,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+  /deep/.el-table--fit{
+    border: 1px solid #EBEEF5 !important;
+    border-bottom: 0px solid #EBEEF5 !important;
+  }
 // /deep/.el-dialog{
     // margin-top:2vh !important;
 // }

@@ -14,7 +14,7 @@
             type="text"
             icon="el-icon-circle-plus"
             style="margin: 0px;    padding: 0px;    float: right;"
-            @click="changeDepClick()"
+            @click="addJurisdiction()"
           >创建类目</el-button
           >
 
@@ -91,7 +91,7 @@
 
       </div>
     </div>
-
+    <add :showing="jurisdictionCreateShow" :info="aoiinfo" @change="getlist"/>
   </div>
 </template>
 
@@ -108,6 +108,7 @@ import {
 import CreateSections from '@/components/CreateSections'
 import XrHeader from '@/components/XrHeader'
 import mtForm from '@/components/mtForm/index'
+import add from './comp'
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
 import { mapGetters } from 'vuex'
 export default {
@@ -116,11 +117,13 @@ export default {
   components: {
     XrHeader,
     CreateSections,
-    mtForm
+    mtForm,
+    add
   },
   mixins: [GenerateRulesMixin],
   data() {
     return {
+      jurisdictionCreateShow: false,
       isLazy: true,
       treeData: [],
       keywords: '',
@@ -160,6 +163,14 @@ export default {
     // this.getDepTreeList()
   },
   methods: {
+    addJurisdiction() {
+      this.aoiinfo = { flag: 1, dutyUserName: '' }
+      this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+    },
+    getlist() {
+      this.node_had.childNodes = []
+      this.getDepTreeList(this.node_had, this.resolve_had)
+    },
     changes() {
       this.node_had.childNodes = []
       if (this.keywords != '') {
@@ -304,6 +315,7 @@ export default {
      */
     changeDepClick(data) {
       this.aoiinfo = data || { flag: 1 }
+      console.log(this.aoiinfo, 111)
       // this.structureValue = data.id
     },
     /**
@@ -354,7 +366,6 @@ export default {
     },
     // 获取树形列表
     getDepTreeList(node, resolve) {
-      debugger
       this.depLoading = true
       const data = node.level === 0 ? {} : { parentId: node.data.id }
       GetGoodsCategoryTree(data)
@@ -365,8 +376,10 @@ export default {
             e.hasChild = !e.hasChild
           })
           if (node.level === 0) {
-            this.aoiinfo == response ? response[0] : { flag: 1 }
+            const data = response.length > 0 ? response[0] : { flag: 1 }
+            this.aoiinfo = { name: data.name, dutyUserName: data.dutyUserName, dutyUserId: data.dutyUserId, flag: 1 }
             this.resolve_had1 = resolve
+            console.log(this.aoiinfo, 144)
           }
           resolve(response || [])
           this.showDepData = response || []

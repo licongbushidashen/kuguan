@@ -133,7 +133,7 @@
         highlight-current-row
         @row-click="handleRowClick"
       >
-        <el-table-column
+        <!-- <el-table-column
           show-overflow-tooltip
           type="index"
           width="50"
@@ -167,7 +167,7 @@
               </span>
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column prop="address" label="申请事项">
           <template slot-scope="{ row, column, $index }">
             <span>{{ row.orderCategory | ordername }}</span>

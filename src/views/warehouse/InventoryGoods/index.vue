@@ -13,7 +13,7 @@
       </template>
     </xr-header>
     <div class="main-body">
-      <div class="main-table-header" style="padding-left:20px">
+      <div class="main-table-header" >
 
         <el-select
           v-model="categoryName" clearable style="width:200px;padding: 10px 0px 0px 10px;"
@@ -75,7 +75,7 @@
         highlight-current-row
 
         @row-click="handleRowClick">
-        <el-table-column
+        <!-- <el-table-column
           show-overflow-tooltip
           type="index"
           width="70"
@@ -102,7 +102,7 @@
 
             </span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           show-overflow-tooltip
           prop="goodsCode"
@@ -376,6 +376,7 @@ export default {
     background: #fff;
     width: 100%;
     border: 1px solid #e6e6e6;
+    top:0px
   }
   .morecondition2{
     width: 100%;
