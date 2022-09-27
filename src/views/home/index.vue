@@ -45,16 +45,16 @@
 
       <div class="echart1">
         <div v-show="!echartHasData1" id="axismain1" />
-        <el-empty v-show="echartHasData1" :image-size="200"/>
+        <el-empty v-show="echartHasData1" image-size="10%"/>
       </div>
       <div class="echart2" >
         <div>
           <div v-show="!echartHasData2" id="axismain2"/>
-          <el-empty v-show="echartHasData1" :image-size="200"/>
+          <el-empty v-show="echartHasData1" image-size="10%"/>
         </div>
         <div>
           <div v-show="!echartHasData3" id="axismain3"/>
-          <el-empty v-show="echartHasData1" :image-size="200"/>
+          <el-empty v-show="echartHasData1" image-size="10%"/>
         </div>
       </div>
     </div>
@@ -517,6 +517,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+/deep/.el-empty__image{
+  width: 10% !important;
+}
 #axismain1,#axismain2,#axismain3{
     width: 100%;
     height: 100%;

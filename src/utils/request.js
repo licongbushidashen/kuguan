@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { Message, MessageBox } from 'element-ui'
-import { removeAuth } from '@/utils/auth'
+import { Message } from 'element-ui'
+// import { removeAuth } from '@/utils/auth'
 import qs from 'qs'
 import { debounce } from 'throttle-debounce'
 import router from '../router'
@@ -10,15 +10,15 @@ import Cookies from 'js-cookie'
  * 检查dom是否忽略
  * @param {*} e
  */
-const clearCacheEnterLogin = debounce(500, () => {
-  removeAuth()
-    .then(() => {
-      location.reload() // 为了重新实例化vue-router对象 避免bug
-    })
-    .catch(() => {
-      location.reload()
-    })
-})
+// const clearCacheEnterLogin = debounce(500, () => {
+//   removeAuth()
+//     .then(() => {
+//       location.reload() // 为了重新实例化vue-router对象 避免bug
+//     })
+//     .catch(() => {
+//       location.reload()
+//     })
+// })
 
 const errorMessage = debounce(500, (message, type = 'error') => {
   Message({
@@ -28,33 +28,33 @@ const errorMessage = debounce(500, (message, type = 'error') => {
   })
 })
 
-const confirmMessage = debounce(1000, message => {
-  MessageBox.confirm(message, '提示', {
-    confirmButtonText: '确定',
-    showCancelButton: false,
-    closeOnClickModal: false,
-    closeOnPressEscape: false,
-    showClose: false,
-    type: 'warning'
-  })
-    .then(() => {
-      if (
-        (window.app.$route && window.app.$route.name !== 'login') ||
-        !window.app.$route
-      ) {
-        clearCacheEnterLogin()
-      } else {
-        removeAuth()
-      }
-    })
-    .catch(() => {})
-})
+// const confirmMessage = debounce(1000, message => {
+//   MessageBox.confirm(message, '提示', {
+//     confirmButtonText: '确定',
+//     showCancelButton: false,
+//     closeOnClickModal: false,
+//     closeOnPressEscape: false,
+//     showClose: false,
+//     type: 'warning'
+//   })
+//     .then(() => {
+//       if (
+//         (window.app.$route && window.app.$route.name !== 'login') ||
+//         !window.app.$route
+//       ) {
+//         clearCacheEnterLogin()
+//       } else {
+//         removeAuth()
+//       }
+//     })
+//     .catch(() => { })
+// })
 
 var https = ''
 var httpAuto = ''
 if (process.env.NODE_ENV === 'production') {
-  https = 'wms-test.zhejianglab.com'
-  httpAuto = 'wms-auth-test.zhejianglab.com'
+  https = 'https://wms.demo.wy5u.com'
+  httpAuto = 'https://wms-auth.demo.wy5u.com'
 } else {
   https = 'https://wms.demo.wy5u.com'
   // https = 'http://identity.zisu.edu.cn'
@@ -156,7 +156,6 @@ service.interceptors.response.use(
         fr.readAsText(resultBlob)
       }
       // eslint-disable-next-line no-constant-condition
-    } else if (!res.access_token && false) {
     } else {
       return res
     }
