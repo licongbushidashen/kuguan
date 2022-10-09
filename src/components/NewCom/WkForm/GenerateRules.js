@@ -68,7 +68,6 @@ export default {
         }
       }
       if (item.array1) {
-        debugger
         const validateCRMMobile = (rule, value, callback) => {
           if (rule.item.setting1.length > 0 && rule.item.parentId1 == '') {
             callback(new Error('空间点位不能为空'))

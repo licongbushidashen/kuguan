@@ -3,7 +3,7 @@
     <xr-header icon-class="iconfont icon-huaban39" icon-color="#2362fb" label="绿植台账">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['PropertyBillManager.GreenPlant.Create']"
+          v-if="allAuth['PropertyBillManager.PropertyBill.GreenPlantCreate']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
@@ -11,13 +11,13 @@
         >新建</el-button
         >
         <el-button
-          v-if="allAuth['PropertyBillManager.GreenPlant.Import']"
+          v-if="allAuth['PropertyBillManager.PropertyBill.GreenPlantImport']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
           @click="bulkImportClick">导入</el-button>
         <el-button
-          v-if="allAuth['PropertyBillManager.GreenPlant.Export']"
+          v-if="allAuth['PropertyBillManager.PropertyBill.GreenPlantExport']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"

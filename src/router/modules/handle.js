@@ -20,7 +20,7 @@ export default [
       permissions: ['handle', 'system-project']
     }),
     meta: {
-      title: 'TaskCenterSetting.TaskCenter',
+      title: 'TaskCenterSetting.Backlog',
       icon: 's-seas'
 
     },
@@ -44,7 +44,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'TaskCenterSetting.TaskCenter',
+      title: 'TaskCenterSetting.Finished',
       icon: 's-seas'
     },
     children: [
@@ -64,7 +64,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'TaskCenterSetting.TaskCenter',
+      title: 'TaskCenterSetting.ApplyFor',
       icon: 's-seas'
     },
     children: [
@@ -84,7 +84,7 @@ export default [
       permissions: ['handle', 'system-project']
     }),
     meta: {
-      title: 'TaskCenterSetting.TaskCenter',
+      title: 'TaskCenterSetting.WarningLog',
       icon: 's-seas'
 
     },

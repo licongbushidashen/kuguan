@@ -5,11 +5,12 @@
     </create-sections>
     <span slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>
-      <el-button type="primary" @click="savechange">保 存</el-button>
+      <el-button type="primary" @click="debouncedHandleLogin">保 存</el-button>
     </span>
   </el-dialog>
 </template>
 <script>
+import { debounce } from 'throttle-debounce'
 import { mapGetters } from 'vuex'
 import { objDeepCopy } from '@/utils'
 import {
@@ -49,8 +50,8 @@ export default {
       setting1: [],
       aoiinfo: {
         drugName: '',
-        parentId1: '',
-        parentId2: ''
+        parentId1: null,
+        parentId2: null
       },
       tree: [],
       fields: {},
@@ -68,15 +69,27 @@ export default {
   },
   watch: {
     showing: {
-      handler(val) {
+      async handler(val) {
         this.showDialog = !this.showDialog
         if (!this.info.id) {
           this.aoiinfo = {
           }
+          this.getBaseField()
         } else {
-          this.aoiinfo = { ...this.info, ...{ parentId1: '', parentId2: '' }}
+          this.aoiinfo = { ...this.info, ...{ parentId1: null, parentId2: null }}
+          this.aoiinfo.parentId = this.info.spacePointId
+
+          debugger
+          if (this.info.spacePointId) {
+            await this.pointTree(this.info.spacePointId, 'parentId', 0, 'chs')
+            this.aoiinfo.parentId1 = this.info.spacePointId1
+          }
+          if (this.info.spacePointId1) {
+            await this.pointTree(this.info.spacePointId1, 'parentId', 1, 'chs')
+            this.aoiinfo.parentId2 = this.info.spacePointId2
+          }
+          this.getBaseField()
         }
-        this.getBaseField()
       },
       deep: true,
       immediate: true
@@ -84,6 +97,7 @@ export default {
   },
   created() {
     this.pointTree()
+    this.debouncedHandleLogin = debounce(300, this.savechange)
   },
   methods: {
     pointTree(item, name, j) {
@@ -108,8 +122,8 @@ export default {
                 this.setting2 = []
                 this.$set(this.fields[i], 'setting1', response)
                 this.fields[i].setting2 = []
-                this.aoiinfo.parentId1 = ''
-                this.aoiinfo.parentId2 = ''
+                this.aoiinfo.parentId1 = null
+                this.aoiinfo.parentId2 = null
               }
             }
           } else {
@@ -141,10 +155,10 @@ export default {
     saveClick(data) {
       if (!data) return
       this.aoiinfo.fillingDate = parseTime(this.aoiinfo.fillingDate)
-      if (this.aoiinfo.parentId2 != '') {
-        this.aoiinfo.spacePointId = this.aoiinfo.parentId2.id
-      } else if (this.aoiinfo.parentId1 != '') {
-        this.aoiinfo.spacePointId = this.aoiinfo.parentId1.id
+      if (this.aoiinfo.parentId2) {
+        this.aoiinfo.spacePointId2 = this.aoiinfo.parentId2.id
+      } else if (this.aoiinfo.parentId1) {
+        this.aoiinfo.spacePointId1 = this.aoiinfo.parentId1.id
       } else {
         this.aoiinfo.spacePointId = this.aoiinfo.parentId
       }

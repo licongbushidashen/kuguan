@@ -17,7 +17,7 @@ export default [
       permissions: ['kcgl', 'system-project']
     }),
     meta: {
-      title: 'AbpIdentity.IdentityClaimTypes',
+      title: 'SystemSetting.ParamTers',
       icon: 's-seas'
     },
     children: [
@@ -39,7 +39,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'AbpIdentity.Roles',
+      title: 'SystemSetting.UserManager',
       icon: 's-seas'
     },
     children: [
@@ -61,7 +61,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'AbpIdentity.Users',
+      title: 'SystemSetting.admin',
       icon: 's-seas'
     },
     children: [

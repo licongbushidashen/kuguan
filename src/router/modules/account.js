@@ -42,7 +42,7 @@ export default [
       , '/views/Account/germicidal'),
     meta: {
       title: '台账管理',
-      title1: 'PropertyBillManager.Disinfection',
+      title1: 'PropertyBillManager.PropertyBill',
       icon: 'iconfont icon-huaban39'
     },
     children: [
@@ -52,7 +52,7 @@ export default [
         component: () => import('@/views/Account/germicidal'),
         meta: {
           title: '消杀台账',
-          title1: 'PropertyBillManager.Disinfection'
+          title1: 'PropertyBillManager.PropertyBill.DisinfectionDefault'
         }
       },
       {
@@ -61,7 +61,7 @@ export default [
         component: () => import('@/views/Account/plant'),
         meta: {
           title: '绿植台账',
-          title1: 'PropertyBillManager.GreenPlant'
+          title1: 'PropertyBillManager.PropertyBill.GreenPlantDefault'
         }
       },
       {
@@ -70,7 +70,7 @@ export default [
         component: () => import('@/views/Account/water'),
         meta: {
           title: '饮水机台账',
-          title1: 'PropertyBillManager.WaterDispenser'
+          title1: 'PropertyBillManager.PropertyBill.WaterDefault'
         }
       }
 
@@ -84,7 +84,7 @@ export default [
     meta: {
       title: '台账报表',
       icon: 'iconfont icon-baobiao',
-      title1: 'PropertyBillManager.Disinfection'
+      title1: 'PropertyBillManager.PropertyBillReport'
     },
     children: [
       {
@@ -93,13 +93,13 @@ export default [
         component: () => import('@/views/Account/germicidalReport'),
         meta: {
           title: '消杀台账',
-          title1: 'PropertyBillManager.Disinfection.Report'
+          title1: 'PropertyBillManager.PropertyBillReport.DisinfectionReportDefault'
         }
       },
       {
         meta: {
           title: '绿植台账',
-          title1: 'PropertyBillManager.GreenPlant.Report'
+          title1: 'PropertyBillManager.PropertyBillReport.GreenPlantReportDefault'
         },
         name: 'plantReport',
         path: 'Account-plantReport', // 类目
@@ -108,7 +108,7 @@ export default [
       {
         meta: {
           title: '饮水机台账',
-          title1: 'PropertyBillManager.WaterDispenser.Report'
+          title1: 'PropertyBillManager.PropertyBillReport.WaterDispenserReportDefault'
         },
         name: 'waterReport',
         path: 'Account-waterReport', // 类目

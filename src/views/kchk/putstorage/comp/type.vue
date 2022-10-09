@@ -72,7 +72,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column v-for="(item,index) in label" :prop="item.prop" :label="item.name" :key="index">
+        <el-table-column v-for="(item,index) in label" :prop="item.prop" :label="item.name" :key="index" :width="item.width">
           <template slot-scope="{ row, column, $index}">
             <span v-if="item.prop=='orderCategory'">{{ row[item.prop]|ordername }}</span>
             <span v-else-if="item.prop=='flag'">已出库</span>
@@ -192,9 +192,9 @@ export default {
           { name: '仓库说明', prop: 'remark' }
         ],
         jfkh: [
-          { name: '经费卡号', prop: 'number' },
+          { name: '经费卡号', prop: 'number', width: 200 },
           { name: '经费名称', prop: 'name' },
-          { name: '负责人 ', prop: 'dutyUser' }
+          { name: '负责人 ', prop: 'dutyUser', width: 150 }
         ],
         dutyUser: [
           { name: '姓名', prop: 'name' },
@@ -266,7 +266,6 @@ export default {
       const isCheckedItems = this.list.filter(d => d.checked)
       if (isCheckedItems.length > 0) {
         if (this.name == 'gldj1') {
-          debugger
           GetOrder(this.row.id).then(res => {
             // const arr = res.detailList
             this.$emit('change', res, this.name)
@@ -303,7 +302,11 @@ export default {
      */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
+      if (this.p == '经费卡号') {
+        this.currentPage = val
+      } else {
+        this.currentPage = x ? x * this.pageSize : x
+      }
       this.Pagelist()
     },
     changeParam(param) {
@@ -357,6 +360,12 @@ export default {
           this.total = res.totalCount
         })
       } else {
+        if (this.p == '经费卡号') {
+          debugger
+          this.currentPage == 0 ? this.currentPage = 1 : this.currentPage
+          data.maxResultCount = 15
+          data.skipCount = this.currentPage
+        }
         return request({
           url: this.url,
           method: 'post',

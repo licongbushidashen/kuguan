@@ -5,7 +5,10 @@
       icon-color="#2362fb "
       label="通知管理" >
       <template v-slot:ft>
-        <el-button type="primary" style="float:right;    position: relative;   " @click="showopen"> 编辑</el-button>
+        <el-button
+          v-if="allAuth['SystemSetting.ParamTers.Edit']" type="primary" style="float:right;    position: relative;   "
+          @click="showopen"
+        > 编辑</el-button>
       </template>
 
     </xr-header>
@@ -207,6 +210,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
   OrderPage,
   usersInfo, ParameterDeleteMany,
@@ -243,7 +247,12 @@ export default {
       ]
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters([
+      'userInfo',
+      'allAuth'
+    ])
+  },
   mounted() {
     this.GetMessageType()
     var self = this

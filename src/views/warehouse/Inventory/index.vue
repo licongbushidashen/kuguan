@@ -84,14 +84,14 @@
         <el-table-column fixed="right" label="操作" width="250">
           <template slot-scope="scope">
             <el-button
-              v-if="allAuth['InventoryManager.CheckPlanDetails']"
+              v-if="allAuth['InventoryManager.CheckPlans.CheckPlanDetails']"
               type="text"
               size="small"
               @click="handleClick('edit', scope.row)">盘点明细</el-button>
             <el-button
               v-if="
                 scope.row.flag == 2 &&
-                  allAuth['InventoryManager.CheckPlanDetails.DealWith']
+                  allAuth['InventoryManager.CheckPlans.DealWith']
               "
               type="text"
               size="small"

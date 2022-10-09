@@ -215,12 +215,13 @@
                   show-checkbox
                   node-key="id"
                   highlight-current
+                  @node-click="changee"
                 />
               </div>
             </div>
           </el-tab-pane>
           <el-tab-pane
-            v-if="roleActive.name != 'admin'"
+            v-if="roleActive.name != 'admin' &&allAuth['SystemSetting.DataPermission']"
             label="数据权限"
             name="rule2"
           >
@@ -244,7 +245,7 @@
                 "
               >
                 <el-button
-                  v-if="roleActive"
+                  v-if="roleActive &&allAuth['SystemSetting.DataPermission.Edit']"
                   :disabled="roleList.length === 0"
                   size="medium"
                   type="primary"
@@ -826,6 +827,8 @@ export default {
     permissionsRole() {
       permissions(`?providerName=R&providerKey=${this.roleActive.name}`).then(
         res => {
+          res.groups.splice(0, 3)
+          res.groups.splice(1, 1)
           for (let i = 0; i < res.groups.length; i++) {
             const data = res.groups[i]
             const arr = []
@@ -858,6 +861,9 @@ export default {
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].permissions && arr[i].permissions.length) {
           this.pushids(arr[i].permissions)
+          if (arr[i].isGranted) {
+            this.allroleActive.push(arr[i].id)
+          }
         } else {
           if (arr[i].isGranted) {
             this.allroleActive.push(arr[i].id)
@@ -994,9 +1000,12 @@ export default {
           this.ruleLoading = false
         })
     },
+    // 权限递归
+    dgs(ids) {
+
+    },
     // 权限提交
     ruleSubmit(val) {
-      debugger
       this.ruleLoading = true
       // const arr = []
 
@@ -1046,6 +1055,9 @@ export default {
           }
         })
       }
+    },
+    changee(a, b, c, d) {
+      console.log(a, b, c, d, 56)
     },
     toOneArray(arr) {
       for (var i = 0; i < arr.length; i++) {

@@ -649,13 +649,17 @@ export default{
           this.list[this.goodsIndex] = row
           this.$set(this.list, this.goodsIndex, row)
         })
-      } else if (!row.number) {
+      } else if (name == 'wldw' || name == 'ck') {
         this.objs[name + 'Name'] = row.name
         this.objs[name + 'Id'] = row.id
+      } else if (!row.number) {
+        debugger
+        this.objs[name + 'Name'] = row.name
+        this.objs[name + 'Id'] = row.number
       } else {
         this.objs[name + 'Number'] = row.number
         this.objs[name + 'Name'] = row.name
-        this.objs[name + 'Id'] = row.id
+        this.objs[name + 'Id'] = row.number
       }
     },
     dialogSure(val, f) {
@@ -692,7 +696,8 @@ export default{
           wareHouseId: this.objs.ckId,
           orderCategory: this.orderCategory,
           goodsCategoryId: this.objs.typeId,
-          memoryCardId: this.objs.jfkhId,
+          memoryCardNumber: this.objs.jfkhId,
+          memoryCardName: this.objs.jfkhName,
           receiptDate: filterTimestampToFormatTime(new Date(this.time).getTime(), 'YYYY-MM-DD HH:mm:ss'),
           remark: this.objs.remark,
           identification: 1,

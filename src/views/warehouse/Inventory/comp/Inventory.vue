@@ -13,10 +13,10 @@
 
       </el-input>
       <div style="float: right;    padding-top: 10px;">
-        <el-button v-if="flag1==0 &&allAuth['InventoryManager.CheckPlanDetails.Begin']" class="xr-btn--orange " style="color:#fff" @click="updatacheck">开始盘点</el-button>
-        <el-button v-if="flag1==1&& allAuth['InventoryManager.CheckPlanDetails.Finish']" class="xr-btn--orange " style="color:#fff" @click="FinishDetail(1)">盘点完成</el-button>
-        <el-button v-if="(flag1==1 || flag1==0)&& allAuth['InventoryManager.CheckPlanDetails.Edit'] " @click="FinishDetail(0)">暂存</el-button>
-        <el-button v-if="(flag1==1 || flag1==0)&& allAuth['InventoryManager.CheckPlanDetails.Import']" @click="bulkImportClick">导入</el-button>
+        <el-button v-if="flag1==0" class="xr-btn--orange " style="color:#fff" @click="updatacheck">开始盘点</el-button>
+        <el-button v-if="flag1==1" class="xr-btn--orange " style="color:#fff" @click="FinishDetail(1)">盘点完成</el-button>
+        <el-button v-if="(flag1==1 || flag1==0) " @click="FinishDetail(0)">暂存</el-button>
+        <el-button v-if="(flag1==1 || flag1==0)" @click="bulkImportClick">导入</el-button>
         <el-button @click="downs">导出</el-button>
       </div>
     </div>

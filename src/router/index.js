@@ -85,7 +85,7 @@ export const asyncRouterMap = [
       permissions: ['home', 'system-project']
     }),
     meta: {
-      title: 'OrderSetting.Orders',
+      title: 'HomePage.Index',
       icon: 's-seas'
     },
     children: [

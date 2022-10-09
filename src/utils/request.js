@@ -53,8 +53,10 @@ const errorMessage = debounce(500, (message, type = 'error') => {
 var https = ''
 var httpAuto = ''
 if (process.env.NODE_ENV === 'production') {
-  https = 'https://wms.demo.wy5u.com'
-  httpAuto = 'https://wms-auth.demo.wy5u.com'
+  // https = 'https://wms.demo.wy5u.com'
+  // httpAuto = 'https://wms-auth.demo.wy5u.com'
+  https = 'https://wms-test.zhejianglab.com'
+  httpAuto = 'https://wms-auth-test.zhejianglab.com'
 } else {
   https = 'https://wms.demo.wy5u.com'
   // https = 'http://identity.zisu.edu.cn'

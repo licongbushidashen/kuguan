@@ -7,6 +7,7 @@
       <template v-slot:ft>
 
         <el-button
+          v-if="allAuth['InventoryManager.Inventorys.Export']"
           class="main-table-header-button "
           type="primary"
           icon="iconfont icon-daochu1"
@@ -129,6 +130,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import {
   GetGoodsCategoryTreeHasRole
 } from '@/api/kchk/goods'
@@ -172,7 +174,12 @@ export default {
       info: {}
     }
   },
-  computed: {},
+  computed: {
+    ...mapGetters([
+      'userInfo',
+      'allAuth'
+    ])
+  },
   mounted() {
     var self = this
     /** 控制table的高度 */

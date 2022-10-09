@@ -5,7 +5,7 @@
       icon-color="#2362FB" label="出库管理">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['OrderSetting.Orders.Create']"
+          v-if="allAuth['OrderSetting.OrdersOut.Create']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
@@ -13,7 +13,7 @@
         >新建</el-button
         >
         <el-button
-          v-if="allAuth['OrderSetting.Orders.Create']"
+          v-if="allAuth['OrderSetting.OrdersOut.Create']"
           type="primary"
           icon="iconfont icon-piliangtianjia"
           class="xr-btn--orange"
@@ -379,7 +379,7 @@ export default {
       if (column.label == '序号') {
         return
       }
-      if (!this.allAuth['OrderSetting.Orders.Edit']) {
+      if (!this.allAuth['OrderSetting.OrdersOut.Edit']) {
         this.$message.error('无详情权限')
         return
       }

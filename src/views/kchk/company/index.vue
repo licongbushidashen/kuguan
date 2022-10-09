@@ -18,12 +18,13 @@
           icon="iconfont icon-xianxing-daoru"
           @click="bulkImportClick">导入</el-button>
         <el-button
+          v-if="allAuth['OrderSetting.Companys.Import']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"
           @click="downs">导出</el-button>
         <el-button
-          v-if="allAuth['OrderSetting.Companys.Delete']"
+          v-if="allAuth['OrderSetting.Companys.Export']"
           :disabled="JSON.stringify(obj)=='{}'"
           class="main-table-header-button "
           type=""
@@ -37,7 +38,7 @@
           <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
         </el-input>
         <el-button
-          v-if="allAuth['OrderSetting.CompanyCategorys']"
+          v-if="allAuth['OrderSetting.Companys.CompanyCategorys']"
           class="main-table-header-button xr-btn--orange  "
           type="primary"
           @click="addtype">单位类型管理</el-button>

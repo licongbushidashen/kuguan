@@ -18,6 +18,7 @@
           icon="iconfont icon-xianxing-daoru"
           @click="bulkImportClick">导入</el-button>
         <el-button
+          v-if="allAuth['OrderSetting.Warehouses.Export']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"

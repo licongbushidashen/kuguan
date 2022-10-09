@@ -8,15 +8,16 @@
       <template v-slot:ft>
         <div style="    display: flex;    justify-content: end;">
           <div>
+
             <el-button
-              v-if="activeName==1&&allAuth['OrderSetting.Orders.BatchAgree']"
+              v-if="activeName==1&&(allAuth['OrderSetting.OrdersIn.BatchAgree'] ||allAuth['OrderSetting.OrdersOut.BatchAgree'])"
               :disabled="!disable"
               style="margin:0px 0px 10px 0px"
               type="primary" @click="addJurisdiction(2)">批量同意</el-button>
           </div>
           <div>
             <el-button
-              v-if="activeName==2&&allAuth['OrderSetting.Orders.BatchStorageIn']"
+              v-if="activeName==2&&allAuth['OrderSetting.OrdersIn.BatchStorageIn']"
               :disabled="!disable"
               style="margin:0px 0px 10px 0px"
               type="primary" @click="addJurisdiction(5)">批量入库</el-button>
@@ -24,7 +25,7 @@
           </div>
           <div>
             <el-button
-              v-if="activeName==3 &&allAuth['OrderSetting.Orders.BatchStorageOut']"
+              v-if="activeName==3 &&allAuth['OrderSetting.OrdersOut.BatchStorageOut']"
               :disabled="!disable"
               style="margin:0px 0px 10px 0px"
               type="primary" @click="addJurisdiction(4)">批量出库</el-button>
@@ -32,7 +33,7 @@
           </div>
           <div>
             <el-button
-              v-if="activeName==6&&allAuth['OrderSetting.Orders.BatchSubmit']"
+              v-if="activeName==6&&(allAuth['OrderSetting.OrdersOut.BatchSubmit']||allAuth['OrderSetting.OrdersIn.BatchSubmit'])"
               :disabled="!disable"
               style="margin:0px 0px 10px 0px"
               type="primary" @click="addJurisdiction(1)">批量提交</el-button>
@@ -40,7 +41,7 @@
           </div>
           <div>
             <el-button
-              v-if="activeName==0&&allAuth['OrderSetting.Orders.BatchSubmit']"
+              v-if="activeName==0&&(allAuth['OrderSetting.OrdersOut.BatchSubmit']||allAuth['OrderSetting.OrdersIn.BatchSubmit'])"
               :disabled="!disable"
               style="margin:0px 0px 10px 0px"
               type="primary" @click="addJurisdiction(1)">批量提交</el-button>

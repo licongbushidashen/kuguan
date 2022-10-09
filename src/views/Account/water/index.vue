@@ -3,7 +3,7 @@
     <xr-header icon-class="iconfont icon-huaban39" icon-color="#2362fb" label="饮水机台账">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['PropertyBillManager.WaterDispenser.Create']"
+          v-if="allAuth['PropertyBillManager.PropertyBill.WaterCreate']"
           class="main-table-header-button "
           type="primary"
           icon="el-icon-plus"
@@ -11,13 +11,13 @@
         >新建</el-button
         >
         <el-button
-          v-if="allAuth['PropertyBillManager.WaterDispenser.Import']"
+          v-if="allAuth['PropertyBillManager.PropertyBill.WaterImport']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
           @click="bulkImportClick">导入</el-button>
         <el-button
-          v-if="allAuth['PropertyBillManager.WaterDispenser.Export']"
+          v-if="allAuth['PropertyBillManager.PropertyBill.WaterExport']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"

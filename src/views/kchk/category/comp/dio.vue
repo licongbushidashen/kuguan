@@ -108,11 +108,12 @@
     </create-sections>
     <span slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>
-      <el-button type="primary" @click="savechange">保 存</el-button>
+      <el-button type="primary" @click="debouncedHandleLogin">保 存</el-button>
     </span>
   </el-dialog>
 </template>
 <script>
+import { debounce } from 'throttle-debounce'
 import { objDeepCopy } from '@/utils'
 import {
   CreateGoodsInfo,
@@ -198,6 +199,7 @@ export default {
   },
   created() {
     this.gettree()
+    this.debouncedHandleLogin = debounce(300, this.savechange)
   },
   methods: {
     gettree() {

@@ -122,7 +122,7 @@
             v-for="(ite,ind) in item.setting"
             :key="ind"
             :label="ite[item.optionL]"
-            :value="ite"/>
+            :value="ite[item.optionV]"/>
         </el-select>
         <el-select
           v-show="fieldFrom[item.field]&&item.setting1.length>0"
@@ -137,7 +137,7 @@
             v-for="(ite,ind) in item.setting1"
             :key="ind"
             :label="ite[item.optionL]"
-            :value="ite"/>
+            :value="ite[item.optionV]"/>
         </el-select>
         <el-select
           v-show="fieldFrom[item.field+'1'] &&item.setting2.length>0"
@@ -152,7 +152,7 @@
             v-for="(ite,ind) in item.setting2"
             :key="ind"
             :label="ite[item.optionL]"
-            :value="ite"/>
+            :value="ite[item.optionV]"/>
         </el-select>
       </div>
       <el-date-picker

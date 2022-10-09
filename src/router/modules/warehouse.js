@@ -63,7 +63,7 @@ export default [
     meta: {
       title: '库存报表',
       icon: 'iconfont icon-baobiao',
-      title1: 'InventoryManager.CheckPlans'
+      title1: 'InventoryManager.InventoryReport'
     },
     children: [
       {
@@ -71,12 +71,14 @@ export default [
         path: 'Inventory-report', // 类目
         component: () => import('@/views/warehouse/InventoryReport'),
         meta: {
-          title: '总库存报表'
+          title: '总库存报表',
+          title1: 'InventoryManager.InventoryReport.TotalInventory'
         }
       },
       {
         meta: {
-          title: '货品库存表'
+          title: '货品库存表',
+          title1: 'InventoryManager.InventoryReport.GoodsInventory'
 
         },
         name: 'warehouse',
@@ -85,7 +87,8 @@ export default [
       },
       {
         meta: {
-          title: '出入库明细表'
+          title: '出入库明细表',
+          title1: 'InventoryManager.InventoryReport.GoodsInOutDetail'
         },
         name: 'warehouse',
         path: 'Inventory-GoodsInOutDetail', // 类目
@@ -98,7 +101,8 @@ export default [
         path: 'Inventory-InventoryBalance', // 类目
         component: () => import('@/views/warehouse/InventoryBalance'),
         meta: {
-          title: '库存余额表'
+          title: '库存余额表',
+          title1: 'InventoryManager.InventoryReport.InventoryBalance'
         }
 
 

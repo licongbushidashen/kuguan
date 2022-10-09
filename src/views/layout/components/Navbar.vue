@@ -164,7 +164,7 @@ export default {
         fontSize: '17px'
       }
       console.log(JSON.stringify(this.quantity), 111)
-      if (JSON.stringify(this.allAuth).indexOf('TaskCenterSetting.TaskCenter') != -1) {
+      if (JSON.stringify(this.allAuth).indexOf('TaskCenterSetting') != -1) {
         tempsItems.handle = {
           title: '任务/审批',
           type: 6,
@@ -195,7 +195,7 @@ export default {
           fontSize: '17px'
         }
       }
-      if (JSON.stringify(this.allAuth).indexOf('SystemSetting') != -1) {
+      if (JSON.stringify(this.allAuth).indexOf('InventoryManager') != -1) {
         tempsItems.account = {
           title: '物业台账',
           type: 6,

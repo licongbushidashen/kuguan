@@ -18,6 +18,7 @@
           icon="iconfont icon-xianxing-daoru"
           @click="bulkImportClick">导入</el-button>
         <el-button
+          v-if="allAuth['OrderSetting.GoodsInfos.Export']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"
@@ -37,7 +38,7 @@
           <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
         </el-input>
         <el-button
-          v-if="allAuth['OrderSetting.WarningRules.Create']"
+          v-if="allAuth['OrderSetting.GoodsInfos.BatchSetWarning']"
           class="main-table-header-button xr-btn--orange  "
           type="primary" @click="openwarn('branth')">批量预警设置</el-button>
       </div>
@@ -111,8 +112,8 @@
           label="操作"
           width="200">
           <template slot-scope="{ row, column, $index}">
-            <span v-if="allAuth['OrderSetting.WarningRules.Create']" class="buttonc" @click.stop="openplan(row)">计划管理</span>
-            <span v-if="allAuth['OrderSetting.WarningRules.Create']" class="buttonc" @click.stop="openwarn(row)">预警管理</span>
+            <span v-if="allAuth['OrderSetting.GoodsInfos.SetPlan']" class="buttonc" @click.stop="openplan(row)">计划管理</span>
+            <span v-if="allAuth['OrderSetting.GoodsInfos.SetWarning']" class="buttonc" @click.stop="openwarn(row)">预警管理</span>
           </template>
         </el-table-column>
 

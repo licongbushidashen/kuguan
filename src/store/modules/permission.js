@@ -22,6 +22,8 @@ const filterAsyncRouter = function(routers, authInfo) {
       arr.push(routers[i])
     } else if (authInfo[routers[i].meta.title]) {
       arr.push(routers[i])
+    } else if (routers[i].meta.title == 'SystemSetting.admin') {
+      arr.push(routers[i])
     }
   }
   return arr

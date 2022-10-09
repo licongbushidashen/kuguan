@@ -81,7 +81,7 @@
                 v-if="allAuth['OrderSetting.GoodsCategorys.Create'] ||allAuth['OrderSetting.GoodsCategorys.Edit']"
                 style="margin-left: 26px;    margin-top: 10px;"
                 type="primary"
-                @click="savechange"
+                @click="debouncedHandleLogin"
               >保存</el-button
               >
             </template>
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-
+import { debounce } from 'throttle-debounce'
 import { objDeepCopy } from '@/utils'
 import {
   CreateGoodsCategory1,
@@ -151,6 +151,9 @@ export default {
   },
   computed: {
     ...mapGetters(['allAuth'])
+  },
+  created() {
+    this.debouncedHandleLogin = debounce(300, this.savechange)
   },
   mounted() {
     var self = this

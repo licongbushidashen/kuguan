@@ -5,11 +5,12 @@
     </create-sections>
     <span slot="footer" class="dialog-footer" style="text-align: center !important;">
       <el-button @click="showDialog = false">取 消</el-button>
-      <el-button type="primary" @click="savechange">保 存</el-button>
+      <el-button type="primary" @click="debouncedHandleLogin">保 存</el-button>
     </span>
   </el-dialog>
 </template>
 <script>
+import { debounce } from 'throttle-debounce'
 import { mapGetters } from 'vuex'
 import { objDeepCopy } from '@/utils'
 import {
@@ -49,8 +50,8 @@ export default {
       setting1: [],
       aoiinfo: {
         drugName: '',
-        parentId1: '',
-        parentId2: ''
+        parentId1: null,
+        parentId2: null
       },
       tree: [],
       fields: {},
@@ -68,15 +69,27 @@ export default {
   },
   watch: {
     showing: {
-      handler(val) {
+      async handler(val) {
         this.showDialog = !this.showDialog
         if (!this.info.id) {
           this.aoiinfo = {
           }
+          this.getBaseField()
         } else {
-          this.aoiinfo = { ...this.info, ...{ parentId1: '', parentId2: '' }}
+          this.aoiinfo = { ...this.info, ...{ parentId1: null, parentId2: null }}
+          this.aoiinfo.parentId = this.info.spacePointId
+
+          debugger
+          if (this.info.spacePointId) {
+            await this.pointTree(this.info.spacePointId, 'parentId', 0, 'chs')
+            this.aoiinfo.parentId1 = this.info.spacePointId1
+          }
+          if (this.info.spacePointId1) {
+            await this.pointTree(this.info.spacePointId1, 'parentId', 1, 'chs')
+            this.aoiinfo.parentId2 = this.info.spacePointId2
+          }
+          this.getBaseField()
         }
-        this.getBaseField()
       },
       deep: true,
       immediate: true
@@ -84,16 +97,21 @@ export default {
   },
   created() {
     this.pointTree()
+    this.debouncedHandleLogin = debounce(300, this.savechange)
   },
   methods: {
-    pointTree(item, name, j) {
+    pointTree(item, name, j, chs) {
+      debugger
       const data = item ? { parentId: item } : {}
       GetSpacePointTree(data)
         .then(response => {
+          debugger
           if (j == 1) {
             for (let i = 0; i < this.fields.length; i++) {
               if (this.fields[i].field == 'parentId') {
-                this.aoiinfo.parentId2 = ''
+                if (!chs) {
+                  this.aoiinfo.parentId2 = null
+                }
                 this.setting2 = response
                 this.$set(this.fields[i], 'setting2', response)
               }
@@ -108,8 +126,10 @@ export default {
                 this.setting2 = []
                 this.$set(this.fields[i], 'setting1', response)
                 this.fields[i].setting2 = []
-                this.aoiinfo.parentId1 = ''
-                this.aoiinfo.parentId2 = ''
+                if (!chs) {
+                  this.aoiinfo.parentId1 = null
+                  this.aoiinfo.parentId2 = null
+                }
               }
             }
           } else {
@@ -138,13 +158,14 @@ export default {
         })
     },
     saveClick(data) {
+      debugger
       if (!data) return
       this.aoiinfo.antivirusDate = parseTime(this.aoiinfo.antivirusDate)
-      if (this.aoiinfo.parentId2 != '') {
-        this.aoiinfo.spacePointId = this.aoiinfo.parentId2.id
-      } else if (this.aoiinfo.parentId1 != '') {
-        this.aoiinfo.spacePointId = this.aoiinfo.parentId1.id
-      } else {
+      if (this.aoiinfo.parentId2) {
+        this.aoiinfo.spacePointId = this.aoiinfo.parentId2
+      } if (this.aoiinfo.parentId1) {
+        this.aoiinfo.spacePointId1 = this.aoiinfo.parentId1
+      } if (this.aoiinfo.parentId) {
         this.aoiinfo.spacePointId = this.aoiinfo.parentId
       }
       this.aoiinfo.servicesAvailableRemark = this.aoiinfo.servicesAvailableRemark ? this.aoiinfo.servicesAvailableRemark : ''
@@ -169,7 +190,8 @@ export default {
     },
     formChange(id, type, type1, i, j) {
       if (id.field == 'parentId') {
-        this.pointTree(type1.id, id.field, j)
+        debugger
+        this.pointTree(type1, id.field, j)
       }
       switch (id.field) {
         case 'servicesAvailable':
@@ -586,8 +608,8 @@ export default {
         field: 'processWay',
         formType: 'textarea',
         isNull: 1,
-        name: '客户反应问题',
-        placeholder: '请输入客户反应问题',
+        name: '存在的问题与建议',
+        placeholder: '请输入存在的问题与建议',
         row: 3,
         maxLength: 200,
         setting: [],

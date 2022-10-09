@@ -5,14 +5,14 @@
       icon-color="#2362FB" label="入库管理">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['OrderSetting.Orders.Create']"
+          v-if="allAuth['OrderSetting.OrdersIn.Create']"
           type="primary"
           icon="el-icon-plus"
           @click="addJurisdiction"
         >新建</el-button
         >
         <el-button
-          v-if="allAuth['OrderSetting.Orders.Create']"
+          v-if="allAuth['OrderSetting.OrdersIn.Create']"
           type="primary"
           icon="iconfont icon-piliangtianjia"
           class="xr-btn--orange"
@@ -368,7 +368,7 @@ export default {
       if (column.label == '序号') {
         return
       }
-      if (!this.allAuth['OrderSetting.Orders.Edit']) {
+      if (!this.allAuth['OrderSetting.OrdersIn.Edit']) {
         this.$message.error('暂无当前权限')
         return
       }

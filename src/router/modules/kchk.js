@@ -102,7 +102,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'OrderSetting.Orders',
+      title: 'OrderSetting.OrdersIn',
       icon: 's-seas'
     },
     children: [
@@ -122,7 +122,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'OrderSetting.Orders',
+      title: 'OrderSetting.OrdersOut',
       icon: 's-seas'
     },
     children: [

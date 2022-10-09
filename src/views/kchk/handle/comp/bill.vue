@@ -332,21 +332,21 @@
     <span slot="footer" class="dialog-footer">
       <div
         v-if="typebutton==0 ">
-        <el-button v-if="allAuth['OrderSetting.Orders.BatchSubmit']" type="primary" @click="dialogSure(1)">提 交</el-button>
+        <el-button v-if="objs.identification?allAuth['OrderSetting.OrdersOut.BatchSubmit']:allAuth['OrderSetting.OrdersIn.BatchSubmit']" type="primary" @click="dialogSure(1)">提 交</el-button>
         <el-button @click="dialogSure(0)">暂 存</el-button>
       </div>
       <div v-if="typebutton==1">
-        <el-button v-if="allAuth['OrderSetting.Orders.BatchAgree']" type="primary" @click="Batch('/api/zjlab/Order/BatchAgree')">同 意</el-button>
-        <el-button v-if="allAuth['OrderSetting.Orders.BatchReject']" @click="Batch('/api/zjlab/Order/BatchRject')">驳 回</el-button>
+        <el-button v-if="objs.identification?allAuth['OrderSetting.OrdersOut.BatchAgree']:allAuth['OrderSetting.OrdersIn.BatchAgree']" type="primary" @click="Batch('/api/zjlab/Order/BatchAgree')">同 意</el-button>
+        <el-button v-if="objs.identification?allAuth['OrderSetting.OrdersOut.BatchReject']:allAuth['OrderSetting.OrdersIn.BatchReject']" @click="Batch('/api/zjlab/Order/BatchRject')">驳 回</el-button>
       </div>
       <div v-if="typebutton==2">
-        <el-button v-if="allAuth['OrderSetting.Orders.BatchStorageIn'] &&!objs.identification" type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认入库</el-button>
-        <el-button v-if="allAuth['OrderSetting.Orders.BatchStorageOut'] && objs.identification" type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认出库</el-button>
-        <el-button v-if="allAuth['OrderSetting.Orders.BatchObsolete']" @click="Batch('/api/zjlab/Order/BatchObsolete')">作废</el-button>
+        <el-button v-if="allAuth['OrderSetting.OrdersIn.BatchStorageIn'] &&!objs.identification" type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认入库</el-button>
+        <el-button v-if="allAuth['OrderSetting.OrdersOut.BatchStorageOut'] && objs.identification" type="primary" @click="Batch(objs.identification?'/api/zjlab/Order/BatchStorageOut':'api/zjlab/Order/BatchStorageIn')">确认出库</el-button>
+        <el-button v-if="objs.identification?allAuth['OrderSetting.OrdersOut.BatchObsolete']:allAuth['OrderSetting.OrdersIn.BatchObsolete']" @click="Batch('/api/zjlab/Order/BatchObsolete')">作废</el-button>
       </div>
       <div v-if="typebutton==3">
-        <el-button v-if="allAuth['OrderSetting.Orders.BatchSubmit']" type="primary" @click="dialogSure(1)">提 交</el-button>
-        <el-button v-if="allAuth['OrderSetting.Orders.BatchObsolete']" @click="Batch('/api/zjlab/Order/BatchObsolete')">作 废</el-button>
+        <el-button v-if="objs.identification?allAuth['OrderSetting.OrdersOut.BatchSubmit']:allAuth['OrderSetting.OrdersIn.BatchSubmit']" type="primary" @click="dialogSure(1)">提 交</el-button>
+        <el-button v-if="objs.identification?allAuth['OrderSetting.OrdersOut.BatchObsolete']:allAuth['OrderSetting.OrdersIn.BatchObsolete']" @click="Batch('/api/zjlab/Order/BatchObsolete')">作 废</el-button>
       </div>
     </span>
 
@@ -689,13 +689,16 @@ export default{
           this.list[this.goodsIndex] = row
           this.$set(this.list, this.goodsIndex, row)
         })
-      } else if (!row.number) {
+      } else if (name == 'wldw' || name == 'ck') {
         this.objs[name + 'Name'] = row.name
         this.objs[name + 'Id'] = row.id
+      } else if (!row.number) {
+        this.objs[name + 'Name'] = row.name
+        this.objs[name + 'Id'] = row.number
       } else {
         this.objs[name + 'Number'] = row.number
         this.objs[name + 'Name'] = row.name
-        this.objs[name + 'Id'] = row.id
+        this.objs[name + 'Id'] = row.number
       }
     },
     dialogSure(val) {
@@ -738,7 +741,8 @@ export default{
           wareHouseId: this.objs.ckId,
           orderCategory: this.orderCategory,
           goodsCategoryId: this.objs.typeId,
-          memoryCardId: this.objs.jfkhId,
+          memoryCardNumber: this.objs.jfkhId,
+          memoryCardName: this.objs.jfkhName,
           receiptDate: filterTimestampToFormatTime(new Date(this.time).getTime(), 'YYYY-MM-DD HH:mm:ss'),
           remark: this.objs.remark,
           identification: this.objs.identification,
