@@ -71,7 +71,7 @@
           <div class="table-top__title" />
 
         </flexbox>
-        <div class="flex-box">
+        <div v-if="rightflag" class="flex-box">
           <create-sections >
             <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
           </create-sections>
@@ -88,6 +88,9 @@
 
           </div>
         </div>
+        <div v-else class="flex-box">
+          <el-empty :image-size="200"/>
+        </div>
 
       </div>
     </div>
@@ -101,7 +104,7 @@ import { objDeepCopy } from '@/utils'
 import {
   CreateGoodsCategory1,
   GetGoodsCategoryTree,
-  CreateGoodsCategory,
+  // CreateGoodsCategory,
   UpdateGoodsCategory,
   Delete
 } from '@/api/kchk/category'
@@ -123,6 +126,7 @@ export default {
   mixins: [GenerateRulesMixin],
   data() {
     return {
+      rightflag: true,
       jurisdictionCreateShow: false,
       isLazy: true,
       treeData: [],
@@ -139,7 +143,7 @@ export default {
       showDepData: [],
       fieldsRules: {}, // 字段列表需要验证
       fields: [],
-      aoiinfo: { flag: 1, dutyUserName: '' },
+      aoiinfo: { flag: 1, dutyUserName: '', orderInDutyUserName: '', orderOutDutyUserName: '' },
       isSave: false,
       infos: {
         code: ''
@@ -167,7 +171,7 @@ export default {
   },
   methods: {
     addJurisdiction() {
-      this.aoiinfo = { flag: 1, dutyUserName: '' }
+      this.aoiinfo = { flag: 1, dutyUserName: '', orderInDutyUserName: '', orderOutDutyUserName: '' }
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
     },
     getlist() {
@@ -183,7 +187,13 @@ export default {
             e.hasChild = !e.hasChild
           })
           this.isLazy = false
+          debugger
           this.aoiinfo = response ? response[0] : { flag: 1 }
+          if (this.aoiinfo) {
+            this.rightflag = true
+          } else {
+            this.rightflag = false
+          }
           this.treeData = (response || [])
           this.depLoading = false
         })
@@ -196,6 +206,12 @@ export default {
       if (index == 'dutyUserName') {
         this.aoiinfo.dutyUserId = item.id
         this.aoiinfo.dutyUserName = item.name
+      } else if (index == 'orderInDutyUserName') {
+        this.aoiinfo.orderOutDutyUserId = item.id
+        this.aoiinfo.orderInDutyUserName = item.name
+      } else if (index == 'orderOutDutyUserName') {
+        this.aoiinfo.orderInDutyUserId = item.id
+        this.aoiinfo.orderOutDutyUserName = item.name
       }
       // this.aoiinfo[item.field] = value
     },
@@ -208,20 +224,21 @@ export default {
         return
       }
       this.flag = 0
-      if (this.aoiinfo.id) {
-        UpdateGoodsCategory(this.aoiinfo).then(res => {
-          this.flag = 1
-          this.$message.success('修改成功')
-        })
-      } else {
-        this.aoiinfo.code = Date.now() + '' + Math.floor(Math.random() * 10)
-        CreateGoodsCategory(this.aoiinfo).then(res => {
-          this.flag = 1
-          this.$message.success('新增成功')
-          this.node_had.childNodes = []
-          this.getDepTreeList(this.node_had, this.resolve_had)
-        })
-      }
+      // if (this.aoiinfo.id) {
+      console.log(this.aoiinfo, 66)
+      UpdateGoodsCategory(this.aoiinfo).then(res => {
+        this.flag = 1
+        this.$message.success('修改成功')
+      })
+      // } else {
+      //   this.aoiinfo.code = Date.now() + '' + Math.floor(Math.random() * 10)
+      //   CreateGoodsCategory(this.aoiinfo).then(res => {
+      //     this.flag = 1
+      //     this.$message.success('新增成功')
+      //     this.node_had.childNodes = []
+      //     this.getDepTreeList(this.node_had, this.resolve_had)
+      //   })
+      // }
     },
     getBaseField() {
       const field = []
@@ -265,6 +282,26 @@ export default {
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.dutyUserName : ''
+      })
+      field.push({
+        field: 'orderOutDutyUserName',
+        formType: 'open',
+        isNull: 0,
+        name: '出库负责人',
+        placeholder: '请选择出库负责人',
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.orderOutDutyUserId : ''
+      })
+      field.push({
+        field: 'orderInDutyUserName',
+        formType: 'open',
+        isNull: 0,
+        name: '入库负责人',
+        placeholder: '请选择入库负责人',
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.orderInDutyUserId : ''
       })
       field.push({
         field: 'remark',
@@ -326,7 +363,7 @@ export default {
      */
     appendStruc(data) {
       if (data.id) {
-        this.aoiinfo = { parentName: data.name, parentId: data.id, dutyUserName: null, dutyUserId: null, flag: 1 }
+        this.aoiinfo = { parentName: data.name, parentId: data.id, dutyUserName: null, dutyUserId: null, flag: 1, orderOutDutyUserName: '', orderInDutyUserName: '' }
       }
     },
     deleteStruc(node, data) {
@@ -380,7 +417,13 @@ export default {
           })
           if (node.level === 0) {
             const data = response.length > 0 ? response[0] : { flag: 1 }
-            this.aoiinfo = { name: data.name, dutyUserName: data.dutyUserName, dutyUserId: data.dutyUserId, flag: 1 }
+            if (data.code) {
+              this.rightflag = true
+              this.aoiinfo = { code: data.code, id: data.id, name: data.name, dutyUserName: data.dutyUserName, dutyUserId: data.dutyUserId, flag: 1, orderOutDutyUserName: data.orderOutDutyUserName, orderOutDutyUserId: data.OrderOutDutyUserId, orderInDutyUserName: data.orderInDutyUserName, OrderInDutyUserId: data.OrderInDutyUserId }
+            } else {
+              this.rightflag = false
+              this.aoiinfo = { code: data.code, id: data.id, name: data.name, dutyUserName: data.dutyUserName, dutyUserId: data.dutyUserId, flag: 1, orderOutDutyUserName: data.orderOutDutyUserName, orderOutDutyUserId: data.OrderOutDutyUserId, orderInDutyUserName: data.orderInDutyUserName, OrderInDutyUserId: data.OrderInDutyUserId }
+            }
             this.resolve_had1 = resolve
             console.log(this.aoiinfo, 144)
           }

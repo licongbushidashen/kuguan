@@ -4,7 +4,7 @@ import request from '@/utils/request'
  * @param {*} data
  */
 export function GetGoodsCategoryTree(data) {
-  const url = data.parentId ? `/api/zjlab/GoodsCategory/GetGoodsCategoryTree?parentId=${data.parentId}` : `/api/zjlab/GoodsCategory/GetGoodsCategoryTree`
+  const url = data.parentId ? `/api/zjlab/GoodsCategory/GetGoodsCategoryList?parentId=${data.parentId}` : `/api/zjlab/GoodsCategory/GetGoodsCategoryList`
   return request({
     url: url,
     method: 'get',
@@ -17,7 +17,7 @@ export function GetGoodsCategoryTree(data) {
 // 类目树 关键字搜索
 export function CreateGoodsCategory1(data) {
   return request({
-    url: `/api/zjlab/GoodsCategory/GetCategoryTree?keyWord=${data}`,
+    url: `/api/zjlab/GoodsCategory/GetGoodsCategoryList?keyWord=${data}`,
     method: 'get',
     data: data,
     headers: {

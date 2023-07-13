@@ -14,7 +14,9 @@ export default {
   components: {},
   mixins: [],
   data() {
-    return {}
+    return {
+      times: null
+    }
   },
   computed: {
     ...mapGetters(['activeIndex', 'userInfo'])
@@ -28,8 +30,15 @@ export default {
     this.addDocumentVisibilityChange()
     this.setMinHeight()
     this.TaskCenterCount()
+    this.times = setInterval(() => {
+      this.$store.dispatch('TaskCenterCount')
+    }, 60000 * 5)
+  },
+  beforeDestroy() {
+    clearInterval(this.times)
   },
   methods: {
+
     TaskCenterCount() {
 
     },

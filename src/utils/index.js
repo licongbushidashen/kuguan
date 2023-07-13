@@ -633,13 +633,25 @@ export function downloadExcelWithResData(res) {
 }
 
 export function downloadFileWithBuffer(data, name, type) {
-  var blob = new Blob([data], {
+  debugger
+  // let fileName = data.headers['content-disposition'].split('filename=')[1]
+  // if (!fileName) {
+  let fileName = ''
+  if (data.headers['content-disposition']) {
+    fileName = data.headers['content-disposition'].split("UTF-8''")[1]
+  }
+
+  // }
+  // fileName = fileName ? fileName.replace(/\"/g, '') : 'file.xlsx'
+  fileName = decodeURI(fileName) || ''
+  var blob = new Blob([data.data], {
     type: type || ''
   })
   var downloadElement = document.createElement('a')
   var href = window.URL.createObjectURL(blob) // 创建下载的链接
   downloadElement.href = href
-  downloadElement.download = name // 下载后文件名
+  debugger
+  downloadElement.download = fileName // 下载后文件名
   document.body.appendChild(downloadElement)
   downloadElement.click() // 点击下载
   document.body.removeChild(downloadElement) // 下载完成移除元素

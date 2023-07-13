@@ -72,7 +72,16 @@ export default [
           title: '饮水机台账',
           title1: 'PropertyBillManager.PropertyBill.WaterDefault'
         }
+      }, {
+        name: 'Account',
+        path: 'Account-xcb', // 类目
+        component: () => import('@/views/Account/xcb'),
+        meta: {
+          title: '小厨宝台账',
+          title1: 'PropertyBillManager.PropertyBill.KitchenDefault'
+        }
       }
+
 
 
     ]
@@ -113,6 +122,15 @@ export default [
         name: 'waterReport',
         path: 'Account-waterReport', // 类目
         component: () => import('@/views/Account/waterReport')
+      },
+      {
+        meta: {
+          title: '小厨宝台账',
+          title1: 'PropertyBillManager.PropertyBillReport.KitchenReportDefault'
+        },
+        name: 'waterReport',
+        path: 'Account-xcbReport', // 类目
+        component: () => import('@/views/Account/xcbReport')
       }
       // {
       //   meta: {

@@ -113,7 +113,7 @@
           show-overflow-tooltip
           type="index"
           width="80"
-          label="序号">
+          label="选择">
 
           <template slot-scope="{ row, column, $index}">
             <span class="status-name">
@@ -128,9 +128,9 @@
                   v-model="row.checked"
                   @change="onItemCheckboxChange(row)"
                 />
-                <span class="text">{{
+                <!-- <span class="text">{{
                   $index+1
-                }}</span>
+                }}</span> -->
               </span>
 
             </span>
@@ -381,10 +381,10 @@ export default {
          * @param {*} val
          */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
       this.morecondition = false
-      this.Pagelist()
+      this.Pagelist(x)
     },
     changeParam(param) {
       return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
@@ -396,9 +396,9 @@ export default {
       this.orderCategory = null
       this.startTime = []
     },
-    Pagelist() {
+    Pagelist(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
+      const data = { 'maxResultCount': this.pageSize, 'skipCount': x || this.currentPage, searchKey: this.inputContent, flag: 4 }
       if (this.name == 'gldj1') {
         data.orderNo = this.orderNo
         if (this.goodsCategoryId) {

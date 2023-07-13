@@ -14,6 +14,13 @@
         <el-button
           v-if="allAuth['OrderSetting.OrdersIn.Create']"
           type="primary"
+          icon="el-icon-plus"
+          @click="showDialog=!showDialog"
+        >导入入库</el-button
+        >
+        <el-button
+          v-if="allAuth['OrderSetting.OrdersIn.Create']"
+          type="primary"
           icon="iconfont icon-piliangtianjia"
           class="xr-btn--orange"
           @click="addJurisdiction1"
@@ -144,12 +151,14 @@
           @current-change="handleCurrentChange"/>
       </div>
     </div>
+    <Im :showing="showDialog " @change="chuxian"/>
     <Bill :showing="jurisdictionCreateShow" :info="info" :ffts="ffts" @change="handleCurrentChange(0)"/>
     <Type :placeholder="placeholder" :typeling="typeling" :p="p" :url="url" :name="name" @change="typevalu"/>
   </div>
 </template>
 
 <script>
+import Im from './comp/im'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { OrderPage, GetOrder } from '@/api/kchk/order'
 // import Ccware from './comp/add.vue'
@@ -166,7 +175,8 @@ export default {
     XrHeader,
     CreateSections,
     Bill,
-    Type
+    Type,
+    Im
     // Ccware
   },
   filters: {
@@ -198,6 +208,7 @@ export default {
   mixins: [pagest],
   data() {
     return {
+      showDialog: false,
       flag: '',
       flagName: [
         { name: '草稿', value: 0 },
@@ -263,6 +274,19 @@ export default {
     this.getList()
   },
   methods: {
+    chuxian(id) {
+      debugger
+      this.handleCurrentChange(0)
+      if (!this.allAuth['OrderSetting.OrdersIn.Edit']) {
+        this.$message.error('暂无当前权限')
+        return
+      }
+      GetOrder(id).then(res => {
+        console.log(res)
+        this.info = res
+        this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+      })
+    },
     Reset() {
       this.company = ''
       this.flag = null
@@ -301,11 +325,11 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
       const data = {
-        maxResultCount: this.pageSize + this.currentPage,
-        skipCount: this.currentPage,
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage,
         isOutbound: false,
         createName: this.inputs,
         searchKey: this.company
@@ -341,9 +365,9 @@ export default {
      */
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /**

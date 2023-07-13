@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="消杀台账">
+    <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="小厨宝台账">
       <template v-slot:ft>
         <el-button
 
@@ -24,34 +24,14 @@
         v-loading="loading"
         id="examine-table"
         :data="list"
+        :summary-method="getSummaries"
         show-summary
         class="main-table"
         highlight-current-row
         @row-click="handleRowClick"
       >
-        <!-- <el-table-column
-          show-overflow-tooltip
-          type="index"
-          width="70"
-          align="center"
-          label="序号"
-        >
-          <template slot-scope="{ row, column, $index }">
-            <span class="status-name">
-              <span
-                class="index"
-                style="text-align: center; display: block;"
-                @mouseenter="row.hover = true"
-                @mouseleave="row.hover = false"
-              >
 
-                <span class="text">{{
-                  $index + 1
-                }}</span>
-              </span>
-            </span>
-          </template>
-        </el-table-column> -->
+
         <el-table-column v-for="(item,index) in tableH" :prop="item.props" :label="item.name" :key="index"/>
 
       </el-table>
@@ -63,11 +43,10 @@
 import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 import {
-  DisinfectionGetBooks,
-  DisinfectionGetDataTable
+  GetKitchenBooks,
+  DownloadKitchenReport
 } from '@/api/account'
 import { downloadFileWithBuffer } from '@/utils'
-
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
 export default {
@@ -80,7 +59,7 @@ export default {
   mixins: [],
   data() {
     return {
-      tableH: [{ name: '虫害类型', props: 'pestCategories' }],
+      tableH: [{ name: '规格', props: 'size' }],
       flag: 0,
       Inventoryid: '',
       lossShow: false,
@@ -120,15 +99,43 @@ export default {
     this.getList()
   },
   methods: {
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 1) {
+          return
+        }
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        const values = data.map(item => Number(item[column.property]))
+        if (!values.every(value => isNaN(value))) {
+          sums[index] = values.reduce((prev, curr) => {
+            const value = Number(curr)
+            if (!isNaN(value)) {
+              return prev + curr
+            } else {
+              return prev
+            }
+          }, 0)
+          sums[index]
+        } else {
+          sums[index] = ''
+        }
+      })
+
+      return sums
+    },
     /**
-     * 导出
-     */
+       * 导出
+       */
     downs() {
-      DisinfectionGetDataTable({ 'maxResultCount': 1000, 'skipCount': 0,
+      DownloadKitchenReport({ 'maxResultCount': 1000, 'skipCount': 0,
         beginTime: this.time ? parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00' : null,
         endTime: this.time ? parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59' : null
-      }
-      ).then(res => {
+      }).then(res => {
         // const blob = new Blob([res], {
         //   type: ''
         // })
@@ -147,15 +154,15 @@ export default {
       }
     },
     /**
-     *  添加权限
-     */
+       *  添加权限
+       */
     addJurisdiction() {
       this.info = {}
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
     },
     /*
-   * 当checkbox选择change时事件
-   */
+     * 当checkbox选择change时事件
+     */
     onItemCheckboxChange() {
       this.obj = {}
       this.list.filter((d) => d.checked).map(e => {
@@ -165,8 +172,8 @@ export default {
       })
     },
     /**
-     * 获取列表数据
-     */
+       * 获取列表数据
+       */
     getList() {
       this.loading = true
       if (this.time) {
@@ -174,11 +181,12 @@ export default {
       } else {
         var data = ``
       }
-      DisinfectionGetBooks(data)
+
+      GetKitchenBooks(data)
         .then(res => {
           const list = []
           const tableH = []
-          this.tableH = [{ name: '虫害类型', props: 'pestCategories' }]
+          this.tableH = [{ name: '品牌', props: 'brand' }, { name: '型号', props: 'model' }]
           const tableHName = new Set()
           for (let i = 0; i < res.length; i++) {
             if (!tableHName.has(res[i].spacePointName)) {
@@ -186,34 +194,27 @@ export default {
               tableHName.add(res[i].spacePointName)
             }
           }
+
           tableH.push({ name: '总计', props: '总计' })
           const size = {}
           for (let i = 0; i < res.length; i++) {
-            const j = res[i].pestCategories
+            const j = res[i].model
             size[j] = size[j] ? size[j] : {}
             size[j][res[i].spacePointName ] = res[i].totalQuantiy
+            size[j].brand = res[i].brand
           }
           for (const item in size) {
-            const obj = { pestCategories: item, ...size[item] }
+            const obj = { model: item, ...size[item] }
+            const brand = JSON.parse(JSON.stringify(size[item].brand))
+            delete size[item].brand
             let s = 0
-            Object.values(size[item]).forEach(val => { s += val }, 0)
+            Object.values(size[item]).forEach(val => {
+              s += isNaN(val) ? 0 : val
+            }, 0)
             obj['总计'] = s
+            obj.brand = brand
             list.push(obj)
           }
-          // for (let i = 0; i < res.length; i++) {
-          //   const obj = { pestCategories: res[i].pestCategories }
-          //   let num = 0
-          //   tableHName.forEach(e => {
-          //     if (e == res[i].spacePointName) {
-          //       obj[res[i].spacePointName] = res[i].totalQuantiy
-          //       if (Number(res[i].totalQuantiy)) {
-          //         num += res[i].totalQuantiy
-          //       }
-          //     }
-          //   })
-          //   obj['总计'] = num
-          //   list.push(obj)
-          // }
           this.tableH = [...this.tableH, ...tableH]
           this.list = list
           this.loading = false
@@ -223,9 +224,9 @@ export default {
         })
     },
     /**
-     * 更改当前页数
-     * @param {*} val
-     */
+       * 更改当前页数
+       * @param {*} val
+       */
     handleCurrentChange(val) {
       const x = val > 0 ? val - 1 : 0
       this.currentPage = x ? x * this.pageSize : x
@@ -236,19 +237,19 @@ export default {
 
     /** 列表操作 */
     /**
-     * 当某一行被点击时会触发该事件
-     */
+       * 当某一行被点击时会触发该事件
+       */
     handleRowClick(row, column, event) {
       if (column.label == '序号') {
         return
       }
       this.info = row
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
-    //   GetInfo(row.id).then(res => {
-    //     console.log(res)
-    //     this.info = res
-    //     this.jurisdictionCreateShow = !this.jurisdictionCreateShow
-    //   })
+      //   GetInfo(row.id).then(res => {
+      //     console.log(res)
+      //     this.info = res
+      //     this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+      //   })
     },
     handleClick1(type, scope) {
       this.createAction = {
@@ -263,53 +264,54 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-  /deep/.el-table__footer-wrapper tbody td.el-table__cell{
-    background-color:#fff !important;
+  <style lang="scss" scoped>
+    /deep/.el-table__footer-wrapper tbody td.el-table__cell{
+      background-color:#fff !important;
+    }
+  /deep/.el-range-editor.el-input__inner{
+    // padding: 0px 10px !important;
   }
-/deep/.el-range-editor.el-input__inner{
-  // padding: 0px 10px !important;
-}
-.main {
-  height: 100%;
+  .main {
+    height: 100%;
 
-  /deep/ .xr-header {
-    padding: 15px 30px;
+    /deep/ .xr-header {
+      padding: 15px 30px;
+    }
   }
-}
 
-.main-body {
-  // height: calc(100% - 61px);
-  background-color: white;
-  border-top: 1px solid $xr-border-line-color;
-  border-bottom: 1px solid $xr-border-line-color;
-}
-// .main-table{
-//       height: calc(100% - 90px ) !important;
-// }
-.main-table-header {
-  height: 50px;
-  background-color: white;
-  position: relative;
-  line-height: 50px;
-  padding-left: 20px;
-  .main-table-header-button {
-    float: right;
-    margin-right: 20px;
+  .main-body {
+    // height: calc(100% - 61px);
+    background-color: white;
+    border-top: 1px solid $xr-border-line-color;
+    border-bottom: 1px solid $xr-border-line-color;
+  }
+  // .main-table{
+  //       height: calc(100% - 90px ) !important;
+  // }
+  .main-table-header {
+    height: 50px;
+    background-color: white;
+    position: relative;
+    line-height: 50px;
+    padding-left: 20px;
+    .main-table-header-button {
+      float: right;
+      margin-right: 20px;
+      margin-top: 10px;
+    }
+  }
+
+  .project-reminder {
+    width: auto;
+    float: left;
+    margin-left: 20px;
     margin-top: 10px;
   }
-}
+  @import '../styles/table.scss';
+  .buttonc {
+    color: #4f81fc;
+     cursor: pointer;
+  }
+  </style>
 
-.project-reminder {
-  width: auto;
-  float: left;
-  margin-left: 20px;
-  margin-top: 10px;
-}
-@import '../styles/table.scss';
-.buttonc {
-  color: #4f81fc;
-   cursor: pointer;
-}
-</style>
 

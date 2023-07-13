@@ -1,6 +1,10 @@
 <template>
   <div class="main">
-    <xr-header icon-class="iconfont icon-huaban39" icon-color="#2362fb" label="消杀台账">
+    <xr-header
+      icon-class="iconfont icon-huaban39"
+      icon-color="#2362fb"
+      label="消杀台账"
+    >
       <template v-slot:ft>
         <el-button
           v-if="allAuth['PropertyBillManager.PropertyBill.DisinfectionCreate']"
@@ -15,24 +19,35 @@
           class="main-table-header-button "
           type=""
           icon="iconfont icon-xianxing-daoru"
-          @click="bulkImportClick">导入</el-button>
+          @click="bulkImportClick"
+        >导入</el-button
+        >
         <el-button
           v-if="allAuth['PropertyBillManager.PropertyBill.DisinfectionExport']"
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"
-          @click="downs">导出</el-button>
+          @click="downs"
+        >导出</el-button
+        >
       </template>
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
+        <label for="">消杀日期:</label>
         <el-date-picker
           v-model="time"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
-          end-placeholder="结束日期"/>
-        <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)">搜索</el-button>
+          end-placeholder="结束日期"
+        />
+        <el-button
+          type="primary"
+          style="margin-left:20px"
+          @click="handleCurrentChange(0)"
+        >搜索</el-button
+        >
       </div>
 
       <el-table
@@ -94,13 +109,20 @@
           class="p-bar"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"/>
+          @current-change="handleCurrentChange"
+        />
       </div>
     </div>
-    <Ccware :showing="jurisdictionCreateShow" :info="info" @change="handleCurrentChange(0)" />
+    <Ccware
+      :showing="jurisdictionCreateShow"
+      :info="info"
+      @change="handleCurrentChange(0)"
+    />
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
+      mbxz="/api/zjlab/Disinfection/DisinfectionDownloadTemplate"
+      import-category="Disinfection"
       url="api/zjlab/Disinfection/Upload"
       @close="bulkImportShow = false"
       @success="handleCurrentChange(0)"
@@ -113,11 +135,7 @@ import BulkImportUser from '../import.vue'
 import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 import { downloadFileWithBuffer } from '@/utils'
-import {
-  DisinfectionPage,
-  DisinfectionDownload
-
-} from '@/api/account'
+import { DisinfectionPage, DisinfectionDownload } from '@/api/account'
 import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
@@ -130,7 +148,6 @@ export default {
     CreateSections,
     Ccware,
     BulkImportUser
-
   },
   mixins: [pagest],
   data() {
@@ -157,8 +174,7 @@ export default {
       total: 0,
       obj: {},
       info: {},
-      time: [new Date() - 24 * 3600 * 1000 * 30, new Date()]
-
+      time: null
     }
   },
   computed: {
@@ -176,16 +192,28 @@ export default {
     this.getList()
   },
   methods: {
-
     /**
      * 导出
      */
     downs() {
-      DisinfectionDownload({ 'maxResultCount': 1000, 'skipCount': 0, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+      DisinfectionDownload({
+        maxResultCount: 1000,
+        skipCount: 0,
+        beginTime: this.time
+          ? parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00'
+          : null,
+        endTime: this.time
+          ? parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59'
+          : null
+      }).then(res => {
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(
+          res,
+          '',
+          'application/vnd.ms-excel;charset=UTF-8'
+        )
       })
     },
     /**
@@ -214,28 +242,43 @@ export default {
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
     },
     /*
-   * 当checkbox选择change时事件
-   */
+     * 当checkbox选择change时事件
+     */
     onItemCheckboxChange() {
       this.obj = {}
-      this.list.filter((d) => d.checked).map(e => {
-        const key = e.id; const val = e.code
-        this.obj[key] = val
-        return { [key]: val }
-      })
+      this.list
+        .filter(d => d.checked)
+        .map(e => {
+          const key = e.id
+          const val = e.code
+          this.obj[key] = val
+          return { [key]: val }
+        })
     },
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, beginTime: parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00', endTime: parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59' }
+      const data = {
+        maxResultCount: this.pageSize,
+        skipCount: x || this.currentPage,
+        beginTime: this.time
+          ? parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00'
+          : null,
+        endTime: this.time
+          ? parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59'
+          : null
+      }
       DisinfectionPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
             res.items[i].checked = false
-            res.items[i].antivirusDate = parseTime(res.items[i].antivirusDate, '{y}-{m}-{d} {h}:{m}')
+            res.items[i].antivirusDate = parseTime(
+              res.items[i].antivirusDate,
+              '{y}-{m}-{d} {h}:{i}'
+            )
           }
           this.list = res.items
           this.total = res.totalCount
@@ -252,12 +295,10 @@ export default {
     handleCurrentChange(val) {
       debugger
       // this.time = [new Date() - 24 * 3600 * 1000 * 30, new Date()]
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
-
-
 
     /** 列表操作 */
     /**
@@ -269,11 +310,11 @@ export default {
       }
       this.info = row
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
-    //   GetInfo(row.id).then(res => {
-    //     console.log(res)
-    //     this.info = res
-    //     this.jurisdictionCreateShow = !this.jurisdictionCreateShow
-    //   })
+      //   GetInfo(row.id).then(res => {
+      //     console.log(res)
+      //     this.info = res
+      //     this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+      //   })
     },
     handleClick1(type, scope) {
       this.createAction = {
@@ -282,14 +323,12 @@ export default {
       }
       this.dbsyShow = true
     }
-
-
   }
 }
 </script>
 
 <style lang="scss" scoped>
-/deep/.el-range-editor.el-input__inner{
+/deep/.el-range-editor.el-input__inner {
   // padding: 0px 10px !important;
 }
 .main {

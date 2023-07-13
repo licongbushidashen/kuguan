@@ -61,7 +61,7 @@ export default [
       permissions: ['kchk', 'system-project']
     }),
     meta: {
-      title: 'SystemSetting.admin',
+      title: 'SystemSetting.UserManager',
       icon: 's-seas'
     },
     children: [

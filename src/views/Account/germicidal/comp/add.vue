@@ -72,6 +72,7 @@ export default {
       async handler(val) {
         this.showDialog = !this.showDialog
         if (!this.info.id) {
+          debugger
           this.aoiinfo = {
           }
           this.getBaseField()
@@ -88,7 +89,9 @@ export default {
             await this.pointTree(this.info.spacePointId1, 'parentId', 1, 'chs')
             this.aoiinfo.parentId2 = this.info.spacePointId2
           }
+          // setTimeout(() => {
           this.getBaseField()
+          // }, 1000)
         }
       },
       deep: true,
@@ -101,7 +104,6 @@ export default {
   },
   methods: {
     pointTree(item, name, j, chs) {
-      debugger
       const data = item ? { parentId: item } : {}
       GetSpacePointTree(data)
         .then(response => {
@@ -123,9 +125,9 @@ export default {
             for (let i = 0; i < this.fields.length; i++) {
               if (this.fields[i].field == 'parentId') {
                 this.setting1 = response
-                this.setting2 = []
+
                 this.$set(this.fields[i], 'setting1', response)
-                this.fields[i].setting2 = []
+
                 if (!chs) {
                   this.aoiinfo.parentId1 = null
                   this.aoiinfo.parentId2 = null
@@ -134,35 +136,17 @@ export default {
             }
           } else {
             this.settings = response || []
-            this.getBaseField()
+            // this.getBaseField()
           }
-          this.fieldsRules['parentId'] = this.getRules({
-            field: 'parentId',
-            formType: 'seleteAll',
-            isNull: 1,
-            name: '空间点位',
-            array1: 1,
-            placeholder: '请选择空间点位',
-            setting: this.settings,
-            setting1: this.setting1,
-            setting2: this.setting2,
-            parentId2: this.aoiinfo.parentId2,
-            parentId1: this.aoiinfo.parentId1,
-            optionL: 'specificLocation',
-            optionV: 'id',
-            inputTips: '',
-            value: this.aoiinfo ? this.aoiinfo.parentId : ''
-          })
         })
         .catch(() => {
         })
     },
     saveClick(data) {
-      debugger
       if (!data) return
       this.aoiinfo.antivirusDate = parseTime(this.aoiinfo.antivirusDate)
       if (this.aoiinfo.parentId2) {
-        this.aoiinfo.spacePointId = this.aoiinfo.parentId2
+        this.aoiinfo.spacePointId2 = this.aoiinfo.parentId2
       } if (this.aoiinfo.parentId1) {
         this.aoiinfo.spacePointId1 = this.aoiinfo.parentId1
       } if (this.aoiinfo.parentId) {
@@ -190,9 +174,9 @@ export default {
     },
     formChange(id, type, type1, i, j) {
       if (id.field == 'parentId') {
-        debugger
         this.pointTree(type1, id.field, j)
       }
+      debugger
       switch (id.field) {
         case 'servicesAvailable':
           this.setBaseField(id.field, type1, 'servicesAvailableRemark', '请输入其它服务项目')
@@ -494,20 +478,22 @@ export default {
           value: this.aoiinfo ? this.aoiinfo.drugNameRemark : ''
         })
       }
-      field.push({
-        field: 'drugName',
-        formType: 'selete',
-        isNull: 1,
-        name: '药物名称',
-        placeholder: '请选择药物名称',
-        setting: [
+      if (this.aoiinfo.pestCategories != '其它') {
+        field.push({
+          field: 'drugName',
+          formType: 'selete',
+          isNull: 1,
+          name: '药物名称',
+          placeholder: '请选择药物名称',
+          setting: [
 
-        ],
-        optionL: 'name',
-        optionV: 'id',
-        inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.drugName : ''
-      })
+          ],
+          optionL: 'name',
+          optionV: 'id',
+          inputTips: '',
+          value: this.aoiinfo ? this.aoiinfo.drugName : ''
+        })
+      }
       if (this.aoiinfo.drugName == '其它') {
         field.push({
           field: 'drugNameRemark1',

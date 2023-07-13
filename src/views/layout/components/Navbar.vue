@@ -155,14 +155,18 @@ export default {
       //   icon: 'wk wk-address-book',
       //   fontSize: '17px'
       // }
-      tempsItems.home = {
-        title: '首页',
-        type: 6,
-        module: 'home',
-        path: '/home',
-        icon: 'iconfont icon-shouye1',
-        fontSize: '17px'
+
+      if (JSON.stringify(this.allAuth).indexOf('HomePage') != -1) {
+        tempsItems.home = {
+          title: '首页',
+          type: 6,
+          module: 'home',
+          path: '/home',
+          icon: 'iconfont icon-shouye1',
+          fontSize: '17px'
+        }
       }
+
       console.log(JSON.stringify(this.quantity), 111)
       if (JSON.stringify(this.allAuth).indexOf('TaskCenterSetting') != -1) {
         tempsItems.handle = {
@@ -195,7 +199,7 @@ export default {
           fontSize: '17px'
         }
       }
-      if (JSON.stringify(this.allAuth).indexOf('InventoryManager') != -1) {
+      if (JSON.stringify(this.allAuth).indexOf('PropertyBillManager') != -1) {
         tempsItems.account = {
           title: '物业台账',
           type: 6,
@@ -206,7 +210,7 @@ export default {
         }
       }
 
-      if (JSON.stringify(this.allAuth).indexOf('AbpTenantManagement') != -1) {
+      if (JSON.stringify(this.allAuth).indexOf('SystemSetting') != -1) {
         tempsItems.xtgl = {
           title: '系统管理',
           type: 6,

@@ -14,9 +14,9 @@ export default {
     },
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     }
   }
 }

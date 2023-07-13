@@ -83,9 +83,9 @@
                   v-model="row.checked"
                   @change="onItemCheckboxChange(row)"
                 />
-                <span class="text">{{
+                <!-- <span class="text">{{
                   $index+1
-                }}</span>
+                }}</span> -->
               </span>
 
             </span>
@@ -274,7 +274,6 @@ export default {
       }
     },
     dialogSure() {
-      debugger
       const isCheckedItems = this.list.filter(d => d.checked)
       if (isCheckedItems.length > 0) {
         if (this.name == 'gldj1') {
@@ -313,16 +312,23 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.Pagelist()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      // if (this.p == '经费卡号') {
+      //
+      // } else {
+      //   this.currentPage = x ? x * this.pageSize : x
+      // }
+      this.Pagelist(x)
     },
     changeParam(param) {
       return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
     },
-    Pagelist() {
+    Pagelist(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
+      console.log(this.url, 'asdasd')
+      debugger
+      const data = { 'maxResultCount': this.pageSize, 'skipCount': x || this.currentPage, searchKey: this.inputContent }
       if (this.name == 'gldj1') {
         data.orderNo = this.inputContent
         data.searchKey = this.company
@@ -363,11 +369,18 @@ export default {
         })
       } else {
         if (this.p == '货品') {
+          data.goodsName = this.inputContent
           data.warehouseId = this.objs.ckId
           data.catetoryId = this.objs.typeId
           data.isBigThenZero = true
           // data.warehouseName = this.warehouseName
           // data.catetoryName = this.catetoryName
+        }
+        if (this.p == '经费卡号') {
+          debugger
+          this.currentPage == 0 ? this.currentPage = 1 : this.currentPage
+          data.maxResultCount = 15
+          data.skipCount = this.currentPage
         }
         data.isBigThenZero = true
         return request({

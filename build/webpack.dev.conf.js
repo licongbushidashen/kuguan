@@ -36,7 +36,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     open: true,
     proxy: {
       "/api": {
-        target: "https://txl.demo.wy5u.com",
+        target: "https://wms.demo.wy5u.com",
         changeOrigin: true,
       
       },

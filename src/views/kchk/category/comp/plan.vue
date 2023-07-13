@@ -21,7 +21,7 @@
 import CreateSections from '@/components/CreateSections'
 import {
   Getrole,
-  CreateRole
+  SetPlan
   // updataRole
 } from '@/api/kchk/goods'
 export default {
@@ -154,7 +154,7 @@ export default {
         ids: [this.info.id]
 
       }
-      CreateRole(data).then(res => {
+      SetPlan(data).then(res => {
         this.$message.success('保存')
         this.showDialog = false
       })

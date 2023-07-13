@@ -18,7 +18,7 @@
       <div class="main-table-header">
         <div style="display: flex;    height: 54px;    line-height: 54px;  align-items: baseline;">
           <div style="margin-right: 20px;">
-            <el-input v-model="inputs" style="width:200px;margin-left: 10px;" placeholder="请输入货品/仓库名称"/>
+            <el-input v-model="inputs" style="width:200px;margin-left: 10px;" placeholder="请输入货品名称"/>
           </div>
           <div style="width:20px;display:inline-block;    line-height: 32px;    margin: 0px 20px 0px 10px;">
             <i class="wk wk-moretj" @click="morecondition=!morecondition"/>
@@ -26,13 +26,16 @@
           <div v-show="morecondition" class="morecondition1">
             <div class="morecondition">
               <div style="margin-right: 20px;">
-                <label for="">货品/仓库名称</label>
-                <el-input v-model="inputs" style="width:200px;" placeholder="请输入货品/仓库名称"/>
+                <label for="">货品名称</label>
+                <el-input v-model="inputs" style="width:200px;" placeholder="请输入货品名称"/>
               </div>
-
+              <div style="margin-right: 20px;">
+                <label for="">仓库名称</label>
+                <el-input v-model="inputs1" style="width:200px;" placeholder="请输入仓库名称"/>
+              </div>
               <div>
                 <label for="">货品类目</label>
-                <el-select v-model="goodsCategoryId">
+                <el-select v-model="goodsCategoryId" style="width:200px;">
                   <el-option
                     v-for="(item,index) in showDepData"
                     :key="index" :label="item.name"
@@ -161,6 +164,7 @@ export default {
       warningshow: true,
       jurisdictionCreateShow: false,
       inputs: '',
+      inputs1: '',
       loading: false, // 加载动画
       tableHeight: document.documentElement.clientHeight - 230, // 表的高度
       list: [],
@@ -196,6 +200,7 @@ export default {
     Reset() {
       this.goodsCategoryId = ''
       this.inputs = ''
+      this.inputs1 = ''
     },
     getDepTreeList() {
       this.depLoading = true
@@ -222,9 +227,9 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = { 'maxResultCount': this.pageSize , 'skipCount': x || this.currentPage, goodsName: this.inputs, warehouseName: this.inputs1 }
       if (this.goodsCategoryId) {
         data.catetoryId = this.goodsCategoryId
       }
@@ -248,9 +253,9 @@ export default {
      */
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
 
@@ -282,10 +287,10 @@ export default {
      */
     downs() {
       DownloadInventoryExcel({ maxResultCount: 1000, skipCount: 0 }).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(res, '', 'application/vnd.ms-excel;charset=UTF-8')
       })
     }
   }

@@ -1,5 +1,14 @@
 <template>
-  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" :destroy-on-close="true" style="    " width="1200px" class="bill" title="入库单">
+  <el-dialog
+    v-if="showDialog"
+    :visible.sync="showDialog"
+    :close-on-click-modal="false"
+    :destroy-on-close="true"
+    style="    "
+    width="1200px"
+    class="bill"
+    title="入库单"
+  >
     <div class="wy-body">
       <div class="wy-body-info">
         <div class="wy-body-info-one">
@@ -8,17 +17,22 @@
               入库类型
             </div>
             <div v-if="!butoom1" class="wy-body-info-one-left-val ">
-              {{ orderCategory|ordername }}
+              {{ orderCategory | ordername }}
             </div>
 
-            <div v-else :class="erroring?orderCategory?'':'errorshow':''" class=" wy-body-info-one-left-val wy-body-info-one-left-puts">
+            <div
+              v-else
+              :class="erroring ? (orderCategory ? '' : 'errorshow') : ''"
+              class=" wy-body-info-one-left-val wy-body-info-one-left-puts"
+            >
               <el-select v-model="orderCategory" placeholder="请选择入库类型">
                 <el-option
-                  v-for="(item,index) in Category"
-                  :key="index" :label="item.name"
+                  v-for="(item, index) in Category"
+                  :key="index"
+                  :label="item.name"
                   :value="item.orderCategory"
-
-                  class="wy-select"/>
+                  class="wy-select"
+                />
               </el-select>
             </div>
           </div>
@@ -28,7 +42,6 @@
             </div>
             <div class="wy-body-info-one-left-val ">
               系统自动填充
-
             </div>
           </div>
         </div>
@@ -40,14 +53,23 @@
             <div v-if="!butoom1" class="wy-body-info-one-left-val ">
               {{ objs.typeName }}
             </div>
-            <div v-else :class="erroring?objs.typeId?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" >
-              <el-select v-model="objs.typeId" placeholder="请选择货品类目" @change="dutychange">
+            <div
+              v-else
+              :class="erroring ? (objs.typeId ? '' : 'errorshow') : ''"
+              class=" wy-body-info-one-left-val  wk changers"
+            >
+              <el-select
+                v-model="objs.typeId"
+                placeholder="请选择货品类目"
+                @change="dutychange"
+              >
                 <el-option
-                  v-for="(item,index) in showDepData"
+                  v-for="(item, index) in showDepData"
                   :key="index"
-                  :label="item.name" :value="item.id"
-
-                  class="wy-select"/>
+                  :label="item.name"
+                  :value="item.id"
+                  class="wy-select"
+                />
               </el-select>
             </div>
           </div>
@@ -58,8 +80,18 @@
             <div v-if="!butoom1" class="wy-body-info-one-left-val ">
               {{ objs.dutyUserName }}
             </div>
-            <div v-else :class="erroring?objs.dutyUserName?'':'errorshow':''" class="wy-body-info-one-left-val  wk changers" @click="opende('dutyUser')">
-              <div :style="objs.dutyUserName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    "> {{ objs.dutyUserName ||'请选择类目负责人' }}</div>
+            <div
+              v-else
+              :class="erroring ? (objs.dutyUserName ? '' : 'errorshow') : ''"
+              class="wy-body-info-one-left-val  wk changers"
+              @click="opende('dutyUser')"
+            >
+              <div
+                :style="objs.dutyUserName ? 'color: #666;' : 'color: #cccfd6;'"
+                style="    font-size: 13px;    "
+              >
+                {{ objs.dutyUserName || '请选择类目负责人' }}
+              </div>
             </div>
           </div>
         </div>
@@ -71,8 +103,18 @@
             <div v-if="!butoom1" class="wy-body-info-one-left-val ">
               {{ objs.ckName }}
             </div>
-            <div v-else :class="erroring?objs.ckName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('ck')">
-              <div :style="objs.ckName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    "> {{ objs.ckName ||'请选择仓库' }}</div>
+            <div
+              v-else
+              :class="erroring ? (objs.ckName ? '' : 'errorshow') : ''"
+              class=" wy-body-info-one-left-val  wk changers"
+              @click="opende('ck')"
+            >
+              <div
+                :style="objs.ckName ? 'color: #666;' : 'color: #cccfd6;'"
+                style="    font-size: 13px;    "
+              >
+                {{ objs.ckName || '请选择仓库' }}
+              </div>
             </div>
           </div>
           <div class="wy-body-info-one-right">
@@ -82,20 +124,28 @@
             <div v-if="!butoom1" class="wy-body-info-one-left-val ">
               {{ objs.wldwName }}
             </div>
-            <div v-else :class="erroring?objs.wldwName?'':'errorshow':''" class="wy-body-info-one-left-val  wk changers" @click="opende('wldw')">
-              <div :style="objs.wldwName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;">
-                {{ objs.wldwName ||'请选择往来单位' }}
+            <div
+              v-else
+              :class="erroring ? (objs.wldwName ? '' : 'errorshow') : ''"
+              class="wy-body-info-one-left-val  wk changers"
+              @click="opende('wldw')"
+            >
+              <div
+                :style="objs.wldwName ? 'color: #666;' : 'color: #cccfd6;'"
+                style="    font-size: 13px;"
+              >
+                {{ objs.wldwName || '请选择往来单位' }}
               </div>
             </div>
           </div>
         </div>
-        <div class="wy-body-info-one">
+        <!-- <div class="wy-body-info-one">
           <div class="wy-body-info-one-left">
             <div class="field__label">
               经费卡号
             </div>
             <div v-if="!butoom1" class="wy-body-info-one-left-val ">
-              {{ objs.jfkhName }}
+              {{ objs.jfkhNumber }}
             </div>
             <div v-else :class="erroring?objs.jfkhName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('jfkh')">
               <div :style="objs.jfkhNumber?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择经费卡号' }}</div>
@@ -110,18 +160,45 @@
 
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="wy-body-detailed">
         <p>入库明细</p>
         <div v-if="butoom1" class="wy-body-detailed-ed">
           <el-button
-            type="primary"
-            icon="el-icon-plus" @click="addpush">新建</el-button>
+            type="primary" icon="el-icon-plus" @click="addpush"
+          >新建</el-button
+          >
           <el-button
             :disabled="!isCheckedItems"
-            icon="wk wk-delete" style="margin-bottom:20px" @click="dellist">删除</el-button>
-            <!-- <el-button
+            icon="wk wk-delete"
+            style="margin-bottom:20px"
+            @click="dellist"
+          >删除</el-button
+          >
+          <el-upload
+            v-if="butoom1 && info.order"
+            :headers="httpHeader"
+            :on-success="handleAvatarSuccess1"
+            :on-remove="handleRemove"
+            :show-file-list="false"
+            :action="'/api/zjlab/Order/OderDetailImport/' + info.order.id"
+            style="    line-height: 11px;display: inline-block;"
+          >
+            <el-button
+              size="small"
+            ><i
+              class="wk wk-icon-relation"
+              style="font-size: 12px;    margin-right: 5px;"
+            />导入明细</el-button
+            >
+          </el-upload>
+
+          <!-- <el-button
+            type="primary" icon="el-icon-plus" @click="addpush"
+          >导入</el-button
+          > -->
+          <!-- <el-button
             type="primary"
             icon="el-icon-plus" @click="opende('gldj1')">关联单据</el-button> -->
         </div>
@@ -129,25 +206,26 @@
           id="examine-table"
           :data="list"
           :summary-method="getSummaries"
+          style="    max-height: 300px;    overflow-y: auto;"
           border
           class="main-table"
           highlight-current-row
           show-summary
-
         >
           <el-table-column
             show-overflow-tooltip
             type="index"
             width="60"
-            label="序号">
-            <template slot="header" slot-scope="scope" >
+            label="序号"
+          >
+            <template slot="header" slot-scope="scope">
               <el-checkbox
                 v-model="checkedAll"
                 :disabled="!list || !list.length"
                 @change="selectAll"
               />
             </template>
-            <template slot-scope="{ row, column, $index}">
+            <template slot-scope="{ row, column, $index }">
               <span class="status-name">
                 <span
                   class="index"
@@ -161,41 +239,58 @@
                     @change="onItemCheckboxChange"
                   />
                   <span v-show="!row.hover && !row.checked" class="text">{{
-                    $index+1
+                    $index + 1
                   }}</span>
                 </span>
-
               </span>
             </template>
           </el-table-column>
 
-          <el-table-column
-            prop="name"
-            label="货品名称"
-          >
+          <el-table-column prop="name" label="货品名称">
             <template slot-scope="scope">
               <div v-if="!butoom1">
-                <div style="    font-size: 13px;    color: #cccfd6;" >{{ scope.row.name || scope.row.goodsName || '请选择货品名称' }}</div>
+                <div
+                  :style="
+                    scope.row.name || scope.row.goodsName
+                      ? 'color: #666;'
+                      : 'color: #cccfd6;'
+                  "
+                  style="    font-size: 13px;    color: #cccfd6;"
+                >
+                  {{
+                    scope.row.name || scope.row.goodsName || '请选择货品名称'
+                  }}
+                </div>
               </div>
-              <div v-else style="    border: 1px solid #d9d9d9;    min-height: 30px;    line-height: 30px;    padding-left: 12px;    border-radius: 5px;" @click="opende('goods',scope.$index)">
-                <div :style="(scope.row.name || scope.row.goodsName)?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px; ">{{ scope.row.name || scope.row.goodsName || '请选择货品名称' }}</div>
+              <div
+                v-else
+                style="    border: 1px solid #d9d9d9;    min-height: 30px;    line-height: 30px;    padding-left: 12px;    border-radius: 5px;"
+                @click="opende('goods', scope.$index)"
+              >
+                <div
+                  :style="
+                    scope.row.name || scope.row.goodsName
+                      ? 'color: #666;'
+                      : 'color: #cccfd6;'
+                  "
+                  style="    font-size: 13px; "
+                >
+                  {{
+                    scope.row.name || scope.row.goodsName || '请选择货品名称'
+                  }}
+                </div>
               </div>
             </template>
           </el-table-column>
-
-          <el-table-column
-            prop="brand"
-            label="品牌"
-          />
-
-          <el-table-column
-            prop="size"
-            label="规格"
-          />
-          <el-table-column
-            prop="unitId"
-            label="单位"
-          >
+          <el-table-column prop="goodsCode" width="130" label="商品编码" >
+            <template slot-scope="scope">
+              <span>{{ scope.row.goodsCode ||scope.row.code }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="brand" label="品牌" />
+          <el-table-column prop="goodsCategoryDetailName" label="大类名称" />
+          <el-table-column prop="size" label="规格" />
+          <el-table-column prop="unitId" label="单位">
             <template slot-scope="scope">
               <div v-if="!butoom1">
                 {{ scope.row.unitName }}
@@ -205,40 +300,44 @@
                   v-for="item in scope.row.ean13List"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id"/>
+                  :value="item.id"
+                />
               </el-select>
-            </template>
-          </el-table-column>>
-          <el-table-column
-            prop="unitPrice"
-            label="单价(元)"
-          >
+          </template> </el-table-column
+          >>
+          <el-table-column prop="unitPrice" label="单价(元)">
             <template slot-scope="scope">
               <div v-if="!butoom1">
                 {{ scope.row.unitPrice }}
               </div>
-              <el-input v-else v-model="scope.row.unitPrice" oninput="value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')" @change="totalNum(scope.$index)"/>
+              <el-input
+                v-else
+                v-model="scope.row.unitPrice"
+                oninput="value=value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3')"
+                @change="totalNum(scope.$index)"
+              />
             </template>
           </el-table-column>
 
-          <el-table-column
-            prop="quantity"
-            label="数量"
-          >
+          <el-table-column prop="quantity" label="数量">
             <template slot-scope="scope">
               <div v-if="!butoom1">
                 {{ scope.row.quantity }}
               </div>
-              <el-input v-else v-model="scope.row.quantity" oninput="value=value.replace(/[^\d]/g,'')" @change="totalNum(scope.$index)"/>
+              <el-input
+                v-else
+                v-model="scope.row.quantity"
+                oninput="value=value.replace(/[^\d]/g,'')"
+                @change="totalNum(scope.$index)"
+              />
             </template>
           </el-table-column>
-          <el-table-column
-            prop="amountMoney"
-            label="金额"
-          />
+          <el-table-column prop="amountMoney" label="金额" />
         </el-table>
       </div>
-      <div style="padding:10px;    border-left: 1px solid #d9d9d9;    border-right: 1px solid #d9d9d9;" />
+      <div
+        style="padding:10px;    border-left: 1px solid #d9d9d9;    border-right: 1px solid #d9d9d9;"
+      />
       <div class="wy-body-info">
         <div class="wy-body-info-one">
           <div class="wy-body-info-one-right">
@@ -253,11 +352,11 @@
                 class="orderput"
                 style="    border: 0px;"
                 type="textarea"
-                placeholder="请输入内容"/>
+                placeholder="请输入内容"
+              />
               <div v-else>{{ objs.remark }}</div>
             </div>
           </div>
-
         </div>
       </div>
       <div class="wy-body-info">
@@ -270,36 +369,68 @@
               <el-upload
                 v-if="butoom1"
                 :on-success="handleAvatarSuccess"
-                :on-remove="handleRemove"
                 :show-file-list="false"
                 drag
                 style="    line-height: 11px;"
                 action="/api/zjlab/Attachment/UploadProviderFile"
               >
-                <el-button size="small" ><i
-                  class="wk wk-icon-relation" style="font-size: 12px;    margin-right: 5px;"/>点击或拖拽上传</el-button>
-                  <!-- <div slot="tip" >单文件不要超过5MB</div> -->
+                <el-button
+                  size="small"
+                ><i
+                  class="wk wk-icon-relation"
+                  style="font-size: 12px;    margin-right: 5px;"
+                />点击或拖拽上传</el-button
+                >
               </el-upload>
               <div>
                 <ul>
-                  <li v-for="(item,index) in fileList" :key="index" class="fileList-order">
-
-                    <div class="fileList-order-content">     <i class="el-icon-document"/> {{ item.fileName }}</div>
+                  <li
+                    v-for="(item, index) in fileList"
+                    :key="index"
+                    class="fileList-order"
+                  >
+                    <div class="fileList-order-content">
+                      <i class="el-icon-document" /> {{ item.fileName }}
+                    </div>
                     <div>
                       <!-- <span><i aria-label="图标: eye" class="anticon anticon-eye"><svg viewBox="64 64 896 896" data-icon="eye" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class=""><path d="M942.2 486.2C847.4 286.5 704.1 186 512 186c-192.2 0-335.4 100.5-430.2 300.3a60.3 60.3 0 0 0 0 51.5C176.6 737.5 319.9 838 512 838c192.2 0 335.4-100.5 430.2-300.3 7.7-16.2 7.7-35 0-51.5zM512 766c-161.3 0-279.4-81.8-362.7-254C232.6 339.8 350.7 258 512 258c161.3 0 279.4 81.8 362.7 254C791.5 684.2 673.4 766 512 766zm-4-430c-97.2 0-176 78.8-176 176s78.8 176 176 176 176-78.8 176-176-78.8-176-176-176zm0 288c-61.9 0-112-50.1-112-112s50.1-112 112-112 112 50.1 112 112-50.1 112-112 112z"/></svg></i>
                         预览
                       </span> -->
-                      <span @click="download(item)"><i aria-label="图标: download" class="anticon anticon-download"><svg viewBox="64 64 896 896" data-icon="download" width="1em" height="1em" fill="currentColor" aria-hidden="true" focusable="false" class=""><path d="M505.7 661a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"/></svg></i>
+                      <span
+                        @click="download(item)"
+                      ><i
+                        aria-label="图标: download"
+                        class="anticon anticon-download"
+                      ><svg
+                        viewBox="64 64 896 896"
+                        data-icon="download"
+                        width="1em"
+                        height="1em"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        focusable="false"
+                        class=""
+                      >
+                        <path
+                          d="M505.7 661a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z"
+                      /></svg
+                      ></i>
                         下载
                       </span>
-                      <span style="    cursor: pointer;" @click="delfilelist(index)"><i style="    font-size: 14px !important;    margin-right: 5px !important;" class="el-dialog__close el-icon el-icon-close"/>删除</span>
+                      <span
+                        style="    cursor: pointer;"
+                        @click="delfilelist(index)"
+                      ><i
+                        style="    font-size: 14px !important;    margin-right: 5px !important;"
+                        class="el-dialog__close el-icon el-icon-close"
+                      />删除</span
+                      >
                     </div>
                   </li>
                 </ul>
               </div>
             </div>
           </div>
-
         </div>
       </div>
       <div class="wy-body-info">
@@ -309,7 +440,7 @@
               申请人
             </div>
             <div class=" wy-body-info-one-left-val ">
-              <div>{{ createUser.createUserName||userInfo.name }}</div>
+              <div>{{ createUser.createUserName || userInfo.name }}</div>
             </div>
           </div>
           <div class="wy-body-info-one-right">
@@ -317,7 +448,7 @@
               申请时间
             </div>
             <div v-if="!butoom1" class="wy-body-info-one-left-val">
-              {{ time|filterTimestampToFormatTime('YYYY-MM-DD HH:mm') }}
+              {{ time | filterTimestampToFormatTime('YYYY-MM-DD HH:mm') }}
             </div>
             <div v-else class="wy-body-info-one-left-val ">
               <el-date-picker
@@ -326,28 +457,43 @@
                 style="width:100%"
                 format="yyyy-MM-dd HH:mm"
                 type="datetime"
-                placeholder="选择日期时间"/>
+                placeholder="选择日期时间"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-checkbox
-        v-if="butoom1"
-        v-model="save"
-      />
+      <el-checkbox v-if="butoom1" v-model="save" />
       <span v-if="butoom1">继续创建时，保存本次提交内容</span>
-      <el-button v-if="butoom1" @click="debouncedHandleLogin(1,1)">提交并继续创建</el-button>
-      <el-button v-if="butoom1" type="primary" @click="debouncedHandleLogin(1)">提 交</el-button>
-      <el-button v-if="butoom1" @click="debouncedHandleLogin(0)">暂 存</el-button>
+      <el-button
+        v-if="butoom1" @click="debouncedHandleLogin(1, 1)"
+      >提交并继续创建</el-button
+      >
+      <el-button
+        v-if="butoom1" type="primary" @click="debouncedHandleLogin(1)"
+      >提 交</el-button
+      >
+      <el-button
+        v-if="butoom1" @click="debouncedHandleLogin(0)"
+      >暂 存</el-button
+      >
     </span>
 
-    <Type :placeholder="placeholder" :typeling="typeling" :p="p" :url="url" :name="name" :objs="objs" @change="typevalu"/>
+    <Type
+      :placeholder="placeholder"
+      :typeling="typeling"
+      :p="p"
+      :url="url"
+      :name="name"
+      :objs="objs"
+      @change="typevalu"
+    />
   </el-dialog>
-
 </template>
 <script>
+import Cookies from 'js-cookie'
 import { debounce } from 'throttle-debounce'
 import { filterTimestampToFormatTime } from '@/filters/index'
 import { mapGetters } from 'vuex'
@@ -358,12 +504,9 @@ import {
 } from '@/api/kchk/goods'
 
 import { downloadFileWithBuffer } from '@/utils'
-import {
-  UpdateOrder,
-  DownLoadFile
-} from '@/api/kchk/order'
+import { UpdateOrder, DownLoadFile, GetOrder } from '@/api/kchk/order'
 import Type from './type.vue'
-export default{
+export default {
   components: { Type },
   filters: {
     ordername: function(value) {
@@ -409,7 +552,9 @@ export default{
   },
   data() {
     return {
+      httpHeader: {},
       p: '',
+      submits: true,
       erroring: false,
       props: {
         label: 'name',
@@ -430,9 +575,8 @@ export default{
         ckId: '',
         typeName: '',
         typeId: '',
-        jfkhName: '',
-        jfkhNumber: '',
-
+        jfkhName: '其他',
+        jfkhNumber: '其他',
         dutyUserName: '',
         dutyUserId: '',
         remark: ''
@@ -450,29 +594,30 @@ export default{
         {
           orderCategory: '11',
           name: '采购入库'
-        }, {
+        },
+        {
           orderCategory: '12',
           name: '退货入库'
-        }, {
+        },
+        {
           orderCategory: '13',
           name: '借用还库'
         }
       ],
       showDepData: [],
-      list: [
-      ]
+      list: []
     }
   },
 
   computed: {
-    ...mapGetters([
-      'userInfo'
-    ])
+    ...mapGetters(['userInfo'])
   },
   watch: {
     showing: {
       handler(val) {
-        debugger
+        this.httpHeader = {
+          Authorization: `Bearer ${Cookies.get('accessToken')}`
+        }
         this.butoom1 = true
         this.time = Date.now()
         this.orderCategory = ''
@@ -489,9 +634,8 @@ export default{
           ckId: '',
           typeName: '',
           typeId: '',
-          jfkhName: '',
-          jfkhNumber: '',
-          jfkhId: '',
+          jfkhName: '其他',
+          jfkhNumber: '其他',
           dutyUserName: '',
           dutyUserId: '',
           remark: ''
@@ -502,10 +646,13 @@ export default{
             this.butoom1 = true
             this.orderCategory = ''
           } else {
-            this.info.order.flag ? this.butoom1 = false : this.butoom1 = true
-            this.orderCategory = this.info.order ? this.info.order.orderCategory + '' : ''
+            this.info.order.flag
+              ? (this.butoom1 = false)
+              : (this.butoom1 = true)
+            this.orderCategory = this.info.order
+              ? this.info.order.orderCategory + ''
+              : ''
           }
-
 
           this.objs = {
             wldwName: this.info.order.companyName,
@@ -516,9 +663,12 @@ export default{
             typeId: this.info.order.goodsCategoryId,
             jfkhName: this.info.order.memoryCardName,
             jfkhNumber: this.info.order.memoryCardNumber,
-            jfkhId: this.info.order.memoryCardId,
-            dutyUserName: this.info.order.goodsCategoryDutyUserName,
-            dutyUserId: this.info.order.goodsCategoryDutyUserId,
+            dutyUserName:
+              this.info.order.orderInDutyUserName ||
+              this.info.order.goodsCategoryDutyUserName,
+            dutyUserId:
+              this.info.order.orderInDutyUserId ||
+              this.info.order.goodsCategoryDutyUserId,
             remark: this.info.order.remark
           }
           this.createUser = {
@@ -531,14 +681,18 @@ export default{
           const list = this.info.detailList
           for (let i = 0; i < list.length; i++) {
             const row = list[i]
-
             GetInfo(row.goodsId).then(res => {
-              row.ean13List = res.unitList
+              debugger
+
               row.checked = false
-              this.list.push(row)
+              row.hover = false
+              row.ean13List = res.unitList
+              row.goodsCategoryDetailName =
+                res.goodsInfo.goodsCategoryDetailName
+              row.goodsCategoryDetailId = res.goodsInfo.goodsCategoryDetailId
+              this.list.push({ hover: false, checked: false, ...row })
             })
           }
-
           this.fileList = this.info.attachmentList
         } else {
           this.addpush()
@@ -558,8 +712,8 @@ export default{
       this.list.push({ hover: false, checked: false })
       this.showDepData.forEach(e => {
         if (e.id == this.objs.typeId) {
-          this.objs.dutyUserName = e.dutyUserName
-          this.objs.dutyUserId = e.dutyUserId
+          this.objs.dutyUserName = e.orderInDutyUserName || e.dutyUserName
+          this.objs.dutyUserId = e.orderInDutyUserId || e.dutyUserId
         }
       })
     },
@@ -568,10 +722,14 @@ export default{
     },
     download(row) {
       DownLoadFile(row.id).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, row.fileName, 'application/vnd.ms-excel;charset=UTF-8')
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(
+          res,
+          row.fileName,
+          'application/vnd.ms-excel;charset=UTF-8'
+        )
       })
     },
     handleAvatarSuccess(res) {
@@ -587,7 +745,15 @@ export default{
         if (index === 0) {
           sums[index] = '总计'
           return
-        } else if (index === 1 || index === 2 || index === 3 || index === 4) {
+        } else if (
+          index === 1 ||
+          index === 2 ||
+          index === 3 ||
+          index === 4 ||
+          index === 5 ||
+          index === 6 ||
+          index === 7
+        ) {
           return
         }
         const values = data.map(item => Number(item[column.property]))
@@ -614,8 +780,15 @@ export default{
       return sums
     },
     totalNum(index) {
-      const amountMoney = Math.round(this.list[index].unitPrice * this.list[index].quantity * 100) / 100
-      this.$set(this.list[index], 'amountMoney', isNaN(amountMoney) ? 0 : amountMoney)
+      const amountMoney =
+        Math.round(
+          this.list[index].unitPrice * this.list[index].quantity * 100
+        ) / 100
+      this.$set(
+        this.list[index],
+        'amountMoney',
+        isNaN(amountMoney) ? 0 : amountMoney
+      )
     },
     /**
      * 选择部门
@@ -642,35 +815,71 @@ export default{
         })
     },
     typevalu(row, name) {
-      debugger
       if (name == 'gldj1') {
         this.list.push(row)
-      } else
-      if (name == 'goods') {
+      } else if (name == 'goods') {
         GetInfo(row.id).then(res => {
           row.ean13List = res.unitList
           row.checked = false
+          row.goodsCategoryDetailId = res.goodsInfo.goodsCategoryDetailId
+          row.goodsCategoryDetailName = res.goodsInfo.goodsCategoryDetailName
           this.list[this.goodsIndex] = row
           this.$set(this.list, this.goodsIndex, row)
+          console.log(this.list, 123)
         })
       } else if (name == 'wldw' || name == 'ck') {
         this.objs[name + 'Name'] = row.name
         this.objs[name + 'Id'] = row.id
       } else if (!row.number) {
         this.objs[name + 'Name'] = row.name
-        this.objs[name + 'Id'] = row.number
+        this.objs[name + 'Id'] = row.number || row.id
       } else {
         this.objs[name + 'Number'] = row.number
         this.objs[name + 'Name'] = row.name
-        this.objs[name + 'Id'] = row.number
+      }
+    },
+    handleAvatarSuccess1(v) {
+      if (v.success) {
+        if (v.data.length) {
+          const arr = v.data.map(e => {
+            return e + '<br/>'
+          })
+          this.$message({
+            type: 'error',
+            dangerouslyUseHTMLString: true,
+            message: `删除失败：<br/>${
+              arr.length > 0 ? arr.toString() : ''
+            }`
+          })
+        } else {
+          GetOrder(this.info.order.id).then(res => {
+            const list = res.detailList
+            this.list = []
+            for (let i = 0; i < list.length; i++) {
+              const row = list[i]
+              GetInfo(row.goodsId).then(res => {
+                row.ean13List = res.unitList
+
+                row.goodsCategoryDetailName =
+                  res.goodsInfo.goodsCategoryDetailName
+                row.goodsCategoryDetailId = res.goodsInfo.goodsCategoryDetailId
+                row.checked = false
+                this.list.push({ hover: false, checked: false, ...row })
+              })
+            }
+          })
+        }
+      } else {
+        this.$message.error(v.msg)
       }
     },
     dialogSure(val, f) {
       let flag = false
+      // this.objs.jfkhNumber = '1'
+      // this.objs.jfkhName = 's'
       for (const i in this.objs) {
         if (!this.objs[i]) {
           if (i != 'remark' && i != 'typeName') {
-            debugger
             flag = true
           }
         }
@@ -687,29 +896,42 @@ export default{
       const arr = []
       for (let i = 0; i < this.list.length; i++) {
         const d = this.list[i]
-        if (!d.quantity || !d.unitPrice) {
-          this.$message.error('数量，单价未填写')
+        if (!d.quantity) {
+          this.$message.error('数量未填写')
           return
         }
-        arr.push({ goodsId: d.goodsId || d.id, goodsCode: d.code || d.goodsCode, unitId: d.unitId, unitPrice: d.unitPrice, quantity: d.quantity, amountMoney: d.amountMoney, DefaultUnitId: d.DefaultUnitId })
+        arr.push({
+          goodsId: d.goodsId || d.id,
+          goodsCode: d.code || d.goodsCode,
+          unitId: d.unitId,
+          unitPrice: d.unitPrice,
+          quantity: d.quantity,
+          amountMoney: d.amountMoney,
+          DefaultUnitId: d.DefaultUnitId
+        })
       }
       const jy = this.showDepData.filter(e => e.id == this.objs.typeId)
-      debugger
-
       if (jy[0].flag == '0') {
         this.erroring = true
         this.objs.typeId = ''
         this.$message.error(jy[0].name + '该类目已被禁用,请重新选择')
         return
       }
+      if (!this.submits) {
+        return
+      }
+      this.submits = false
       const obj = {
         order: {
           wareHouseId: this.objs.ckId,
           orderCategory: this.orderCategory,
           goodsCategoryId: this.objs.typeId,
-          memoryCardNumber: this.objs.jfkhId,
+          memoryCardNumber: this.objs.jfkhNumber,
           memoryCardName: this.objs.jfkhName,
-          receiptDate: filterTimestampToFormatTime(new Date(this.time).getTime(), 'YYYY-MM-DD HH:mm:ss'),
+          receiptDate: filterTimestampToFormatTime(
+            new Date(this.time).getTime(),
+            'YYYY-MM-DD HH:mm:ss'
+          ),
           remark: this.objs.remark,
           identification: 0,
           companyId: this.objs.wldwId,
@@ -721,50 +943,58 @@ export default{
       }
       if (this.info.order && !this.ffts) {
         obj.order.orderNo = this.info.order.orderNo
-        UpdateOrder(obj, this.info.order.id).then(res => {
-          this.$store.dispatch('TaskCenterCount')
-          this.$message.success('修改成功')
-          this.showDialog = false
-          this.$emit('change', 0)
-        })
-      } else {
-        CreateOrder(obj).then(res => {
-          this.$store.dispatch('TaskCenterCount')
-
-          if (f) {
-            if (!this.save) {
-              this.$message.success('新增成功')
-              this.time = Date.now()
-              this.orderCategory = ''
-              this.createUser = {
-                createUserName: '',
-                createUserId: ''
-              }
-              this.list = []
-              this.fileList = []
-              this.objs = {
-                wldwName: '',
-                wldwId: '',
-                ckName: '',
-                ckId: '',
-                typeName: '',
-                typeId: '',
-                jfkhName: '',
-                jfkhNumber: '',
-                jfkhId: '',
-                dutyUserName: '',
-                dutyUserId: '',
-                remark: ''
-              }
-            } else {
-              this.$message.success('新增成功,请继续添加')
-            }
-          } else {
-            this.$message.success('新增成功')
+        UpdateOrder(obj, this.info.order.id)
+          .then(res => {
+            this.submits = true
+            this.$store.dispatch('TaskCenterCount')
+            this.$message.success('修改成功')
             this.showDialog = false
             this.$emit('change', 0)
-          }
-        })
+          })
+          .catch(() => {
+            this.submits = true
+          })
+      } else {
+        CreateOrder(obj)
+          .then(res => {
+            this.$store.dispatch('TaskCenterCount')
+            this.submits = true
+            if (f) {
+              if (!this.save) {
+                this.$message.success('新增成功')
+                this.time = Date.now()
+                this.orderCategory = ''
+                this.createUser = {
+                  createUserName: '',
+                  createUserId: ''
+                }
+                this.list = []
+                this.fileList = []
+                this.objs = {
+                  wldwName: '',
+                  wldwId: '',
+                  ckName: '',
+                  ckId: '',
+                  typeName: '',
+                  typeId: '',
+                  jfkhName: '其他',
+                  jfkhNumber: '其他',
+                  dutyUserName: '',
+                  dutyUserId: '',
+                  remark: ''
+                }
+              } else {
+                this.$message.success('新增成功,请继续添加')
+              }
+            } else {
+              this.$message.success('新增成功')
+              this.showDialog = false
+              this.$emit('change', 0)
+            }
+          })
+          .catch(() => {
+            this.submits = true
+          })
       }
     },
 
@@ -830,7 +1060,7 @@ export default{
     },
     dellist() {
       const arr = []
-      this.list.forEach((e) => {
+      this.list.forEach(e => {
         if (!e.checked) {
           arr.push(e)
         }
@@ -839,20 +1069,20 @@ export default{
       console.log(arr)
     },
     /*
-   * 当checkbox选择change时事件
-   */
+     * 当checkbox选择change时事件
+     */
     /**
-   * 全选
-   */
+     * 全选
+     */
     selectAll(e) {
       const isChecked = e
       if (isChecked) {
-        this.list.forEach((item) => {
+        this.list.forEach(item => {
           item.checked = true
           this.isCheckedItems = 1
         })
       } else {
-        this.list.forEach((item) => {
+        this.list.forEach(item => {
           item.checked = false
           this.isCheckedItems = 0
         })
@@ -863,8 +1093,8 @@ export default{
      * 当某一行被点击时会触发该事件
      */
     /*
-   * 当checkbox选择change时事件
-   */
+     * 当checkbox选择change时事件
+     */
     onItemCheckboxChange() {
       this.obj = {}
       const isCheckedItems = this.list.filter(d => d.checked)
@@ -877,122 +1107,124 @@ export default{
     }
   }
 }
-
 </script>
 <style lang="scss" scoped>
-/deep/.el-date-editor input{
+/deep/.el-date-editor input {
   border: 0px !important;
 }
-.fileList-order{
+.fileList-order {
   display: flex;
-      padding: 0px 20px;
-  .fileList-order-content{
-    flex:1
-
+  padding: 0px 20px;
+  .fileList-order-content {
+    flex: 1;
   }
 }
-.wy-body{
-     border-bottom: 1px solid #d9d9d9;
-     .changers{
-      position: relative;
-     }
+.wy-body {
+  border-bottom: 1px solid #d9d9d9;
+  .changers {
+    position: relative;
+  }
 
-.wy-body-detailed{
-   border: 1px solid #d9d9d9;
-   .wy-body-detailed-ed{
-    padding: 16px 16px;
-    padding-bottom: 0px;
-    margin: 0px;
-   }
-   p{
-    padding: 16px 16px;
-       border-bottom: 1px solid #d9d9d9;
-   }
-}
-.wy-body-info{
- .wy-body-info-one{
-  display: flex;
-     border: 1px solid #d9d9d9;
-        min-height: 37px;
-        line-height: 37px;
-        border-bottom:0px ;
-  >div{
-    flex: 1;
-    border-right: 1px solid #d9d9d9;
-    display: flex;
-    .field__label{
+  .wy-body-detailed {
+    border: 1px solid #d9d9d9;
+    .wy-body-detailed-ed {
+      padding: 16px 16px;
+      padding-bottom: 0px;
+      margin: 0px;
+    }
+    p {
+      padding: 16px 16px;
+      border-bottom: 1px solid #d9d9d9;
+    }
+  }
+  .wy-body-info {
+    .wy-body-info-one {
+      display: flex;
+      border: 1px solid #d9d9d9;
+      min-height: 37px;
+      line-height: 37px;
+      border-bottom: 0px;
+      > div {
+        flex: 1;
+        border-right: 1px solid #d9d9d9;
+        display: flex;
+        .field__label {
           background: rgb(240, 240, 240);
           min-width: 120px;
           padding-left: 16px;
           border-right: 1px solid #d9d9d9;
-    }
-    .wy-body-info-one-left-val{
-      flex:1;
-      padding-left: 10px;
-      .el-select{
-        width: 100%;
-
-        /deep/ input{
-          border: 0px;
-          padding-left: 0px;
         }
+        .wy-body-info-one-left-val {
+          flex: 1;
+          padding-left: 10px;
+          .el-select {
+            width: 100%;
+
+            /deep/ input {
+              border: 0px;
+              padding-left: 0px;
+            }
+          }
+        }
+      }
+      > div.wy-body-info-one-right {
+        border: 0px;
       }
     }
   }
-  >div.wy-body-info-one-right{
-    border: 0px;
-  }
- }
-}
 }
 </style>
 <style>
-.errorshow{
+.errorshow {
   border: 1px solid red !important;
-    margin: 0px !important;
+  margin: 0px !important;
 }
-.errorshow>div{
+.errorshow > div {
   color: red !important;
 }
-.errorshow input[type='text']::-webkit-input-placeholder{   /* 使用webkit内核的浏览器*/
-	color: red;
+.errorshow input[type='text']::-webkit-input-placeholder {
+  /* 使用webkit内核的浏览器*/
+  color: red;
 }
-.errorshow input[type='text']:-moz-placeholder{    /* Firefox版本4-18 */
-	color: red;
+.errorshow input[type='text']:-moz-placeholder {
+  /* Firefox版本4-18 */
+  color: red;
 }
-.errorshow input[type='text']::-moz-placeholder{    /* Firefox版本19+ */
-	color: red;
+.errorshow input[type='text']::-moz-placeholder {
+  /* Firefox版本19+ */
+  color: red;
 }
- .errorshow input[type='text']:-ms-input-placeholder{   /* IE浏览器 */
-	color: red;
+.errorshow input[type='text']:-ms-input-placeholder {
+  /* IE浏览器 */
+  color: red;
 }
-.bill .el-dialog__header{
-        text-align: center;
-        padding: 20px;
-    padding-bottom: 10px;
-    margin-top: 7px;
+.bill .el-dialog__header {
+  text-align: center;
+  padding: 20px;
+  padding-bottom: 10px;
+  margin-top: 7px;
 }
-.bill .el-dialog__body{
+.bill .el-dialog__body {
   padding-bottom: 10px;
 }
-.bill .el-dialog__footer{
- text-align: center
+.bill .el-dialog__footer {
+  text-align: center;
 }
-.wy-select.el-select-dropdown__item{
-      padding: 0 20px;
+.wy-select.el-select-dropdown__item {
+  padding: 0 20px;
 }
-.wy-select1.el-select-dropdown__item{
-      height: 100%;
-    padding: 0px
+.wy-select1.el-select-dropdown__item {
+  height: 100%;
+  padding: 0px;
 }
-.orderput .el-textarea__inner{
+.orderput .el-textarea__inner {
   border: 0px;
 }
-.wy-body-info-one-left-val .el-upload-dragger{
-height: 42px;
-    border: 0px;
-    text-align: left;
-        margin-top: 7px;
+.wy-body-info-one-left-val .el-upload-dragger {
+  height: 42px;
+  border: 0px;
+  text-align: left;
+  margin-top: 7px;
 }
 </style>
 

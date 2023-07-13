@@ -123,6 +123,7 @@
         <el-table-column prop="memoryCardName" label="经费卡号" />
         <el-table-column prop="createUserName" label="申请人" />
         <el-table-column prop="receiptDate" label="申请时间" />
+        <el-table-column prop="address" label="领用地点" />
         <!-- <el-table-column
           prop="ean13"
           label="单位"
@@ -155,7 +156,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { filterTimestampToFormatTime } from '@/filters/index'
-import { OrderPage, GetOrder } from '@/api/kchk/order'
+import { OrderOutPageAsync, GetOutOrder } from '@/api/kchk/order'
 // import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
@@ -317,11 +318,11 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
       const data = {
-        maxResultCount: this.pageSize + this.currentPage,
-        skipCount: this.currentPage,
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage,
         isOutbound: true,
         createName: this.inputs,
         searchKey: this.company
@@ -336,7 +337,7 @@ export default {
         data.startTime = filterTimestampToFormatTime(new Date(this.startTime[0]).getTime(), 'YYYY-MM-DD') + ' 00:00:00'
         data.endTime = filterTimestampToFormatTime(new Date(this.startTime[1]).getTime(), 'YYYY-MM-DD') + ' 23:59:59'
       }
-      OrderPage(data)
+      OrderOutPageAsync(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
@@ -357,9 +358,9 @@ export default {
      */
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /**
@@ -383,7 +384,7 @@ export default {
         this.$message.error('无详情权限')
         return
       }
-      GetOrder(row.id).then(res => {
+      GetOutOrder(row.id).then(res => {
         console.log(res)
         this.info = res
         this.jurisdictionCreateShow = !this.jurisdictionCreateShow

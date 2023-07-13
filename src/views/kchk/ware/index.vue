@@ -11,7 +11,7 @@
           type="primary"
           icon="el-icon-plus"
           @click="addJurisdiction">新建</el-button>
-        <el-button
+        <!-- <el-button
           v-if="allAuth['OrderSetting.Warehouses.Import']"
           class="main-table-header-button "
           type=""
@@ -22,7 +22,7 @@
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"
-          @click="downs">导出</el-button>
+          @click="downs">导出</el-button> -->
         <el-button
           v-if="allAuth['OrderSetting.Warehouses.Delete']"
           :disabled="JSON.stringify(obj)=='{}'"
@@ -132,6 +132,7 @@
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
+      import-category="Warehouse"
       url="/api/zjlab/Warehouse/Upload"
       @close="bulkImportShow = false"
       @success="handleCurrentChange(0)"
@@ -140,7 +141,7 @@
 </template>
 
 <script>
-
+import { downloadFileWithBuffer } from '@/utils'
 import {
   WarehousePage,
   DeleteMany,
@@ -254,9 +255,9 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = { 'maxResultCount': this.pageSize , 'skipCount': x || this.currentPage, searchKey: this.inputs }
       WarehousePage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -277,9 +278,9 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /**
@@ -362,7 +363,10 @@ export default {
      */
     downs() {
       DownloadWarehouseExcel({ maxResultCount: 1000, skipCount: 0 }).then(res => {
-
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(res, '', 'application/vnd.ms-excel;charset=UTF-8')
       })
     }
   }

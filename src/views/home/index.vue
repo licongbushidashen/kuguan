@@ -169,8 +169,8 @@ const option = {
 
 import echarts from 'echarts'
 import {
-  GetGoodsCategoryTree
-} from '@/api/kchk/category'
+  GetGoodsCategoryTreeHasRole
+} from '@/api/kchk/goods'
 import request from '@/utils/request'
 export default {
   data() {
@@ -269,7 +269,7 @@ export default {
       })
     },
     GetGoodsCategoryTree() {
-      GetGoodsCategoryTree({})
+      GetGoodsCategoryTreeHasRole()
         .then(response => {
           this.o = response
           this.o.unshift({ name: '全部', value: '全部' })

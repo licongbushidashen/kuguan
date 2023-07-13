@@ -80,28 +80,30 @@ const layout = function(meta = {}, path = '/home', requiresAuth = true) {
 }
 export default router
 export const asyncRouterMap = [
-  { type: 'home', router: [{
-    ...layout({
-      permissions: ['home', 'system-project']
-    }),
-    meta: {
-      title: 'HomePage.Index',
-      icon: 's-seas'
-    },
-    children: [
-      {
-        name: 'home',
-        path: 'home', // 类目
-        component: () => import('@/views/home'),
-        meta: {
-          title: '首页',
-          icon: 'iconfont icon-31leimu'
+  {
+    type: 'home', router: [{
+      ...layout({
+        permissions: ['home', 'system-project']
+      }),
+      meta: {
+        title: 'HomePage.Index',
+        icon: 's-seas'
+      },
+      children: [
+        {
+          name: 'home',
+          path: 'home', // 类目
+          component: () => import('@/views/home'),
+          meta: {
+            title: '首页',
+            icon: 'iconfont icon-31leimu'
+          }
         }
-      }
 
 
-    ]
-  }] },
+      ]
+    }]
+  },
   { type: 'kchk', router: kcRouter },
   { type: 'crm', router: crmRouter },
   { type: 'taskExamine', router: taskExamineRouter },

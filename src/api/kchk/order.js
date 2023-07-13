@@ -9,6 +9,26 @@ export function TaskCenter(data) {
     }
   })
 }
+export function FinishedTaskCenter(data) {
+  return request({
+    url: '/api/zjlab/Order/FinishedTaskCenter',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function ApplyForTaskCenter(data) {
+  return request({
+    url: '/api/zjlab/Order/ApplyForTaskCenter',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function GetLogTaskCenter(data) {
   return request({
     url: '/api/zjlab/WarningRule/GetLogTaskCenter',
@@ -29,6 +49,16 @@ export function OrderPage(data) {
     }
   })
 }
+export function OrderOutPageAsync(data) {
+  return request({
+    url: '/api/zjlab/Order/OrderOutPage',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function GetOrder(data) {
   return request({
     url: `/api/zjlab/Order/GetOrder?id=${data}`,
@@ -39,9 +69,29 @@ export function GetOrder(data) {
     }
   })
 }
+export function GetOutOrder(data) {
+  return request({
+    url: `/api/zjlab/Order/GetOutOrder?id=${data}`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function UpdateOrder(data, id) {
   return request({
     url: `api/zjlab/Order/UpdateOrder?id=${id}`,
+    method: 'put',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function UpdateOutOrder(data, id) {
+  return request({
+    url: `api/zjlab/Order/UpdateOutOrder?id=${id}`,
     method: 'put',
     data: data,
     headers: {
@@ -121,6 +171,18 @@ export function BatchALL(data, url) {
 export function DealWithWarningRule(data) {
   return request({
     url: '/api/zjlab/WarningRule/DealWithWarningRule',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+// 入库
+export function OrderCreate(data) {
+  return request({
+    url: '/api/zjlab/Order/Create',
     method: 'post',
     data: data,
     headers: {

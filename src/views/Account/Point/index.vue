@@ -3,7 +3,8 @@
     <xr-header
       icon-class="iconfont icon-31leimu"
       icon-color="#2362FB"
-      label="空间点位" />
+      label="空间点位"
+    />
     <div class="system-content">
       <!-- 左边导航栏 -->
       <div v-loading="depLoading" class="system-nav">
@@ -17,20 +18,23 @@
             @click="addJurisdiction()"
           >创建点位</el-button
           >
-
         </div>
         <div class="system-nav__content">
           <div class="section">
-
             <div class="section__content">
               <el-input v-model="keywords" style="padding:10px">
-                <el-button slot="append" icon="el-icon-search" @click="changes"/>
+                <el-button
+                  slot="append"
+                  icon="el-icon-search"
+                  @click="changes"
+                />
               </el-input>
               <el-tree
                 v-if="tree1"
                 ref="tree"
                 :props="props"
                 :load="getDepTreeList"
+                :expand-on-click-node="false"
                 lazy
                 node-key="id"
                 highlight-current
@@ -45,62 +49,68 @@
                     {{ data.specificLocation }}
                   </div>
                   <div class="node-label-set">
-
-                    <i v-if="allAuth['PropertyBillManager.SpacePoint.Create']" class="el-icon-plus" @click.stop="appendStruc(data)" />
+                    <i
+                      v-if="allAuth['PropertyBillManager.SpacePoint.Create']"
+                      class="el-icon-plus"
+                      @click.stop="appendStruc(data)"
+                    />
                     <i
                       v-if="allAuth['PropertyBillManager.SpacePoint.Delete']"
                       class="el-icon-delete"
-                      @click.stop="deleteStruc(node,data)"
+                      @click.stop="deleteStruc(node, data)"
                     />
                   </div>
-
                 </flexbox>
               </el-tree>
             </div>
-
           </div>
         </div>
       </div>
       <!-- 右边内容 -->
       <div class="system-view-table flex-index">
-        <flexbox
-          justify="space-between"
-          class="table-top"
-        >
+        <flexbox justify="space-between" class="table-top">
           <div class="table-top__title" />
-
         </flexbox>
         <div class="flex-box">
-          <create-sections >
-            <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @change="formChange" @save="saveClick"/>
+          <create-sections>
+            <mtForm
+              :rules="fieldsRules"
+              :field-from="aoiinfo"
+              :field-list="fields"
+              :is-save="isSave"
+              @change="formChange"
+              @save="saveClick"
+            />
             <div style="margin:20px 0px 0px 15px">
               <template>
                 <el-button
-                  v-if="allAuth['PropertyBillManager.SpacePoint.Create'] ||allAuth['PropertyBillManager.SpacePoint.Edit']"
+                  v-if="
+                    allAuth['PropertyBillManager.SpacePoint.Create'] ||
+                      allAuth['PropertyBillManager.SpacePoint.Edit']
+                  "
                   type="primary"
                   @click="savechange"
                 >保存</el-button
                 >
               </template>
-
             </div>
           </create-sections>
         </div>
       </div>
     </div>
-    <add :showing="jurisdictionCreateShow" :info="aoiinfo" @change="getlist"/>
+    <add :showing="jurisdictionCreateShow" :info="aoiinfo" @change="getlist" />
   </div>
 </template>
 
 <script>
-
 import { objDeepCopy } from '@/utils'
 import {
   GetKeySpacePointTree,
   GetSpacePointTree,
   CreateSpacePoint,
   UpdateSpacePoint,
-  Delete
+  Delete,
+  SpacePointGet
 } from '@/api/account'
 import add from './comp'
 import CreateSections from '@/components/CreateSections'
@@ -134,7 +144,7 @@ export default {
       showDepData: [],
       fieldsRules: {}, // 字段列表需要验证
       fields: [],
-      aoiinfo: { flag: 1, dutyUserName: '' },
+      aoiinfo: { flag: 1, dutyUserName: '', sort: '' },
       isSave: false,
       infos: {
         code: ''
@@ -164,7 +174,7 @@ export default {
       })
     },
     addJurisdiction() {
-      this.aoiinfo = { flag: 1, dutyUserName: '' }
+      this.aoiinfo = { flag: 1, dutyUserName: '', sort: '' }
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
     },
     changes() {
@@ -193,6 +203,11 @@ export default {
     },
     saveClick(data) {
       if (!data) return
+      if (this.aoiinfo.id == this.aoiinfo.parentId) {
+        this.$message.error('父级不能是当前级相同')
+        return
+      }
+      debugger
       if (this.aoiinfo.id) {
         UpdateSpacePoint(this.aoiinfo).then(res => {
           this.$message.success('修改成功')
@@ -208,7 +223,7 @@ export default {
     },
     getBaseField() {
       const field = []
-
+      debugger
       field.push({
         field: 'parentName',
         formType: 'leave1',
@@ -231,6 +246,16 @@ export default {
         value: this.aoiinfo ? this.aoiinfo.specificLocation : ''
       })
       field.push({
+        field: 'sort',
+        formType: 'number',
+        isNull: 0,
+        name: '排序',
+        placeholder: '请输入排序',
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.sort : ''
+      })
+      field.push({
         field: 'remark',
         formType: 'textarea',
         isNull: 0,
@@ -247,10 +272,7 @@ export default {
         formType: 'radio',
         isNull: 1,
         name: '状态',
-        setting: [
-          { name: '启用', id: 1 },
-          { name: '禁用', id: 0 }
-        ],
+        setting: [{ name: '启用', id: 1 }, { name: '禁用', id: 0 }],
         optionL: 'name',
         optionV: 'id',
         inputTips: '',
@@ -280,7 +302,15 @@ export default {
      * 选择部门
      */
     changeDepClick(data) {
-      this.aoiinfo = data || { flag: 1 }
+      debugger
+      if (data.parentId) {
+        SpacePointGet(data.parentId).then(res => {
+          this.aoiinfo = { ...data, parentName: res.specificLocation } || { flag: 1 }
+        })
+      } else {
+        this.aoiinfo = { ...data } || { flag: 1 }
+      }
+
       // this.structureValue = data.id
     },
     /**
@@ -288,15 +318,23 @@ export default {
      */
     appendStruc(data) {
       if (data.id) {
-        this.aoiinfo = { parentName: data.specificLocation, parentId: data.id, flag: 1 }
+        this.aoiinfo = {
+          parentName: data.specificLocation,
+          parentId: data.id,
+          flag: 1
+        }
       }
     },
     deleteStruc(node, data) {
-      this.$confirm(`此操作将删除${data.specificLocation}类目，是否继续？`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
+      this.$confirm(
+        `此操作将删除${data.specificLocation}类目，是否继续？`,
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
         .then(() => {
           this.tree1 = false
           this.loading = true
@@ -314,7 +352,9 @@ export default {
                 this.$message({
                   type: 'error',
                   dangerouslyUseHTMLString: true,
-                  message: `删除失败：<br/>${arr.length > 0 ? arr.toString() : ''}`
+                  message: `删除失败：<br/>${
+                    arr.length > 0 ? arr.toString() : ''
+                  }`
                 })
               }
             })
@@ -358,33 +398,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/.is-current.is-focusable>.el-tree-node__content{
-
-
-  &::before{
-  content: ' ';
+/deep/.is-current.is-focusable > .el-tree-node__content {
+  &::before {
+    content: ' ';
     background: #3e6bea;
     height: 100%;
     display: inline-block;
     width: 3px;
     position: relative;
- }
+  }
 }
-/deep/.el-tree-node__children{
-  padding:0px !important;
-  .is-current .el-tree-node__content{
+/deep/.el-tree-node__children {
+  padding: 0px !important;
+  .is-current .el-tree-node__content {
     padding-left: 0px !important;
-    .is-current{
-      padding-left: 30px
+    .is-current {
+      padding-left: 30px;
     }
   }
 }
 @import '@/views/login/index.scss';
-/deep/.el-tree-node__content:hover{
-  background: #F6F8FA !important;
+/deep/.el-tree-node__content:hover {
+  background: #f6f8fa !important;
 }
-/deep/.is-current>.el-tree-node__content{
-  background: #F6F8FA !important;
+/deep/.is-current > .el-tree-node__content {
+  background: #f6f8fa !important;
 }
 .verify-picture {
   margin-top: 20px;

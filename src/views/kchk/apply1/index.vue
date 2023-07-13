@@ -228,7 +228,7 @@ import {
 } from '@/api/kchk/goods'
 import { mapGetters } from 'vuex'
 import { filterTimestampToFormatTime } from '@/filters/index'
-import { TaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchStorageOut } from '@/api/kchk/order'
+import { FinishedTaskCenter, GetOrder, BatchAgree, BatchSubmit, BatchStorageIn, BatchStorageOut } from '@/api/kchk/order'
 // import Ccware from './comp/add.vue'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
@@ -459,11 +459,11 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
       const data = {
-        maxResultCount: this.pageSize,
-        skipCount: this.currentPage
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage
       }
       data.status = Number(this.activeName)
       if (this.orderCategory) {
@@ -482,7 +482,7 @@ export default {
       if (this.startTime) {
         data.startTime = filterTimestampToFormatTime(new Date(this.startTime).getTime(), 'YYYY-MM-DD HH:mm:ss')
       }
-      TaskCenter(data)
+      FinishedTaskCenter(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
@@ -503,9 +503,9 @@ export default {
      */
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /**

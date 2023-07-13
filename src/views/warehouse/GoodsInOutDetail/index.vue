@@ -3,26 +3,34 @@
     <xr-header
       icon-class="iconfont icon-baobiao"
       icon-color="#2362fb"
-      label="出入库明细表" >
+      label="出入库明细表"
+    >
       <template v-slot:ft>
-
         <el-button
           class="main-table-header-button "
           type="primary"
           icon="iconfont icon-daochu1"
-          @click="downs">导出</el-button>
+          @click="downs"
+        >导出</el-button
+        >
       </template>
     </xr-header>
     <div class="main-body">
-      <div class="main-table-header" >
-        <el-select v-model="categoryName" clearable style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请选择类目名称">
+      <div class="main-table-header">
+        <el-select
+          v-model="categoryName"
+          clearable
+          style="width:200px;padding: 10px 0px 0px 10px;"
+          placeholder="请选择类目名称"
+        >
           <el-option
-            v-for="(item,index) in showDepData"
+            v-for="(item, index) in showDepData"
             :key="index"
-            :label="item.name" :value="item.id"
-            class="wy-select"/>
+            :label="item.name"
+            :value="item.id"
+            class="wy-select"
+          />
         </el-select>
-
 
         <div
           style="
@@ -33,47 +41,64 @@
           "
         >
           <i class="wk wk-moretj" @click="morecondition = !morecondition" />
-
         </div>
         <div v-show="morecondition" class="morecondition1">
           <div class="morecondition">
             <div>
               <label for="" style="margin-left:10px">类目名称</label>
-              <el-select v-model="categoryName" clearable style="width:200px;" placeholder="请选择类目名称" >
+              <el-select
+                v-model="categoryName"
+                clearable
+                style="width:200px;"
+                placeholder="请选择类目名称"
+              >
                 <el-option
-                  v-for="(item,index) in showDepData"
+                  v-for="(item, index) in showDepData"
                   :key="index"
-                  :label="item.name" :value="item.id"
-                  class="wy-select"/>
+                  :label="item.name"
+                  :value="item.id"
+                  class="wy-select"
+                />
               </el-select>
             </div>
             <div>
               <label for="" style="margin-left:10px">货品名称</label>
-              <el-input v-model="goodsName" style="width:200px;" placeholder="请输入货品名称"/>
+              <el-input
+                v-model="goodsName"
+                style="width:200px;"
+                placeholder="请输入货品名称"
+              />
             </div>
             <div>
               <label for="" style="margin:0px 10px">时间范围</label>
               <el-date-picker
                 v-model="time"
                 :clearable="false"
-                style="    vertical-align: bottom;"
+                style="    vertical-align: bottom;width:230px;"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
-                end-placeholder="结束日期"/>
+                end-placeholder="结束日期"
+              />
             </div>
           </div>
-          <div
-            class="morecondition2">
+          <div class="morecondition2">
+            <el-button
+              class="main-table-header-button " @click="Reset"
+            >重置</el-button
+            >
             <el-button
               class="main-table-header-button "
-              @click="Reset">重置</el-button>
-            <el-button
-              class="main-table-header-button "
-              type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+              type="primary"
+              @click="handleCurrentChange(0)"
+            >搜索</el-button
+            >
           </div>
         </div>
-        <el-button type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+        <el-button
+          type="primary" @click="handleCurrentChange(0)"
+        >搜索</el-button
+        >
       </div>
       <el-table
         v-loading="loading"
@@ -82,8 +107,8 @@
         :height="tableHeight"
         class="main-table"
         highlight-current-row
-
-        @row-click="handleRowClick">
+        @row-click="handleRowClick"
+      >
         <!-- <el-table-column
           show-overflow-tooltip
           type="index"
@@ -115,91 +140,47 @@
         <el-table-column
           show-overflow-tooltip
           prop="goodsCode"
-          label="商品编码"/>
+          label="商品编码"
+        />
 
-        <el-table-column
-          prop="goodsCategoryName"
-          label="类目名称"
-        />
-        <el-table-column
-          prop="goodsName"
-          label="商品名称"
-        />
-        <el-table-column
-          prop="size"
-          label="规格型号"
-        />
+        <el-table-column prop="goodsCategoryName" label="类目名称" />
+        <el-table-column prop="goodsName" label="商品名称" />
+        <el-table-column prop="size" label="规格型号" />
         <!-- <el-table-column
           prop="ean13"
           label="商品条码"
         /> -->
-        <el-table-column
-          prop="goodsTime"
-          label="日期"
-        />
-        <el-table-column
-          prop="orderNo"
-          label="单据编号"
-        />
+        <el-table-column prop="goodsTime" label="日期" />
+        <el-table-column prop="orderNo" label="单据编号" />
         <!-- <el-table-column
           prop="unitName"
           label="单位"
         /> -->
-        <el-table-column
-          prop="companyName"
-          label="往来单位"
-        />
-        <el-table-column
-          prop="warehouseName"
-          label="仓库名称"
-        />
-        <el-table-column
-          prop="inNum"
-          label="入库"
-          cell-class-name="test"
-        >
+        <el-table-column prop="companyName" label="往来单位" />
+        <el-table-column prop="warehouseName" label="仓库名称" />
+        <el-table-column prop="inNum" label="入库" cell-class-name="test">
           <template slot="header" slot-scope="scope">
             <div style="    text-align: center;">入库</div>
           </template>
-          <el-table-column
-            prop="inNum"
-            label="入库数量 "
-            width="120px"
-          >
-            <template slot-scope="{ row, column, $index}">
-              {{ row.inNum }} {{ row.inNum>0? row.unitName:'' }}
+          <el-table-column prop="inNum" label="入库数量 " width="120px">
+            <template slot-scope="{ row, column, $index }">
+              {{ row.inNum }} {{ row.inNum > 0 ? row.unitName : '' }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="inPrice"
-            label="入库金额 (元)"
-          />
+          <el-table-column prop="inPrice" label="入库金额 (元)" />
         </el-table-column>
-        <el-table-column
-          prop="inNum"
-          label="出库"
-        >
+        <el-table-column prop="inNum" label="出库">
           <template slot="header" slot-scope="scope">
             <div style="    text-align: center;">出库</div>
           </template>
-          <el-table-column
-            prop="outNum"
-            label="出库数量 "
-            width="120px"
-          >
-            <template slot-scope="{ row, column, $index}">
-              {{ row.outNum }} {{ row.outNum>0? row.unitName:'' }}
+          <el-table-column prop="outNum" label="出库数量 " width="120px">
+            <template slot-scope="{ row, column, $index }">
+              {{ row.outNum }} {{ row.outNum > 0 ? row.unitName : '' }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="outPrice"
-            label="出库金额 (元)"
-          />
+          <el-table-column prop="outPrice" label="出库金额 (元)" />
         </el-table-column>
-        <el-table-column
-          prop="inNum"
-          label="结存"
-        >
+        <el-table-column prop="inNum" label="结存">
           <template slot="header" slot-scope="scope">
             <div style="    text-align: center;">结存</div>
           </template>
@@ -208,14 +189,12 @@
             label="剩余数量 "
             width="120px"
           >
-            <template slot-scope="{ row, column, $index}">
-              {{ row.residueQuantity }} {{ row.residueQuantity>0? row.unitName:'' }}
+            <template slot-scope="{ row, column, $index }">
+              {{ row.residueQuantity }}
+              {{ row.residueQuantity > 0 ? row.unitName : '' }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="residuePrice"
-            label="结存金额 (元)"
-          />
+          <el-table-column prop="residuePrice" label="结存金额 (元)" />
         </el-table-column>
       </el-table>
       <div class="p-contianer">
@@ -227,7 +206,8 @@
           class="p-bar"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"/>
+          @current-change="handleCurrentChange"
+        />
       </div>
     </div>
   </div>
@@ -237,11 +217,9 @@
 import { parseTime } from '@/utils'
 import {
   GoodsInOutDetail,
-  DownloadGoodsInventoryExcel
+  DownloadGoodsInOutDetailExcel
 } from '@/api/Inventory/kc'
-import {
-  GetGoodsCategoryTreeHasRole
-} from '@/api/kchk/goods'
+import { GetGoodsCategoryTreeHasRole } from '@/api/kchk/goods'
 import { downloadFileWithBuffer } from '@/utils'
 import XrHeader from '@/components/XrHeader'
 import CreateSections from '@/components/CreateSections'
@@ -252,7 +230,6 @@ export default {
   components: {
     XrHeader,
     CreateSections
-
   },
   mixins: [pagest],
   data() {
@@ -282,10 +259,10 @@ export default {
   },
   computed: {},
   mounted() {
-    const date = new Date()
-    const year = date.getFullYear()
-    const month = date.getMonth() + 1
-    this.time = [year + '-' + month + '-' + '01', date]
+    // const date = new Date()
+    // const year = date.getFullYear()
+    // const month = date.getMonth() + 1
+    // this.time = [year + '-' + month + '-' + '01', date]
     var self = this
     /** 控制table的高度 */
     window.onresize = function() {
@@ -301,10 +278,10 @@ export default {
     Reset() {
       this.goodsName = ''
       this.categoryName = ''
-      const date = new Date()
-      const year = date.getFullYear()
-      const month = date.getMonth() + 1
-      this.time = [year + '-' + month + '-' + '01', date]
+      // const date = new Date()
+      // const year = date.getFullYear()
+      // const month = date.getMonth() + 1
+      this.time = []
     },
     GetGoodsCategoryTreeHasRole() {
       GetGoodsCategoryTreeHasRole()
@@ -318,32 +295,38 @@ export default {
     },
 
     /*
-   * 当checkbox选择change时事件
-   */
+     * 当checkbox选择change时事件
+     */
     onItemCheckboxChange() {
       this.obj = {}
-      this.list.filter((d) => d.checked).map(e => {
-        const key = e.id; const val = e.code
-        this.obj[key] = val
-        return { [key]: val }
-      })
+      this.list
+        .filter(d => d.checked)
+        .map(e => {
+          const key = e.id
+          const val = e.code
+          this.obj[key] = val
+          return { [key]: val }
+        })
     },
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.currentPage + 15, 'skipCount': this.currentPage, goodsName: this.goodsName, beginTime: this.gettiem(this.time[0], 1), endTime: this.gettiem(this.time[1]) }
+      const data = {
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage,
+        goodsName: this.goodsName,
+        beginTime: this.time.length > 0 ? this.gettiem(this.time[0], 1) : null,
+        endTime: this.time.length > 0 ? this.gettiem(this.time[1]) : null
+      }
       if (this.categoryName) {
         data.goodsCategoryId = this.categoryName
       }
       GoodsInOutDetail(data)
         .then(res => {
           res.items.forEach(e => {
-            e.goodsTime = parseTime(
-              e.goodsTime,
-              '{y}-{m}-{d}'
-            )
+            e.goodsTime = parseTime(e.goodsTime, '{y}-{m}-{d}')
           })
           this.list = res.items
           this.total = res.totalCount
@@ -356,7 +339,10 @@ export default {
     gettiem(time, flag) {
       const date = new Date(time)
       const year = date.getFullYear()
-      const month = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + (date.getMonth() + 1)
+      const month =
+        date.getMonth() + 1 > 9
+          ? date.getMonth() + 1
+          : '0' + (date.getMonth() + 1)
       const day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
       if (flag) {
         return year + '-' + month + '-' + day + ' 00:00:00'
@@ -370,12 +356,10 @@ export default {
      */
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
-
-
 
     /** 列表操作 */
     /**
@@ -385,11 +369,11 @@ export default {
       if (column.label == '序号') {
         return
       }
-    //   GetInfo(row.id).then(res => {
-    //     console.log(res)
-    //     this.info = res
-    //     this.jurisdictionCreateShow = !this.jurisdictionCreateShow
-    //   })
+      //   GetInfo(row.id).then(res => {
+      //     console.log(res)
+      //     this.info = res
+      //     this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+      //   })
     },
     handleClick1(type, scope) {
       this.createAction = {
@@ -403,16 +387,28 @@ export default {
      * 导出
      */
     downs() {
-      const data = { 'maxResultCount': 1000, 'skipCount': 0, goodsName: this.goodsName, beginTime: this.gettiem(this.time[0], 1), endTime: this.gettiem(this.time[1]) }
+      const data = {
+        maxResultCount: 1000,
+        skipCount: 0,
+        beginTime: this.gettiem(this.time[0], 1),
+        endTime: this.gettiem(this.time[1])
+      }
 
       if (this.categoryName) {
         data.goodsCategoryId = this.categoryName
       }
-      DownloadGoodsInventoryExcel(data).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+      if (this.goodsName) {
+        data.goodsName = this.goodsName
+      }
+      DownloadGoodsInOutDetailExcel(data).then(res => {
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(
+          res,
+          '',
+          'application/vnd.ms-excel;charset=UTF-8'
+        )
       })
     }
   }
@@ -420,8 +416,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/.el-date-editor .el-range-separator {
+  padding: 0px !important;
+}
 .main {
-  height:100%;
+  height: 100%;
 
   /deep/ .xr-header {
     padding: 15px 30px;
@@ -429,7 +428,7 @@ export default {
 }
 
 .main-body {
-      // height: calc(100% - 61px);
+  // height: calc(100% - 61px);
   background-color: white;
   border-top: 1px solid $xr-border-line-color;
   border-bottom: 1px solid $xr-border-line-color;
@@ -455,58 +454,56 @@ export default {
   margin-top: 10px;
 }
 @import '../styles/table.scss';
-.buttonc{
-  color:#4f81fc;
-   cursor: pointer;
+.buttonc {
+  color: #4f81fc;
+  cursor: pointer;
 }
 </style>
 <style lang="scss">
-
-.morecondition2{
-    width: 100%;
-    padding: 0px 0 8px 8px;
-    text-align: center;
-    .main-table-header-button{
-      float: none !important;
-    }
+.morecondition2 {
+  width: 100%;
+  padding: 0px 0 8px 8px;
+  text-align: center;
+  .main-table-header-button {
+    float: none !important;
   }
-.morecondition{
-    display: flex;
-    padding: 20px 20px 0px 20px;
-    flex-wrap: wrap;
-    -webkit-box-pack: start;
-    justify-content: flex-start;
-    >div{
-      margin-bottom: 10px;
-    margin-right: 1.5%;
-    width: 31.33%;
+}
+.morecondition {
+  display: flex;
+  padding: 20px 10px 0px 0px;
+  flex-wrap: wrap;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+  > div {
+    margin-bottom: 10px;
+    // margin-right: 1.5%;
+    width: 33.33%;
     display: flex;
     -webkit-box-align: center;
     align-items: center;
-    >div{
+    > div {
       width: 100%;
     }
-      label{
-        // width: 80px;
-    display: inline-block;
-    text-align: right;
-      }
-      label:after {
-    content: " ";
-    position: relative;
-    top: -0.5px;
-    margin: 0 8px 0 2px;
-}
+    label {
+      // width: 80px;
+      display: inline-block;
+      text-align: right;
     }
-
-}
-.morecondition1{
-  align-items: baseline;
-      position: absolute;
-    z-index: 9;
-    background: #fff;
-    width: 100%;
-    border: 1px solid #e6e6e6;
-    top:0px
+    label:after {
+      content: ' ';
+      position: relative;
+      top: -0.5px;
+      margin: 0 8px 0 2px;
+    }
   }
+}
+.morecondition1 {
+  align-items: baseline;
+  position: absolute;
+  z-index: 9;
+  background: #fff;
+  width: 100%;
+  border: 1px solid #e6e6e6;
+  top: 0px;
+}
 </style>

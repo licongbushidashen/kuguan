@@ -39,6 +39,7 @@ export default {
     }},
   data() {
     return {
+      submits: true,
       showDialog: true,
       list: [],
       maxlength: 300,
@@ -97,29 +98,33 @@ export default {
       })
     },
     saveClick(data) {
+      debugger
       if (!data) return
-      // this.aoiinfo.dutyUserId = '3fa85f64-5717-4562-b3fc-2c963f66afa6'
-      // if (this.aoiinfo.startTime.indexOf('00:00:00') == -1) {
-      //   this.aoiinfo.startTime = this.aoiinfo.startTime + ' 00:00:00'
-      // }
-      // if (this.aoiinfo.endTime.indexOf('00:00:00') == -1) {
-      //   this.aoiinfo.endTime = this.aoiinfo.endTime + ' 00:00:00'
-      // }
-      // this.aoiinfo.goodsCategoryId = this.aoiinfo.goodsCategoryName
+      if (!this.submits) {
+        return
+      }
       this.aoiinfo.startTime = parseTime(this.aoiinfo.startTime)
       this.aoiinfo.endTime = parseTime(this.aoiinfo.endTime)
       delete this.aoiinfo.goodsCategoryName
+      this.submits = true
       if (this.aoiinfo.id) {
         Update(this.aoiinfo).then(res => {
+          this.submits = false
           this.$message.success('修改成功')
           this.showDialog = false
           this.$emit('change', 'up')
+        }).catch(() => {
+          this.submits = true
         })
       } else {
         Create(this.aoiinfo).then(res => {
+          this.submits = false
           this.$message.success('新增成功')
           this.showDialog = false
           this.$emit('change', 'add')
+        }).catch(() => {
+          debugger
+          this.submits = true
         })
       }
     },
@@ -186,6 +191,7 @@ export default {
       field.push({
         field: 'startTime',
         formType: 'datetime',
+        date: 'date',
         format: 'yyyy-MM-dd',
         isNull: 1,
         name: '开始时间',
@@ -199,6 +205,7 @@ export default {
         field: 'endTime',
         formType: 'datetime1',
         format: 'yyyy-MM-dd',
+        date: 'date',
         isNull: 1,
         name: '结束时间',
         placeholder: '请选择结束时间',

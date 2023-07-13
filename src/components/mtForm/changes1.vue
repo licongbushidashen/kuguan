@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="shows" :close-on-click-modal="false" :append-to-body="true" :before-close="handleClose" title="上级类目" >
+  <el-dialog :visible.sync="shows" :close-on-click-modal="false" :append-to-body="true" :before-close="handleClose" title="上级点位" >
     <div class="grounds">
       <div >
         <el-input v-model="keywords" style="margin-bottom:20px">
@@ -21,8 +21,7 @@
                 />
                 <div class="dep-name text-one-line">{{ item.specificLocation }}</div>
               </div>
-              <template >
-
+              <template>
                 <el-button
                   v-if="item.hasChild"
                   type="text"
@@ -55,6 +54,9 @@ export default {
   props: {
     shows: {
       type: Boolean
+    },
+    pointobj: {
+      type: Object
     }
   },
   data() {
@@ -63,10 +65,12 @@ export default {
       depLoading: false,
       keywords: '',
       showDataList: '',
-      item: ''
+      item: '',
+      pointobjs: {}
     }
   },
   mounted() {
+    this.pointobjs = JSON.parse(JSON.stringify(this.pointobj))
     this.getDepTreeList()
   },
   methods: {
@@ -74,6 +78,7 @@ export default {
       this.$emit('onshow')
     },
     onchecked(val) {
+      debugger
       this.showDataList.forEach((e, index) => {
         if (e.checked && val != index) {
           e.checked = false
@@ -81,9 +86,18 @@ export default {
         if (val == undefined) {
           e.checked = false
         }
+        if (this.pointobjs && this.pointobjs.parentId == e.id) {
+          e.checked = true
+          this.pointobjs = null
+        }
       })
-      const item = this.showDataList.filter(e => e.checked)
-      this.item = this.showDataList.filter(e => e.checked).length > 0 ? item[0] : {}
+      debugger
+      let item = this.showDataList.filter(e => e.checked)
+      if (item.length == 0 && this.pointobjs) {
+        item = [{ specificLocation: this.pointobjs.parentName, id: this.pointobjs.parentId }]
+        item = JSON.parse(JSON.stringify(item))
+      }
+      this.item = item.length > 0 ? item[0] : {}
     },
     dialogSure() {
       if (this.item.id) {

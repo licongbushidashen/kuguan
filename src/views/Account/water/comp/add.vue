@@ -79,11 +79,11 @@ export default {
         } else {
           this.aoiinfo = { ...this.info, ...{ parentId1: null, parentId2: null }}
           this.aoiinfo.parentId = this.info.spacePointId
-
-          debugger
           if (this.info.spacePointId) {
             await this.pointTree(this.info.spacePointId, 'parentId', 0, 'chs')
+
             this.aoiinfo.parentId1 = this.info.spacePointId1
+            console.log(this.info.parentId1, 12356)
           }
           if (this.info.spacePointId1) {
             await this.pointTree(this.info.spacePointId1, 'parentId', 1, 'chs')
@@ -103,14 +103,18 @@ export default {
   },
   methods: {
 
-    pointTree(item, name, j) {
+    pointTree(item, name, j, chs) {
+      debugger
       const data = item ? { parentId: item } : {}
       GetSpacePointTree(data)
         .then(response => {
+          debugger
           if (j == 1) {
             for (let i = 0; i < this.fields.length; i++) {
               if (this.fields[i].field == 'parentId') {
-                this.aoiinfo.parentId2 = null
+                if (!chs) {
+                  this.aoiinfo.parentId2 = null
+                }
                 this.setting2 = response
                 this.$set(this.fields[i], 'setting2', response)
               }
@@ -125,8 +129,10 @@ export default {
                 this.setting2 = []
                 this.$set(this.fields[i], 'setting1', response)
                 this.fields[i].setting2 = []
-                this.aoiinfo.parentId1 = null
-                this.aoiinfo.parentId2 = null
+                if (!chs) {
+                  this.aoiinfo.parentId1 = null
+                  this.aoiinfo.parentId2 = null
+                }
               }
             }
           } else {
@@ -155,16 +161,17 @@ export default {
         })
     },
 
+
     saveClick(data) {
       if (!data) return
       this.aoiinfo.fillingDate = parseTime(this.aoiinfo.fillingDate)
       this.aoiinfo.installationDate = parseTime(this.aoiinfo.installationDate)
       this.aoiinfo.maintenanceDate = parseTime(this.aoiinfo.maintenanceDate)
       if (this.aoiinfo.parentId2) {
-        this.aoiinfo.spacePointId = this.aoiinfo.parentId2.id
-      } else if (this.aoiinfo.parentId1) {
-        this.aoiinfo.spacePointId = this.aoiinfo.parentId1.id
-      } else {
+        this.aoiinfo.spacePointId2 = this.aoiinfo.parentId2
+      } if (this.aoiinfo.parentId1) {
+        this.aoiinfo.spacePointId1 = this.aoiinfo.parentId1
+      } if (this.aoiinfo.parentId) {
         this.aoiinfo.spacePointId = this.aoiinfo.parentId
       }
       if (this.aoiinfo.id) {
@@ -183,7 +190,7 @@ export default {
     },
     formChange(id, type, type1, i, j) {
       if (id.field == 'parentId') {
-        this.pointTree(type1.id, id.field, j)
+        this.pointTree(type1, id.field, j)
       }
     },
     savechange() {

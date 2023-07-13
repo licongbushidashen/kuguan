@@ -3,7 +3,7 @@
     <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="绿植台账">
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['PropertyBillManager.GreenPlant.ReportExport']"
+
           class="main-table-header-button "
           type="primary"
           icon="iconfont icon-daochu1"
@@ -43,7 +43,7 @@ import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 import {
   GetBooks,
-  DownloadGreenPlantPage
+  DownloadGreenPlantExcel
 } from '@/api/account'
 import { downloadFileWithBuffer } from '@/utils'
 import XrHeader from '@/components/XrHeader'
@@ -80,7 +80,7 @@ export default {
       obj: {},
       info: {},
 
-      time: [new Date() - 24 * 3600 * 1000 * 30, new Date()]
+      time: null
     }
   },
   computed: {
@@ -102,11 +102,14 @@ export default {
      * 导出
      */
     downs() {
-      DownloadGreenPlantPage({ 'maxResultCount': 1000, 'skipCount': 0, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+      DownloadGreenPlantExcel({ 'maxResultCount': 1000, 'skipCount': 0,
+        beginTime: this.time ? parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00' : null,
+        endTime: this.time ? parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59' : null
+      }).then(res => {
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(res, '', 'application/vnd.ms-excel;charset=UTF-8')
       })
     },
     handleClick(type, row) {
@@ -142,9 +145,12 @@ export default {
      * 获取列表数据
      */
     getList() {
-      debugger
       this.loading = true
-      const data = `?beginTime=${parseTime(this.time[0])}&endTime=${parseTime(this.time[1])}`
+      if (this.time) {
+        var data = `?beginTime=${parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00'}&endTime=${parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59'}`
+      } else {
+        var data = ``
+      }
       GetBooks(data)
         .then(res => {
           const list = []
@@ -157,19 +163,39 @@ export default {
               tableHName.add(res[i].spacePointName)
             }
           }
+
           tableH.push({ name: '总计', props: '总计' })
+          const size = {}
           for (let i = 0; i < res.length; i++) {
-            const obj = { size: res[i].size }
-            let num = 0
-            tableHName.forEach(e => {
-              if (e == res[i].spacePointName) {
-                obj[res[i].spacePointName] = res[i].totalQuantiy
-                num += !!res[i].totalQuantiy
-              }
-            })
-            obj['总计'] = num
+            const j = res[i].size
+            size[j] = size[j] ? size[j] : {}
+            size[j][res[i].spacePointName ] = res[i].totalQuantiy
+          }
+          for (const item in size) {
+            const obj = { size: item, ...size[item] }
+            let s = 0
+            Object.values(size[item]).forEach(val => { s += val }, 0)
+            obj['总计'] = s
             list.push(obj)
           }
+
+
+
+          // for (let i = 0; i < res.length; i++) {
+          //   const obj = { size: res[i].size }
+          //   let num = 0
+          //   tableHName.forEach(e => {
+          //     if (e == res[i].spacePointName) {
+          //       obj[res[i].spacePointName] = res[i].totalQuantiy
+          //       if (Number(res[i].totalQuantiy)) {
+          //         num += res[i].totalQuantiy
+          //       }
+          //     }
+          //   })
+          //   obj['总计'] = num
+          //       // list.push(obj)
+          // }
+          // list.push(obj)
           this.tableH = [...this.tableH, ...tableH]
           this.list = list
           this.loading = false

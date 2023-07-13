@@ -390,6 +390,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.dispatch('TaskCenterCount')
     var self = this
     /** 控制table的高度 */
     window.onresize = function() {
@@ -476,11 +477,11 @@ export default {
       this.goodsCategoryId = null
       this.warehouseId = null
     },
-    getList() {
+    getList(x) {
       this.loading = true
       const data = {
-        maxResultCount: this.pageSize,
-        skipCount: this.currentPage
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage
       }
       data.status = Number(this.activeName)
       if (this.orderCategory) {
@@ -521,9 +522,9 @@ export default {
      */
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /**
@@ -535,11 +536,13 @@ export default {
         case 1:
           BatchSubmit(ids).then(res => {
             this.$store.dispatch('TaskCenterCount')
-            res.forEach(e => {
+            res.forEach((e, index) => {
               if (e.code) {
                 this.handleCurrentChange(0)
                 this.showDialog = false
-                this.$message.success(e.message)
+                if (index == 0) {
+                  this.$message.success(e.message)
+                }
               } else {
                 this.$message.error(e.message)
               }
@@ -549,11 +552,13 @@ export default {
         case 2:
           BatchAgree(ids).then(res => {
             this.$store.dispatch('TaskCenterCount')
-            res.forEach(e => {
+            res.forEach((e, index) => {
               if (e.code) {
                 this.handleCurrentChange(0)
                 this.showDialog = false
-                this.$message.success(e.message)
+                if (index == 0) {
+                  this.$message.success(e.message)
+                }
               } else {
                 this.$message.error(e.message)
               }
@@ -563,11 +568,13 @@ export default {
         case 4:
           BatchStorageOut(ids).then(res => {
             this.$store.dispatch('TaskCenterCount')
-            res.forEach(e => {
+            res.forEach((e, index) => {
               if (e.code) {
                 this.handleCurrentChange(0)
                 this.showDialog = false
-                this.$message.success(e.message)
+                if (index == 0) {
+                  this.$message.success(e.message)
+                }
               } else {
                 this.$message.error(e.message)
               }
@@ -577,11 +584,13 @@ export default {
         case 5:
           BatchStorageIn(ids).then(res => {
             this.$store.dispatch('TaskCenterCount')
-            res.forEach(e => {
+            res.forEach((e, index) => {
               if (e.code) {
                 this.handleCurrentChange(0)
                 this.showDialog = false
-                this.$message.success(e.message)
+                if (index == 0) {
+                  this.$message.success(e.message)
+                }
               } else {
                 this.$message.error(e.message)
               }

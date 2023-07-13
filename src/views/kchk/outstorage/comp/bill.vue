@@ -89,13 +89,13 @@
             </div>
           </div>
         </div>
-        <div class="wy-body-info-one">
+        <!-- <div class="wy-body-info-one">
           <div class="wy-body-info-one-left">
             <div class="field__label">
               经费卡号
             </div>
             <div v-if="!butoom1" class="wy-body-info-one-left-val ">
-              {{ objs.jfkhName }}
+              {{ objs.jfkhNumber }}
             </div>
             <div v-else :class="erroring?objs.jfkhName?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('jfkh')">
               <div :style="objs.jfkhNumber?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择经费卡号' }}</div>
@@ -110,6 +110,20 @@
 
             </div>
           </div>
+        </div> -->
+        <div class="wy-body-info-one">
+          <div class="wy-body-info-one-left" style="border: 0px;">
+            <div class="field__label">
+              领用地点
+            </div>
+            <div v-if="!butoom1" class="wy-body-info-one-left-val ">
+              {{ objs.address }}
+            </div>
+            <div v-else :class="erroring?objs.address.length<200?'':'errorshow':''" class=" wy-body-info-one-left-val  wk ddyh">
+              <el-input v-model="objs.address" placeholder="请输入领用地点"/>
+            </div>
+          </div>
+
         </div>
       </div>
       <div class="wy-body-detailed">
@@ -175,7 +189,7 @@
           >
             <template slot-scope="scope">
               <div v-if="!butoom1">
-                <div style="    font-size: 13px;    color: #cccfd6;">{{ scope.row.name || scope.row.goodsName || '请选择货品名称' }}</div>
+                <div :style="(scope.row.name || scope.row.goodsName)?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ scope.row.name || scope.row.goodsName || '请选择货品名称' }}</div>
               </div>
               <div v-else style="    border: 1px solid #d9d9d9;    min-height: 30px;    line-height: 30px;    padding-left: 12px;    border-radius: 5px;" @click="opende('goods',scope.$index)">
                 <div :style="(scope.row.name || scope.row.goodsName)?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;" >{{ scope.row.name || scope.row.goodsName || '请选择货品名称' }}</div>
@@ -187,7 +201,10 @@
             prop="brand"
             label="品牌"
           />
-
+          <el-table-column
+            prop="goodsCategoryDetailName"
+            label="大类名称"
+          />
           <el-table-column
             prop="size"
             label="规格"
@@ -274,7 +291,7 @@
                 :show-file-list="false"
                 drag
                 style="    line-height: 11px;"
-                action="file2/api/zjlab/Attachment/UploadProviderFile"
+                action="/api/zjlab/Attachment/UploadProviderFile"
               >
                 <el-button size="small" ><i
                   class="wk wk-icon-relation" style="font-size: 12px;    margin-right: 5px;"/>点击或拖拽上传</el-button>
@@ -337,7 +354,7 @@
         v-model="save"
 
       />
-      <span v-if="butoom1">继续创建时，保存本次提交内容</span>
+      <span v-if="butoom1&&!info.order">继续创建时，保存本次提交内容</span>
       <el-button v-if="butoom1 &&!info.order" @click="debouncedHandleLogin(1,1)">提交并继续创建</el-button>
       <el-button v-if="butoom1" type="primary" @click="debouncedHandleLogin(1)">提 交</el-button>
       <el-button v-if="butoom1" @click="dialogSure(0)">暂 存</el-button>
@@ -353,11 +370,11 @@ import { filterTimestampToFormatTime } from '@/filters/index'
 import { mapGetters } from 'vuex'
 import {
   GetInfo,
-  CreateOrder,
+  CreateOutOrder,
   GetGoodsCategoryTreeHasRole
 } from '@/api/kchk/goods'
 import {
-  UpdateOrder,
+  UpdateOutOrder,
   DownLoadFile
 } from '@/api/kchk/order'
 import Type from './type.vue'
@@ -410,6 +427,7 @@ export default{
   },
   data() {
     return {
+      submits: true,
       showDepData: [],
       p: '',
       erroring: false,
@@ -432,9 +450,9 @@ export default{
         ckId: '',
         typeName: '',
         typeId: '',
-        jfkhName: '',
-        jfkhNumber: '',
-
+        jfkhName: '其他',
+        jfkhNumber: '其他',
+        address: '',
         dutyUserName: '',
         dutyUserId: '',
         remark: ''
@@ -491,9 +509,9 @@ export default{
           ckId: '',
           typeName: '',
           typeId: '',
-          jfkhName: '',
-          jfkhNumber: '',
-          jfkhId: '',
+          jfkhName: '其他',
+          jfkhNumber: '其他',
+          address: '其他',
           dutyUserName: '',
           dutyUserId: '',
           remark: ''
@@ -517,9 +535,9 @@ export default{
             typeName: this.info.order.goodsCategoryName,
             jfkhName: this.info.order.memoryCardName,
             jfkhNumber: this.info.order.memoryCardNumber,
-            jfkhId: this.info.order.memoryCardId,
-            dutyUserName: this.info.order.goodsCategoryDutyUserName,
-            dutyUserId: this.info.order.goodsCategoryDutyUserId,
+            address: this.info.order.address,
+            dutyUserName: this.info.order.orderOutDutyUserName || this.info.order.goodsCategoryDutyUserName,
+            dutyUserId: this.info.order.orderOutDutyUserId || this.info.order.goodsCategoryDutyUserId,
             remark: this.info.order.remark
           }
           this.createUser = {
@@ -533,6 +551,8 @@ export default{
 
             GetInfo(row.goodsId).then(res => {
               row.ean13List = res.unitList
+              row.goodsCategoryDetailId = res.goodsInfo.goodsCategoryDetailId
+              row.goodsCategoryDetailName = res.goodsInfo.goodsCategoryDetailName
               row.checked = false
               this.list.push(row)
             })
@@ -545,7 +565,7 @@ export default{
     }
   },
   created() {
-    this.debouncedHandleLogin = debounce(300, this.dialogSure)
+    this.debouncedHandleLogin = debounce(0, this.dialogSure)
   },
   mounted() {
     this.getDepTreeList()
@@ -554,8 +574,8 @@ export default{
     listn() {
       this.showDepData.forEach(e => {
         if (e.id == this.objs.typeId) {
-          this.objs.dutyUserName = e.dutyUserName
-          this.objs.dutyUserId = e.dutyUserId
+          this.objs.dutyUserName = e.orderOutDutyUserName || e.dutyUserName
+          this.objs.dutyUserId = e.orderOutDutyUserId || e.dutyUserId
         }
       })
       this.list = []
@@ -581,7 +601,7 @@ export default{
         if (index === 0) {
           sums[index] = '总计'
           return
-        } else if (index === 1 || index === 2 || index === 3 || index === 4) {
+        } else if (index === 1 || index === 2 || index === 3 || index === 4 || index === 5) {
           return
         }
         const values = data.map(item => Number(item[column.property]))
@@ -646,6 +666,8 @@ export default{
         GetInfo(row.goodsId).then(res => {
           row.ean13List = res.unitList
           row.checked = false
+          row.goodsCategoryDetailId = res.goodsInfo.goodsCategoryDetailId
+          row.goodsCategoryDetailName = res.goodsInfo.goodsCategoryDetailName
           this.list[this.goodsIndex] = row
           this.$set(this.list, this.goodsIndex, row)
         })
@@ -653,9 +675,8 @@ export default{
         this.objs[name + 'Name'] = row.name
         this.objs[name + 'Id'] = row.id
       } else if (!row.number) {
-        debugger
         this.objs[name + 'Name'] = row.name
-        this.objs[name + 'Id'] = row.number
+        this.objs[name + 'Id'] = row.number || row.id
       } else {
         this.objs[name + 'Number'] = row.number
         this.objs[name + 'Name'] = row.name
@@ -666,12 +687,19 @@ export default{
       let flag = false
       for (const i in this.objs) {
         if (!this.objs[i]) {
-          if (i != 'remark' && i != 'typeName') { flag = true }
+          if (i != 'remark' && i != 'typeName' && i != 'address') {
+            
+            flag = i
+          }
         }
+      }
+      if (this.objs.address && this.objs.address.length > 200) {
+        this.erroring = true
+        this.$message.error('红框内容超出长度，规定长度200')
       }
       if (!this.orderCategory || flag) {
         this.erroring = true
-        this.$message.error('请填写红框的相应内容')
+        this.$message.error('请填写红框的相应内容'+i+'该字段异常')
         return
       } else if (this.list.length == 0) {
         this.$message.error('请添加入库明细')
@@ -683,7 +711,6 @@ export default{
         arr.push({ goodsId: d.goodsId || d.id, goodsCode: d.code || d.goodsCode, unitId: d.unitId, unitPrice: d.unitPrice, quantity: d.quantity, amountMoney: d.amountMoney, DefaultUnitId: d.DefaultUnitId })
       }
       const jy = this.showDepData.filter(e => e.id == this.objs.typeId)
-      debugger
 
       if (jy[0].flag == '0') {
         this.erroring = true
@@ -696,7 +723,8 @@ export default{
           wareHouseId: this.objs.ckId,
           orderCategory: this.orderCategory,
           goodsCategoryId: this.objs.typeId,
-          memoryCardNumber: this.objs.jfkhId,
+          memoryCardNumber: this.objs.jfkhNumber,
+          address: this.objs.address,
           memoryCardName: this.objs.jfkhName,
           receiptDate: filterTimestampToFormatTime(new Date(this.time).getTime(), 'YYYY-MM-DD HH:mm:ss'),
           remark: this.objs.remark,
@@ -708,16 +736,25 @@ export default{
         detaiList: arr,
         attachmentList: this.fileList.map(e => e.id)
       }
+      if (!this.submits) {
+        return
+      }
+      this.submits = false
+
       if (this.info.order && !this.ffts) {
         obj.order.orderNo = this.info.order.orderNo
-        UpdateOrder(obj, this.info.order.id).then(res => {
+        UpdateOutOrder(obj, this.info.order.id).then(res => {
+          this.submits = true
           this.$store.dispatch('TaskCenterCount')
           this.$message.success('修改成功')
 
           this.$emit('change', 0)
+        }).catch(() => {
+          this.submits = true
         })
       } else {
-        CreateOrder(obj).then(res => {
+        CreateOutOrder(obj).then(res => {
+          this.submits = true
           this.$store.dispatch('TaskCenterCount')
           this.$message.success('新增成功')
           if (!f) {
@@ -742,9 +779,9 @@ export default{
                 ckId: '',
                 typeName: '',
                 typeId: '',
-                jfkhName: '',
-                jfkhNumber: '',
-                jfkhId: '',
+                jfkhName: '其他',
+                jfkhNumber: '其他',
+                address: '',
                 dutyUserName: '',
                 dutyUserId: '',
                 remark: ''
@@ -753,6 +790,8 @@ export default{
               this.$message.success('新增成功,请继续添加')
             }
           }
+        }).catch(() => {
+          this.submits = true
         })
       }
     },
@@ -869,7 +908,11 @@ export default{
 
 </script>
 <style lang="scss" scoped>
-  /deep/.el-date-editor input{
+/deep/.ddyh input{
+  border: 0px !important;
+  padding: 1px;
+}
+/deep/.el-date-editor input{
   border: 0px !important;
 }
 .fileList-order{

@@ -73,9 +73,16 @@
         </template>
       </el-table-column>
       <el-table-column prop="profitNum" label="盘盈数量" />
-      <el-table-column prop="lossNum" label="盘亏数量" />
+      <el-table-column prop="lossNum" label="盘亏数量" >
+        <template slot-scope="{ row, column, $index }">
 
-      <el-table-column prop="checkUserName" label="盘点人" />
+          <span >
+            {{ Math.abs(row.lossNum) }}
+          </span>
+        </template>
+      </el-table-column>
+
+      <!-- <el-table-column prop="checkUserName" label="盘点人" />
       <el-table-column prop="checkTime" label="盘点时间" width="200px">
         <template slot-scope="{ row, column, $index }">
           <el-date-picker
@@ -84,12 +91,12 @@
             type="datetime"
             style="width:190px"
             placeholder="选择日期时间"/>
-          <!-- <el-input v-if="flag1==1" v-model="row.checkNum" @change="listchange(row,$index)"/> -->
+          <el-input v-if="flag1==1" v-model="row.checkNum" @change="listchange(row,$index)"/>
           <span v-else>
             {{ row.checkTime }}
           </span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column prop="remark" label="备注" width="100px">
         <template slot-scope="{ row, column, $index }">
           <el-input v-if="flag1==1" v-model="row.remark"/>
@@ -116,6 +123,7 @@
     <bulk-import-user
       :show="bulkImportShow"
       :url="'/api/zjlab/CheckPlanDetail/Upload?planId='+id"
+      import-category="CheckPlanDetail"
       @close="bulkImportShow = false"
       @success="handleCurrentChange(0)"
     />
@@ -126,7 +134,7 @@
   </el-dialog>
 </template>
 <script>
-import { parseTime } from '@/utils'
+// import { parseTime } from '@/utils'
 import { mapGetters } from 'vuex'
 import {
   Create,
@@ -207,21 +215,21 @@ export default {
     },
     downs() {
       DownloadCheckPlanDetailExcel(this.id).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(res, '', 'application/vnd.ms-excel;charset=UTF-8')
       })
     },
     // 完成盘点
     FinishDetail(val) {
       const data = { detailList: [] }
       for (let i = 0; i < this.list.length; i++) {
-        if (!this.list[i].checkTime) {
-          this.$message.error('请输入盘点时间')
-          return
-        }
-        this.list[i].checkTime = parseTime(this.list[i].checkTime)
+        // if (!this.list[i].checkTime) {
+        //   this.$message.error('请输入盘点时间')
+        //   return
+        // }
+        // this.list[i].checkTime = parseTime(this.list[i].checkTime)
         data.detailList.push({ id: this.list[i].id, checkPlanDetail: this.list[i] })
       }
       if (val) {
@@ -248,15 +256,16 @@ export default {
       UpdateCheckPlanBegin(this.id).then(res => {
         if (res == true) {
           this.flag1 = 1
+          this.$emit('change', 0)
         }
       })
     },
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize, 'skipCount': this.currentPage, 'searchKey': this.inputs }
+      const data = { 'maxResultCount': this.pageSize , 'skipCount': x || this.currentPage, 'searchKey': this.inputs }
       GetDetails(data, this.id)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -280,9 +289,9 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     listchange(row, index) {

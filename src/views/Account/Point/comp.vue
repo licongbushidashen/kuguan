@@ -44,7 +44,7 @@ export default {
       maxlength: 300,
       checkedAll: [],
       fieldsRules: {}, // 字段列表需要验证,
-      aoiinfo: { flag: 1, dutyUserName: '' },
+      aoiinfo: { flag: 1, dutyUserName: '', sort: 0 },
       tree: [],
       fields: {},
       isSave: false,
@@ -65,7 +65,8 @@ export default {
         this.showDialog = !this.showDialog
         this.title = '新增点位'
         this.aoiinfo = {
-          flag: 1, dutyUserName: ''
+          flag: 1, dutyUserName: '',
+          sort: 0
         }
       },
       deep: true,
@@ -121,6 +122,16 @@ export default {
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.specificLocation : ''
+      })
+      field.push({
+        field: 'sort',
+        formType: 'number',
+        isNull: 1,
+        name: '排序',
+        placeholder: '请输入排序',
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.sort : ''
       })
       field.push({
         field: 'remark',

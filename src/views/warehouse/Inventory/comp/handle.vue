@@ -1,8 +1,14 @@
 <template>
-  <el-dialog v-if="showDialog" :visible.sync="showDialog" :close-on-click-modal="false" title="盈亏处理" style="    ">
+  <el-dialog
+    v-if="showDialog"
+    :visible.sync="showDialog"
+    :close-on-click-modal="false"
+    title="盈亏处理"
+    style="    "
+  >
     <el-table
       v-loading="loading"
-      v-if="list.length>0"
+      v-if="list.length > 0"
       id="examine-table"
       :data="list"
       class="main-table"
@@ -27,9 +33,7 @@
                 v-model="row.checked"
                 @change="onItemCheckboxChange"
               /> -->
-              <span class="text">{{
-                $index + 1
-              }}</span>
+              <span class="text">{{ $index + 1 }}</span>
             </span>
           </span>
         </template>
@@ -48,7 +52,7 @@
       <el-table-column prop="profitNum" label="盘盈数量" />
       <el-table-column prop="lossNum" label="盘亏数量" />
     </el-table>
-    <div v-if="list.length>0" class="p-contianer">
+    <div v-if="list.length > 0" class="p-contianer">
       <el-pagination
         :current-page="currentPage"
         :total="total"
@@ -60,11 +64,15 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <div v-if="list.length==0">
-
-      <el-empty :image-size="200" description="本次盘点无需盈亏处理"/>
+    <div v-if="list.length == 0">
+      <el-empty :image-size="200" description="本次盘点无需盈亏处理" />
     </div>
-    <span v-if="flag!=3" slot="footer" class="dialog-footer" style="text-align: center !important;">
+    <span
+      v-if="flag != 3"
+      slot="footer"
+      class="dialog-footer"
+      style="text-align: center !important;"
+    >
       <el-button @click="showDialog = false">取 消</el-button>
       <el-button type="primary" @click="savechange">提 交</el-button>
     </span>
@@ -80,7 +88,6 @@ import {
 
 import GenerateRulesMixin from '@/components/NewCom/WkForm/GenerateRules'
 export default {
-
   mixins: [GenerateRulesMixin],
   props: {
     showing: {
@@ -97,7 +104,8 @@ export default {
       default: () => {
         return {}
       }
-    }},
+    }
+  },
   data() {
     return {
       list: [],
@@ -121,9 +129,7 @@ export default {
       immediate: true
     }
   },
-  created() {
-
-  },
+  created() {},
   methods: {
     /**
      * 获取列表数据
@@ -134,14 +140,19 @@ export default {
           this.$emit('change', 0)
           this.$message.success('盈亏处理完成')
           this.showDialog = false
+          this.$store.dispatch('TaskCenterCount')
         } else {
           this.$message.success('接口异常')
+          this.$store.dispatch('TaskCenterCount')
         }
       })
     },
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage }
+      const data = {
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage
+      }
       GetProfitLoss(data, this.id)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -161,9 +172,9 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     saveClick(data) {
@@ -182,15 +193,14 @@ export default {
         })
       }
     }
-
   }
 }
 </script>
 <style lang="scss" scoped>
 // /deep/.el-dialog{
-    // margin-top:2vh !important;
+// margin-top:2vh !important;
 // }
-/deep/.el-dialog__footer{
-    text-align: center !important;
+/deep/.el-dialog__footer {
+  text-align: center !important;
 }
 </style>

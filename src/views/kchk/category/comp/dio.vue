@@ -119,6 +119,9 @@ import {
   CreateGoodsInfo,
   UpdateGoodsInfo
 } from '@/api/kchk/goods'
+import {
+  GoodsCategoryDetailGetList
+} from '@/api/kchk/company'
 import { GetGoodsCategoryTreeHasRole } from '@/api/kchk/goods'
 import CreateSections from '@/components/CreateSections'
 import mtForm from '@/components/mtForm/index'
@@ -153,6 +156,7 @@ export default {
         categoryName: ''
       },
       tree: [],
+      type: [],
       fields: {},
       isSave: false,
       mining: false,
@@ -176,6 +180,7 @@ export default {
           this.getBaseField()
           this.minchange()
           this.defaultchang()
+          this.getType(this.aoiinfo.categoryId)
           this.attachmentList = this.info.attachmentList.map(e => {
             return { url: `/api/zjlab/Attachment/FileMsg?id=${e.id}` }
           })
@@ -189,7 +194,8 @@ export default {
             flag: 1,
             remark: '',
             categoryId: '',
-            categoryName: ''
+            categoryName: '',
+            goodsCategoryDetailId: ''
           }
         }
       },
@@ -208,12 +214,23 @@ export default {
         this.getBaseField()
       })
     },
+    changeParam(param) {
+      return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
+    },
+    getType(id) {
+      const data = { 'maxResultCount': 1000, 'skipCount': 0, categoryId: id }
+      GoodsCategoryDetailGetList(this.changeParam(data)).then(res => {
+        this.fields[3].setting = res.items
+      })
+    },
     formChange(id, type) {
+      if (id.field == 'categoryId') {
+        this.aoiinfo.goodsCategoryDetailId = ''
+        this.getType(this.aoiinfo.categoryId)
+      }
       if (type == 'photo') {
         this.attachmentList.push({ url: `/api/zjlab/Attachment/FileMsg?id=${id}` })
       } else if (type == 'phototp') {
-        debugger
-        // const ids = id.url.substring(id.url.indexOf('=') + 1, id.url.length)
         for (let index = 0; index < this.attachmentList.length; index++) {
           if (this.attachmentList[index].url === id.url) {
             this.attachmentList.splice(index, 1)
@@ -312,9 +329,11 @@ export default {
         }
         if (!e.name) {
           this.$message.error('请选择请输入单位名称')
+          return
         }
         if (!e.num) {
           this.$message.error('请选择请输入换算数量')
+          return
         }
       })
       if (!fl) {
@@ -328,6 +347,7 @@ export default {
       this.list.forEach(e => {
         list.push({ id: e.id, unit: e })
       })
+      this.aoiinfo.goodsCategoryDetailId = this.aoiinfo.goodsCategoryDetailId || null
       const obj = JSON.parse(JSON.stringify({
         goodsInfo: this.aoiinfo,
         attachmentList: attachmentList,
@@ -384,6 +404,18 @@ export default {
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.name : ''
+      })
+      field.push({
+        field: 'goodsCategoryDetailId',
+        formType: 'selete',
+        isNull: 0,
+        name: '大类名称',
+        placeholder: '请选择大类名称',
+        setting: this.type,
+        inputTips: '',
+        optionL: 'goodsCategoryDetailName',
+        optionV: 'id',
+        value: this.aoiinfo ? this.aoiinfo.goodsCategoryDetailId : ''
       })
       field.push({
         field: 'brand',

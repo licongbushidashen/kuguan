@@ -1,9 +1,10 @@
 <template>
-  <el-dialog :visible.sync="showDialog" title="单位类型管理" >
+  <el-dialog :visible.sync="showDialog" title="大类管理" >
     <div>
-      <el-input v-model="inputs" style="width:200px;padding: 10px 0px 10px 0px;" placeholder="请输入单位类型">
-        <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(1)"/>
-      </el-input>
+      <el-input v-model="CategoryName" placeholder="请输入类目名称" style="width:200px;padding: 10px 0px 10px 0px;"/>
+      <el-input v-model="inputs" style="width:200px;padding: 10px 0px 10px 0px;" placeholder="请输入大类名称"/>
+      <el-button icon="el-icon-search" type="primary" style="height: 30px !important;" @click="handleCurrentChange(1)">
+        搜索      </el-button>
       <div style="float:right"><el-button
         class="main-table-header-button "
         type="primary"
@@ -32,11 +33,11 @@
         label="序号">
         <template slot="header" slot-scope="scope">
           <div style="text-align: center; display: block;">
-            <el-checkbox
+            <!-- <el-checkbox
               v-model="checkedAll"
               :disabled="!list || !list.length"
               @change="selectAll"
-            />
+            /> -->
           </div>
         </template>
         <template slot-scope="{ row, column, $index}">
@@ -50,7 +51,7 @@
               <el-checkbox
                 v-show="row.hover || row.checked"
                 v-model="row.checked"
-                @change="onItemCheckboxChange"
+                @change="onItemCheckboxChange(row)"
               />
               <span v-show="!row.hover && !row.checked" class="text">{{
                 $index+1
@@ -62,16 +63,13 @@
       </el-table-column>
 
       <el-table-column
-        prop="name"
-        label="单位类型"
+        prop="categoryName"
+        label="类目名称"
       />
-
       <el-table-column
-        prop="creationTime"
-        label="创建时间"
+        prop="goodsCategoryDetailName"
+        label="大类名称"
       />
-
-
     </el-table>
     <div class="p-contianer">
       <el-pagination
@@ -86,7 +84,15 @@
     </div>
     <el-dialog :visible.sync="addshow" :title="titles" append-to-body width="400px" style="margin-top: 18vh;">
       <div>
-        <label for="" style="margin-right:20px" >单位类型</label>
+        <label for="" style="margin-right:20px" >货品类型</label>
+        <el-select v-model="type" style="    width: 200px;margin-bottom:30px">
+          <el-option
+            v-for="(item,index ) in types" :key="index" :label="item.name"
+            :value="item.id"/>
+        </el-select>
+      </div>
+      <div>
+        <label for="" style="margin-right:20px" >大类名称</label>
         <el-input v-model="name" style="width:200px" placeholder="请输入"/>
       </div>
       <span slot="footer" class="dialog-footer" style="text-align: center !important;">
@@ -99,11 +105,14 @@
 <script>
 
 import {
-  CompanyCategoryPage,
-  CompanyCreate,
-  CompanyUpdate,
-  CompanyDeleteMany
+  GoodsCategoryDetailGetList,
+  GoodsCategoryDetailCreate,
+  GoodsCategoryDetailUpdate,
+  GoodsCategoryDetailDelete
 } from '@/api/kchk/company'
+import {
+  GetGoodsCategoryTreeHasRole
+} from '@/api/kchk/goods'
 import { mapGetters } from 'vuex'
 export default {
   props: {
@@ -118,6 +127,9 @@ export default {
     }},
   data() {
     return {
+      CategoryName: '',
+      type: '',
+      types: [],
       checkedAll: [],
       titles: '新建单位类型',
       addshow: false,
@@ -145,39 +157,31 @@ export default {
     }
   },
   mounted() {
+    this.GetGoodsCategoryTree()
     this.getList()
   },
   methods: {
+    GetGoodsCategoryTree() {
+      GetGoodsCategoryTreeHasRole({}).then(res => {
+        this.types = res
+      })
+    },
     /**
-     * 编辑删除
-     */
+       * 编辑删除
+       */
     handleClick(type) {
       if (type === 'delete') {
         // 启用停用
+
         this.$confirm('您确定要删除吗?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         })
           .then(() => {
-            CompanyDeleteMany(this.obj)
+            debugger
+            GoodsCategoryDetailDelete(this.obj)
               .then(res => {
-                const arr = res.data.failMsg.map(e => {
-                  return e + '<br/>'
-                })
-                if (!res.data.failCount) {
-                  this.$message({
-                    type: 'success',
-                    dangerouslyUseHTMLString: true,
-                    message: `成功删除${res.data.successCount}条`
-                  })
-                } else {
-                  this.$message({
-                    type: 'error',
-                    dangerouslyUseHTMLString: true,
-                    message: `成功删除${res.data.successCount}条，失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
-                  })
-                }
                 this.getList()
               })
               .catch(() => {})
@@ -192,39 +196,45 @@ export default {
     },
     savechange() {
       if (!this.name) {
-        this.$message.error('请输入单位类型')
+        this.$message.error('请输入大类名称')
+        return
+      }
+      if (!this.type) {
+        this.$message.error('请选择类目')
         return
       }
       if (this.info1) {
-        CompanyUpdate({ name: this.name, id: this.info1.id }).then(res => {
+        GoodsCategoryDetailUpdate({ goodsCategoryDetailName: this.name, id: this.info1.id, categoryId: this.type }).then(res => {
           this.getList()
+          this.$message.success('修改成功')
           this.addshow = false
         })
       } else {
-        CompanyCreate({ name: this.name }).then(res => {
+        GoodsCategoryDetailCreate({ goodsCategoryDetailName: this.name, categoryId: this.type }).then(res => {
           this.getList()
+          this.$message.success('新增成功')
           this.addshow = false
         })
       }
     },
     addtype(val, item) {
       if (val) {
-        this.titles = '新增单位类型'
+        this.titles = '新增大类名称'
         this.name = ''
+        this.type = ''
         this.info1 = false
+        this.addshow = true
       } else {
         this.info1 = item
-        this.name = item.name
-        if (!this.allAuth['OrderSetting.CompanyCategorys.Edit']) {
-          this.$message.error('暂无当前权限')
-        }
+        this.type = item.categoryId
+        this.name = item.goodsCategoryDetailName
+        this.addshow = true
       }
-      this.addshow = true
     },
     /** 列表操作 */
     /**
-     * 当某一行被点击时会触发该事件
-     */
+       * 当某一行被点击时会触发该事件
+       */
     handleRowClick(row, column, event) {
       if (column.label == '序号') {
         return
@@ -234,17 +244,17 @@ export default {
       }
     },
     /**
-     * 更改当前页数
-     * @param {*} val
-     */
+       * 更改当前页数
+       * @param {*} val
+       */
     handleCurrentChange(val) {
       const x = (val > 0 ? val - 1 : 0) * this.pageSize
       this.currentPage = val
       this.getList(x)
     },
     /*
-   * 当checkbox选择change时事件
-   */
+     * 当checkbox选择change时事件
+     */
     selectAll(e) {
       const isChecked = e
       if (isChecked) {
@@ -260,18 +270,22 @@ export default {
       }
       this.onItemCheckboxChange()
     },
-    onItemCheckboxChange() {
-      this.obj = {}
-      this.list.filter((d) => d.checked).map(e => {
-        const key = e.id; const val = e.id
-        this.obj[key] = val
+    onItemCheckboxChange(row) {
+      this.obj = row.id
+      this.list.forEach(e => {
+        if (e.id != row.id) {
+          e.checked = false
+        }
       })
       console.log(this.obj)
     },
+    changeParam(param) {
+      return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
+    },
     getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize , 'skipCount': x || this.currentPage, searchKey: this.inputs }
-      CompanyCategoryPage(data)
+      const data = { 'maxResultCount': this.pageSize , 'skipCount': x || this.currentPage, GoodsCategoryDetailName: this.inputs, CategoryName: this.CategoryName }
+      GoodsCategoryDetailGetList(this.changeParam(data))
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
@@ -288,3 +302,4 @@ export default {
   }
 }
 </script>
+

@@ -164,7 +164,11 @@
             </div>
 
           </el-tab-pane> -->
-          <el-tab-pane v-if="roleActive.name != 'admin'" label="功能权限" name="rule1">
+          <el-tab-pane
+            v-if="roleActive.name != 'admin'"
+            label="功能权限"
+            name="rule1"
+          >
             <!-- v-if="roleActive && showRuleSet" -->
             <!-- 权限管理 -->
 
@@ -221,7 +225,10 @@
             </div>
           </el-tab-pane>
           <el-tab-pane
-            v-if="roleActive.name != 'admin' &&allAuth['SystemSetting.DataPermission']"
+            v-if="
+              roleActive.name != 'admin' &&
+                allAuth['SystemSetting.DataPermission']
+            "
             label="数据权限"
             name="rule2"
           >
@@ -245,7 +252,9 @@
                 "
               >
                 <el-button
-                  v-if="roleActive &&allAuth['SystemSetting.DataPermission.Edit']"
+                  v-if="
+                    roleActive && allAuth['SystemSetting.DataPermission.Edit']
+                  "
                   :disabled="roleList.length === 0"
                   size="medium"
                   type="primary"
@@ -436,7 +445,8 @@ export default {
       checkList: [], // 自定义选择
       allrole: [], // 按钮权限
       nowrole: [],
-      allroleActive: []
+      allroleActive: [],
+      tb: []
     }
   },
 
@@ -825,8 +835,10 @@ export default {
       })
     },
     permissionsRole() {
+      this.tb = new Set()
       permissions(`?providerName=R&providerKey=${this.roleActive.name}`).then(
         res => {
+          debugger
           res.groups.splice(0, 3)
           res.groups.splice(1, 1)
           for (let i = 0; i < res.groups.length; i++) {
@@ -838,11 +850,16 @@ export default {
                 add.permissions = []
                 arr.push(add)
               } else {
+                if (add.isGranted == false) {
+                  arr[arr.length - 1].isGranted = false
+                }
+                this.tb.add(arr[arr.length - 1].name)
                 arr[arr.length - 1].permissions.push(add)
               }
             }
             res.groups[i].permissions = arr
           }
+
           this.allrole = JSON.parse(
             JSON.stringify(res.groups).replace(/name/g, 'id')
           )
@@ -1007,24 +1024,48 @@ export default {
     // 权限提交
     ruleSubmit(val) {
       this.ruleLoading = true
-      // const arr = []
-
       if (val == 1) {
         this.newArr = []
-        // this.toOneArray(this.allrole)
-        // this.nowrole
-        const arr = this.$refs.tree1.getCheckedNodes()
+        const arr = this.$refs.tree1.getCheckedNodes(false, true)
+        // const arr1 = this.$refs.tree1.getHalfCheckedNodes()
+        // console.log(this.$refs.tree1.getNode(), 123)
+        // const obj = []
+        // for (const item of arr1) {
+        //   if (item.isGranted != undefined) {
+        //     obj.push({
+        //       name: item.id,
+        //       isGranted: true
+        //     })
+        //   }
+        // }
+        console.log(this.$refs.tree1, 123)
         const obj = []
+        console.log(this.tb)
+        const tb = new Set(JSON.parse(JSON.stringify(this.tb)))
+
         const active = new Set(this.allroleActive)
         for (const item of arr) {
           if (item.isGranted != undefined) {
             obj.push({
               name: item.id,
-              isGranted: true
+              isGranted: true,
+              parentName: item.parentName
             })
             active.delete(item.id)
+            tb.delete(item.parentName)
           }
         }
+        obj.forEach(e => {
+          if (active.has(e.parentName)) {
+            active.delete(e.parentName)
+          }
+        });
+        [...tb].forEach(e => {
+          obj.push({
+            name: e,
+            isGranted: false
+          })
+        });
         [...active].forEach(e => {
           obj.push({
             name: e,

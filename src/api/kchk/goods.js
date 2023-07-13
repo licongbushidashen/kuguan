@@ -13,6 +13,16 @@ export function CreateOrder(data) {
     }
   })
 }
+export function CreateOutOrder(data) {
+  return request({
+    url: `/api/zjlab/Order/CreateOutOrder`,
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function updataRole(data) {
   return request({
     url: `/api/zjlab/WarningRule/BtachUpdate`,
@@ -32,9 +42,29 @@ export function Getrole(id) {
     }
   })
 }
-export function CreateRole(data) {
+export function SetWarning(data) {
   return request({
-    url: '/api/zjlab/WarningRule/CreateManyAysnc',
+    url: '/api/zjlab/WarningRule/SetWarning',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function BatchSetWarning(data) {
+  return request({
+    url: '/api/zjlab/WarningRule/BatchSetWarning',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function SetPlan(data) {
+  return request({
+    url: '/api/zjlab/WarningRule/SetPlan',
     method: 'post',
     data: data,
     headers: {
@@ -93,7 +123,7 @@ export function GetTree(data) {
 }
 export function GetGoodsCategoryTreeHasRole(data) {
   return request({
-    url: '/api/zjlab/GoodsCategory/GetGoodsCategoryTreeHasRole',
+    url: '/api/zjlab/GoodsCategory/GetGoodsCategoryListHasRole',
     method: 'get',
     data: data,
     headers: {

@@ -107,7 +107,7 @@ export function GreenPlantGetPage(data) {
 }
 export function WaterDispenserGetBooks(data) {
   return request({
-    url: '/api/zjlab/WaterDispenser/GetBooks',
+    url: `/api/zjlab/WaterDispenser/GetBooks${data}`,
     method: 'get',
     data: data,
     headers: {
@@ -157,9 +157,20 @@ export function DownloadGreenPlantExcel(data) {
     }
   })
 }
-export function DownloadWaterDispenserExcel(data) {
+export function DownloadKitchenReport(data) {
   return request({
-    url: '/api/zjlab/WaterDispenser/DownloadWaterDispenserExcel',
+    url: '/api/zjlab/Kitchen/DownloadKitchenReport',
+    method: 'post',
+    data: data,
+    responseType: 'arraybuffer',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function DownloadWaterDispenserPage(data) {
+  return request({
+    url: '/api/zjlab/WaterDispenser/DownloadWaterDispenserPage',
     method: 'post',
     data: data,
     responseType: 'arraybuffer',
@@ -189,6 +200,38 @@ export function WaterDispenserCreate(data) {
     }
   })
 }
+// 小厨宝
+export function DownloadKitchenPage(data) {
+  return request({
+    url: '/api/zjlab/Kitchen/DownloadKitchenPage',
+    method: 'post',
+    data: data,
+    responseType: 'arraybuffer',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function KitchenGetPage(data) {
+  return request({
+    url: '/api/zjlab/Kitchen/GetPage',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function KitchenCreate(data) {
+  return request({
+    url: '/api/zjlab/Kitchen/Create',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function WaterDispenserUpdate(data) {
   return request({
     url: `/api/zjlab/WaterDispenser/Update?id=${data.id}`,
@@ -199,9 +242,29 @@ export function WaterDispenserUpdate(data) {
     }
   })
 }
+export function KitchenUpdate(data) {
+  return request({
+    url: `/api/zjlab/Kitchen/Update?id=${data.id}`,
+    method: 'put',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
 export function GetBooks(data) {
   return request({
     url: `/api/zjlab/GreenPlant/GetBooks${data}`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function GetKitchenBooks(data) {
+  return request({
+    url: `/api/zjlab/Kitchen/GetBooks${data}`,
     method: 'get',
     data: data,
     headers: {
@@ -238,6 +301,17 @@ export function DownloadGreenPlantPage(data) {
     method: 'post',
     data: data,
     responseType: 'arraybuffer',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+export function SpacePointGet(data) {
+  return request({
+    url: `/api/zjlab/SpacePoint/Get?id=${data}`,
+    method: 'get',
+    data: data,
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }

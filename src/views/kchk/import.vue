@@ -11,12 +11,13 @@
   >
     <div class="dialog-body">
       <el-upload
-        v-if="flag==true"
+        v-if="flag == true"
         :show-file-list="false"
         :http-request="fileUpload"
         action="http"
         drag
-        multiple>
+        multiple
+      >
         <i class="wk wk-icon-upload upload-icon" />
         <div class="upload-name">点击或拖拽上传</div>
         <!-- <div class="content content-tips">
@@ -27,44 +28,65 @@
           <div>3、数据标题单据号仅支持覆盖导入</div>
         </div> -->
       </el-upload>
-      <div v-if="flag==false" style="border:1px dashed #d9d9d9;    width: 100%;   padding-top: 60px;height: 260px;    text-align: center;">
-        <img src="../../assets/img/excel.png" alt="">
-        <h1 style="font-size:15px">{{ params1.name }}({{ params1.sizev }}) <span class="el-icon-circle-close" @click="news"/></h1>
-        <el-progress :stroke-width="12" :percentage="100" status="success" style="    padding: 0px 110px;"/>
+      <div
+        v-if="flag == false"
+        style="
+          border: 1px dashed #d9d9d9;
+          width: 100%;
+          padding-top: 60px;
+          height: 260px;
+          text-align: center;
+        "
+      >
+        <img src="../../assets/img/excel.png" alt="" >
+        <h1 style="font-size: 15px">
+          {{ params1.name }}({{ params1.sizev }})
+          <span class="el-icon-circle-close" @click="news" />
+        </h1>
+        <el-progress
+          :stroke-width="12"
+          :percentage="100"
+          status="success"
+          style="padding: 0px 110px"
+        />
       </div>
-      <div v-if="flag==3">
+      <div v-if="flag == 3">
         <el-table
           v-loading="loading"
           id="examine-table"
           :data="list"
           height="300"
           class="main-table"
-          highlight-current-row>
-
+          highlight-current-row
+        >
           <el-table-column
             show-overflow-tooltip
             prop="creationTime"
-            label="导入时间"/>
+            label="导入时间"
+          />
 
-          <el-table-column
-            prop="creatorName"
-            label="操作人"
-          />
-          <el-table-column
-            prop="importResult"
-            label="导入结果"
-          />
+          <el-table-column prop="creatorName" label="操作人" />
+          <el-table-column prop="importResult" label="导入结果" />
         </el-table>
       </div>
     </div>
     <span slot="footer" class="dialog-footer">
-      <el-button
-        :class="{ 'is-hidden': !showCancel }" @click="closeView"
-      >{{ flag==3?'关闭':'取消' }}</el-button
-      >
-      <el-button v-if="flag!=3" :disabled="flag" type="primary" @click="uploads">{{
-        sureTitle
+      <el-button :class="{ 'is-hidden': !showCancel }" @click="closeView">{{
+        flag == 3 ? '关闭' : '取消'
       }}</el-button>
+      <el-button
+        v-if="mbxz"
+        :class="{ 'is-hidden': !showCancel }"
+        @click="DownloadGoodsInfoExcel"
+      >模板下载</el-button
+      >
+      <el-button
+        v-if="flag != 3"
+        :disabled="flag"
+        type="primary"
+        @click="uploads"
+      >{{ sureTitle }}</el-button
+      >
     </span>
   </el-dialog>
 </template>
@@ -76,6 +98,7 @@ import {
   ImportLogPageAysnc
 } from '@/api/admin/employeeDep'
 import request from '@/utils/request'
+import { downloadFileWithBuffer } from '@/utils'
 import axios from 'axios'
 import { downloadExcelWithResData, verifyFileTypeWithFileName } from '@/utils'
 
@@ -88,6 +111,10 @@ export default {
       type: Boolean,
       default: false
     },
+    mbxz: {
+      type: String,
+      default: ''
+    },
     // CRM类型
     crmType: {
       type: String,
@@ -97,6 +124,10 @@ export default {
     url: {
       type: String,
       default: ''
+    },
+    importCategory: {
+      type: String,
+      default: 'Company'
     }
   },
   data() {
@@ -135,8 +166,8 @@ export default {
     },
     /** 附件上传 */
     fileUpload(val) {
-      console.log(val, 555)
-      if (val.file.type != 'application/vnd.ms-excel') {
+      console.log(val, 666620)
+      if (val.file.type.indexOf('application/vnd.') == -1) {
         this.$message.error('请上传xlsx格式文件')
         return
       }
@@ -149,24 +180,12 @@ export default {
     dateunit(val) {
       if (val < 1024) {
         return val + 'B'
-      } else if (
-        val >= 1024 &&
-        val < Math.pow(1024, 2)
-      ) {
-        return (
-          parseFloat(val / 1024).toFixed(2) + 'KB'
-        )
-      } else if (
-        val >= Math.pow(1024, 2) &&
-        val < Math.pow(1024, 3)
-      ) {
+      } else if (val >= 1024 && val < Math.pow(1024, 2)) {
+        return parseFloat(val / 1024).toFixed(2) + 'KB'
+      } else if (val >= Math.pow(1024, 2) && val < Math.pow(1024, 3)) {
         return parseFloat(val / Math.pow(1024, 2)).toFixed(2) + 'MB'
       } else if (val > Math.pow(1024, 3)) {
-        return (
-          parseFloat(val / Math.pow(1024, 3)).toFixed(
-            2
-          ) + 'GB'
-        )
+        return parseFloat(val / Math.pow(1024, 3)).toFixed(2) + 'GB'
       } else {
         return 0 + 'B'
       }
@@ -175,7 +194,7 @@ export default {
       const CancelToken = axios.CancelToken
       const self = this
       const config = {
-        onUploadProgress: progressEvent => {
+        onUploadProgress: (progressEvent) => {
           console.log(progressEvent)
           const percentage =
             ((progressEvent.loaded / progressEvent.total) * 100) | 0
@@ -194,10 +213,20 @@ export default {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
-      }).then(res => {
+      }).then((res) => {
         this.loading = false
-        ImportLogPageAysnc({ 'maxResultCount': 20, 'skipCount': 0 }).then(res => {
-          debugger
+        if (res.data.length > 0) {
+          this.$message.error(res.data.join())
+        }
+        if (res.success == false) {
+          this.$message.error(res.msg)
+        }
+        ImportLogPageAysnc({
+          maxResultCount: 20,
+          skipCount: 0,
+          importCategory: this.importCategory
+        }).then((res) => {
+          this.$emit('success', '1')
           this.list = res.items
           this.flag = 3
         })
@@ -207,6 +236,24 @@ export default {
     /**
      * 下载错误
      */
+    DownloadGoodsInfoExcel() {
+      return request({
+        url: this.mbxz,
+        method: 'get',
+        responseType: 'arraybuffer',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((res) => {
+        this.loading = false
+        downloadFileWithBuffer(res).then((res) => {
+          debugger
+          this.list = res.items
+          this.flag = 3
+        })
+      })
+    },
+
     downloadErrData() {
       this.getImportError(this.resultData.token)
     },
@@ -219,7 +266,7 @@ export default {
       userErrorExcelDownAPI({
         token
       })
-        .then(res => {
+        .then((res) => {
           downloadExcelWithResData(res)
           this.loading = false
         })
@@ -233,7 +280,7 @@ export default {
      */
     download() {
       userImportTemplateAPI()
-        .then(res => {
+        .then((res) => {
           downloadExcelWithResData(res)
         })
         .catch(() => {})
@@ -316,11 +363,10 @@ export default {
     transform: rotate(-45deg) translateY(-2px);
   }
 }
-  .download {
-    cursor: pointer;
-    color: #2362fb;
-
-  }
+.download {
+  cursor: pointer;
+  color: #2362fb;
+}
 .sections {
   font-size: 14px;
   min-height: 215px;
@@ -348,12 +394,12 @@ export default {
 }
 
 .content-tips {
-font-size: 13px;
-    color: #999;
-    text-align: left;
-    margin-left: 147px;
-    margin-top: 20px;
-    line-height: 20px;
+  font-size: 13px;
+  color: #999;
+  text-align: left;
+  margin-left: 147px;
+  margin-top: 20px;
+  line-height: 20px;
 }
 
 #importInputFile {
@@ -414,17 +460,15 @@ font-size: 13px;
   }
 }
 /deep/.el-upload {
-      width: 100%;
-          padding-top: 30px;
+  width: 100%;
+  padding-top: 30px;
 }
-/deep/.el-upload-dragger{
+/deep/.el-upload-dragger {
   width: 100%;
   padding-top: 87px;
   height: 260px;
-.upload-icon{
-
+  .upload-icon {
     font-size: 50px;
-
-}
+  }
 }
 </style>

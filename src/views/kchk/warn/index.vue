@@ -8,8 +8,9 @@
       <template v-slot:ft>
         <div style="    display: flex;    justify-content: end;">
           <div>
+            <!-- v-if="activeName==0&&allAuth['TaskCenterSetting.TaskCenterDealWithWarningRule']" -->
             <el-button
-              v-if="activeName==0&&allAuth['TaskCenterSetting.TaskCenterDealWithWarningRule']"
+              v-if="activeName==0"
               :disabled="!disable"
               style="margin:0px 0px 10px 0px"
               type="primary" @click="addJurisdiction(1)">批量处理</el-button>
@@ -52,7 +53,7 @@
         :height="tableHeight"
         class="main-table"
         highlight-current-row
-        @row-click="handleRowClick"
+
       >
         <el-table-column
           show-overflow-tooltip
@@ -89,11 +90,11 @@
             </span>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="address" label="类型">
+        <el-table-column prop="address" label="预警类型">
           <template slot-scope="{ row, column, $index }">
-            <span>{{ row.orderCategory | ordername }}</span>
+            <span>{{ row.warningCategory | ordername }}</span>
           </template>
-        </el-table-column> -->
+        </el-table-column>
         <el-table-column prop="goodsCode" label="商品编号" />
         <!-- <el-table-column show-overflow-tooltip prop="name" label="单据状态">
             <template slot-scope="{ row, column, $index }">
@@ -104,10 +105,27 @@
 
         <el-table-column prop="goodName" label="商品名称" />
         <el-table-column prop="size" label="规格" />
-        <el-table-column prop="lowerLimit" label="最低库存" />
-        <el-table-column prop="upperLimit" label="最高库存" />
-        <el-table-column prop="stockQuantity" label="结存数量" />
-        <el-table-column prop="warningValue" label="超限数量" />
+        <el-table-column prop="lowerLimit" label="最低库存" >
+          <template slot-scope="{ row, column, $index }">
+            <span>{{ row.lowerLimit }}{{ row.unitName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="upperLimit" label="最高库存" >
+          <template slot-scope="{ row, column, $index }">
+            <span>{{ row.upperLimit }}{{ row.unitName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="stockQuantity" label="结存数量" >
+          <template slot-scope="{ row, column, $index }">
+            <span>{{ row.stockQuantity }}{{ row.unitName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="warningValue" label="预警触发数量" >
+          <template slot-scope="{ row, column, $index }">
+            <span>{{ row.warningValue }}{{ row.unitName }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="触发时间" />
         <!-- <el-table-column
             prop="ean13"
             label="单位"
@@ -161,13 +179,13 @@ export default {
       }
     },
     ordername: function(value) {
-      if (value == 21) {
+      if (value == 11) {
         return '库存总量预警'
-      } else if (value == 22) {
-        return '每单出库预警'
       } else if (value == 23) {
+        return '每单出库预警'
+      } else if (value == 21) {
         return '月度出库预警'
-      } else if (value == 24) {
+      } else if (value == 22) {
         return '季度出库预警'
       }
     },
@@ -191,6 +209,7 @@ export default {
   mixins: [pagest],
   data() {
     return {
+      pageSizes: [15, 30, 60, 100],
       warningCategory: '',
       warningCategorys: [
         { name: '每单预警', id: 23 },
@@ -289,12 +308,11 @@ export default {
     /**
        * 获取列表数据
        */
-    getList() {
+    getList(x) {
       this.loading = true
       const data = {
-        maxResultCount: this.pageSize,
-        skipCount: this.currentPage
-
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage
       }
       data.isProcessed = !!Number(this.activeName)
       if (this.warningCategory) {
@@ -305,11 +323,11 @@ export default {
       }
       GetLogTaskCenter(data)
         .then(res => {
-          for (let i = 0; i < res.length; i++) {
-            res[i].hover = false
-            res[i].checked = false
+          for (let i = 0; i < res.items.length; i++) {
+            res.items[i].hover = false
+            res.items[i].checked = false
           }
-          this.list = res
+          this.list = res.items
           this.total = res.totalCount
           this.loading = false
         })
@@ -323,9 +341,9 @@ export default {
        */
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /**
@@ -337,15 +355,22 @@ export default {
         case 1:
           DealWithWarningRule(ids).then(res => {
             this.$store.dispatch('TaskCenterCount')
-            res.forEach(e => {
-              if (e.code) {
-                this.handleCurrentChange(0)
-                this.showDialog = false
-                this.$message.success(e.message)
-              } else {
-                this.$message.error(e.message)
-              }
-            })
+            if (res) {
+              this.handleCurrentChange(0)
+              this.$message.success('操作成功')
+            } else {
+              this.$message.error('操作失败')
+            }
+
+            // res.forEach(e => {
+            //   if (e.code) {
+            //     this.handleCurrentChange(0)
+            //     this.showDialog = false
+            //     this.$message.success(e.message)
+            //   } else {
+            //     this.$message.error(e.message)
+            //   }
+            // })
           })
           break
 

@@ -97,6 +97,13 @@ export default {
     url: {
       type: String,
       default: ''
+    },
+    importCategory: {
+      type: String,
+      default: 'Company'
+    }, mbxz: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -136,7 +143,7 @@ export default {
     /** 附件上传 */
     fileUpload(val) {
       console.log(val, 555)
-      if (val.file.type != 'application/vnd.ms-excel') {
+      if (val.file.type.indexOf('application/vnd.') == -1) {
         this.$message.error('请上传xlsx格式文件')
         return
       }
@@ -196,8 +203,14 @@ export default {
         }
       }).then(res => {
         this.loading = false
-        ImportLogPageAysnc({ 'maxResultCount': 20, 'skipCount': 0 }).then(res => {
-          debugger
+        if (res.data.length > 0) {
+          this.$message.error(res.data.join())
+        }
+        if (res.success == false) {
+          this.$message.error(res.msg)
+        }
+        this.$emit('success', '1')
+        ImportLogPageAysnc({ 'maxResultCount': 20, 'skipCount': 0, importCategory: this.importCategory }).then(res => {
           this.list = res.items
           this.flag = 3
         })

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-if="showDialog" :visible.sync="showDialog" style="    " destroy-on-close title="绿植台账">
+  <el-dialog v-if="showDialog" :visible.sync="showDialog" style="    " destroy-on-close title="小厨宝台账">
     <create-sections >
       <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick" @change="formChange"/>
     </create-sections>
@@ -14,8 +14,8 @@ import { debounce } from 'throttle-debounce'
 import { mapGetters } from 'vuex'
 import { objDeepCopy } from '@/utils'
 import {
-  GreenPlantCreate,
-  GreenPlantUpdate,
+  KitchenCreate,
+  KitchenUpdate,
   GetSpacePointTree
 } from '@/api/account'
 import { parseTime } from '@/utils'
@@ -40,6 +40,7 @@ export default {
     }},
   data() {
     return {
+      flag: false,
       showDialog: true,
       list: [],
       maxlength: 300,
@@ -64,7 +65,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'userInfo'
+      'userInfo',
+      'allAuth'
     ])
   },
   watch: {
@@ -80,13 +82,14 @@ export default {
           this.aoiinfo.parentId = this.info.spacePointId
           if (this.info.spacePointId) {
             await this.pointTree(this.info.spacePointId, 'parentId', 0, 'chs')
+
             this.aoiinfo.parentId1 = this.info.spacePointId1
+            console.log(this.info.parentId1, 12356)
           }
           if (this.info.spacePointId1) {
             await this.pointTree(this.info.spacePointId1, 'parentId', 1, 'chs')
             this.aoiinfo.parentId2 = this.info.spacePointId2
           }
-
           this.getBaseField()
         }
       },
@@ -96,13 +99,17 @@ export default {
   },
   created() {
     this.pointTree()
+
     this.debouncedHandleLogin = debounce(300, this.savechange)
   },
   methods: {
+
     pointTree(item, name, j, chs) {
+      debugger
       const data = item ? { parentId: item } : {}
       GetSpacePointTree(data)
         .then(response => {
+          debugger
           if (j == 1) {
             for (let i = 0; i < this.fields.length; i++) {
               if (this.fields[i].field == 'parentId') {
@@ -120,11 +127,10 @@ export default {
             for (let i = 0; i < this.fields.length; i++) {
               if (this.fields[i].field == 'parentId') {
                 this.setting1 = response
-                // this.setting2 = []
+                this.setting2 = []
                 this.$set(this.fields[i], 'setting1', response)
-
+                this.fields[i].setting2 = []
                 if (!chs) {
-                  // this.fields[i].setting2 = []
                   this.aoiinfo.parentId1 = null
                   this.aoiinfo.parentId2 = null
                 }
@@ -156,9 +162,16 @@ export default {
         })
     },
 
+
     saveClick(data) {
+      if (this.flag) {
+        return
+      }
+      this.flag = true
       if (!data) return
       this.aoiinfo.fillingDate = parseTime(this.aoiinfo.fillingDate)
+      this.aoiinfo.installationDate = parseTime(this.aoiinfo.installationDate)
+      this.aoiinfo.maintenanceDate = parseTime(this.aoiinfo.maintenanceDate)
       if (this.aoiinfo.parentId2) {
         this.aoiinfo.spacePointId2 = this.aoiinfo.parentId2
       } if (this.aoiinfo.parentId1) {
@@ -167,13 +180,15 @@ export default {
         this.aoiinfo.spacePointId = this.aoiinfo.parentId
       }
       if (this.aoiinfo.id) {
-        GreenPlantUpdate(this.aoiinfo).then(res => {
+        KitchenUpdate(this.aoiinfo).then(res => {
+          this.flag = false
           this.$message.success('修改成功')
           this.showDialog = false
           this.$emit('change', 'up')
         })
       } else {
-        GreenPlantCreate(this.aoiinfo).then(res => {
+        KitchenCreate(this.aoiinfo).then(res => {
+          this.flag = false
           this.$message.success('新增成功')
           this.showDialog = false
           this.$emit('change', 'add')
@@ -191,15 +206,15 @@ export default {
     getBaseField() {
       const field = []
       field.push({
-        field: 'fillingDate',
+        field: 'installationDate',
         formType: 'datetime',
         format: 'yyyy-MM-dd HH:mm',
         isNull: 1,
-        name: '填写日期',
-        placeholder: '请选择填写日期',
+        name: '安装日期',
+        placeholder: '请选择日期',
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.fillingDate : ''
+        value: this.aoiinfo ? this.aoiinfo.installationDate : ''
       })
       field.push({
         field: 'parentId',
@@ -211,8 +226,6 @@ export default {
         setting: this.settings,
         setting1: this.setting1,
         setting2: this.setting2,
-        parentId2: this.aoiinfo.parentId2,
-        parentId1: this.aoiinfo.parentId1,
         optionL: 'specificLocation',
         optionV: 'id',
         inputTips: '',
@@ -222,70 +235,80 @@ export default {
         field: 'name',
         formType: 'text',
         isNull: 1,
-        name: '绿植名称',
-        placeholder: '请输入绿植名称',
+        name: '名称',
+        placeholder: '请输入名称',
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.name : ''
       })
       field.push({
-        field: 'size',
+        field: 'code',
         formType: 'text',
         isNull: 1,
-        name: '规格',
-        placeholder: '请输入规格',
+        name: '编号',
+        placeholder: '请输入编号',
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.size : ''
+        value: this.aoiinfo ? this.aoiinfo.code : ''
       })
       field.push({
-        field: 'quantiy',
-        formType: 'number',
-        isNull: 1,
-        name: '数量',
-        placeholder: '请输入数量',
-        setting: [],
-        inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.quantiy : ''
-      })
-      field.push({
-        field: 'company',
+        field: 'brand',
         formType: 'text',
         isNull: 1,
-        name: '维护单位',
-        placeholder: '请输入维护单位',
+        name: '品牌',
+        placeholder: '请输入品牌',
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.company : ''
+        value: this.aoiinfo ? this.aoiinfo.brand : ''
       })
       field.push({
-        field: 'accendant',
+        field: 'model',
         formType: 'text',
         isNull: 1,
-        name: '维护人',
-        placeholder: '请输入维护人',
+        name: '型号',
+        placeholder: '请输入型号',
         setting: [],
         inputTips: '',
-        value: this.aoiinfo ? this.aoiinfo.accendant : ''
+        value: this.aoiinfo ? this.aoiinfo.model : ''
+      })
+      field.push({
+        field: 'rateOfWork',
+        formType: 'text',
+        isNull: 1,
+        name: '功率',
+        placeholder: '请输入功率',
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.rateOfWork : ''
+      })
+      field.push({
+        field: 'capacity',
+        formType: 'text',
+        isNull: 1,
+        name: '容量',
+        placeholder: '请输入容量',
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.capacity : ''
       })
       field.push({
         field: 'remark',
         formType: 'textarea',
-        name: '备注',
-        placeholder: '请输入备注',
+        isNull: 1,
+        name: '说明',
+        placeholder: '请输入说明',
         row: 3,
         maxLength: 200,
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.remark : ''
-
       })
       this.fields = this.handleFields(field).list
       this.fieldsRules = this.handleFields(field).fieldRules
     },
     /**
-     * 调整字段
-     */
+       * 调整字段
+       */
     handleFields(list) {
       const fieldRules = {}
       const fieldForm = {}
@@ -301,11 +324,12 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-// /deep/.el-dialog{
-    // margin-top:2vh !important;
-// }
-/deep/.el-dialog__footer{
-    text-align: center !important;
-}
-</style>
+  <style lang="scss" scoped>
+  // /deep/.el-dialog{
+      // margin-top:2vh !important;
+  // }
+  /deep/.el-dialog__footer{
+      text-align: center !important;
+  }
+  </style>
+

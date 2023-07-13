@@ -65,7 +65,8 @@ export default {
         this.showDialog = !this.showDialog
         this.title = '新增类目'
         this.aoiinfo = {
-          flag: 1, dutyUserName: ''
+          flag: 1, dutyUserName: '',
+          orderOutDutyUserName: '', orderInDutyUserName: ''
         }
       },
       deep: true,
@@ -82,6 +83,12 @@ export default {
       if (index == 'dutyUserName') {
         this.aoiinfo.dutyUserId = item.id
         this.aoiinfo.dutyUserName = item.name
+      } else if (index == 'orderInDutyUserName') {
+        this.aoiinfo.orderOutDutyUserId = item.id
+        this.aoiinfo.orderInDutyUserName = item.name
+      } else if (index == 'orderOutDutyUserName') {
+        this.aoiinfo.orderInDutyUserId = item.id
+        this.aoiinfo.orderOutDutyUserName = item.name
       }
       // this.aoiinfo[item.field] = value
     },
@@ -139,6 +146,26 @@ export default {
         setting: [],
         inputTips: '',
         value: this.aoiinfo ? this.aoiinfo.dutyUserName : ''
+      })
+      field.push({
+        field: 'orderOutDutyUserName',
+        formType: 'open',
+        isNull: 0,
+        name: '出库负责人',
+        placeholder: '请选择出库负责人',
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.orderOutDutyUserId : ''
+      })
+      field.push({
+        field: 'orderInDutyUserName',
+        formType: 'open',
+        isNull: 0,
+        name: '入库负责人',
+        placeholder: '请选择入库负责人',
+        setting: [],
+        inputTips: '',
+        value: this.aoiinfo ? this.aoiinfo.orderInDutyUserId : ''
       })
       field.push({
         field: 'remark',

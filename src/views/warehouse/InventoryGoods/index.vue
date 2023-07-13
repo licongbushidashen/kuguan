@@ -159,7 +159,7 @@ import {
 } from '@/api/kchk/goods'
 import {
   GoodsInventory,
-  DownloadGoodsInOutDetailExcel
+  DownloadGoodsInventoryExcel
 } from '@/api/Inventory/kc'
 import { downloadFileWithBuffer } from '@/utils'
 import XrHeader from '@/components/XrHeader'
@@ -245,10 +245,10 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
 
-      const data = { 'maxResultCount': this.currentPage + 15, 'skipCount': this.currentPage, goodsName: this.goodsName, beginTime: this.gettiem(this.time[0], 1), endTime: this.gettiem(this.time[1]) }
+      const data = { 'maxResultCount': this.pageSize , 'skipCount': x || this.currentPage, goodsName: this.goodsName, beginTime: this.gettiem(this.time[0], 1), endTime: this.gettiem(this.time[1]) }
       if (this.categoryName) {
         data.goodsCategoryId = this.categoryName
       }
@@ -279,9 +279,9 @@ export default {
      */
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
 
@@ -318,11 +318,11 @@ export default {
       }
 
 
-      DownloadGoodsInOutDetailExcel(data).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+      DownloadGoodsInventoryExcel(data).then(res => {
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(res, '', 'application/vnd.ms-excel;charset=UTF-8')
       })
     }
   }

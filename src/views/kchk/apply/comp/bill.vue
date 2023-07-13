@@ -87,7 +87,7 @@
             </div>
           </div>
         </div>
-        <div class="wy-body-info-one">
+        <!-- <div class="wy-body-info-one">
           <div class="wy-body-info-one-left">
             <div class="field__label">
               经费卡号
@@ -95,6 +95,7 @@
             <div v-if="butoom1" class="wy-body-info-one-left-val ">
               {{ objs.jfkhName }}
             </div>
+
             <div v-else :class="erroring?objs.jfkhNumber?'':'errorshow':''" class=" wy-body-info-one-left-val  wk changers" @click="opende('jfkh')">
               <div :style="objs.jfkhNumber?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhNumber ||'请选择' }}</div>
             </div>
@@ -105,10 +106,9 @@
             </div>
             <div class="wy-body-info-one-left-val ">
               <div :style="objs.jfkhName?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ objs.jfkhName ||'' }}</div>
-
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="wy-body-detailed">
         <p>{{ objs.identification?'出库':'入库' }}明细</p>
@@ -173,7 +173,7 @@
           >
             <template slot-scope="scope">
               <div v-if="butoom1">
-                <div style="    font-size: 13px;    color: #cccfd6;">{{ scope.row.name || scope.row.goodsName || '请选择' }}</div>
+                <div :style="(scope.row.name || scope.row.goodsName)?'color: #666;':'color: #cccfd6;'" style="    font-size: 13px;    color: #cccfd6;">{{ scope.row.name || scope.row.goodsName || '请选择' }}</div>
               </div>
               <div v-else style="    border: 1px solid #d9d9d9;    min-height: 30px;    line-height: 30px;    padding-left: 12px;    border-radius: 5px;" @click="opende('goods',scope.$index)">
                 <div style="    font-size: 13px;    color: #cccfd6;">{{ scope.row.name || scope.row.goodsName || '请选择' }}</div>
@@ -185,7 +185,10 @@
             prop="brand"
             label="品牌"
           />
-
+          <el-table-column
+            prop="goodsCategoryDetailName"
+            label="大类名称"
+          />
           <el-table-column
             prop="size"
             label="规格"
@@ -370,7 +373,15 @@ export default{
   components: { Type },
   filters: {
     ordername: function(value) {
-      if (value == 11) {
+      if (value == 21) {
+        return '领用出库'
+      } else if (value == 22) {
+        return '退货出库'
+      } else if (value == 23) {
+        return '借用出库'
+      } else if (value == 24) {
+        return '销毁出库'
+      } else if (value == 11) {
         return '采购入库'
       } else if (value == 12) {
         return '退货入库'
@@ -430,9 +441,8 @@ export default{
         ckId: '',
         typeName: '',
         typeId: '',
-        jfkhName: '',
-        jfkhNumber: '',
-
+        jfkhName: '其他',
+        jfkhNumber: '其他',
         dutyUserName: '',
         dutyUserId: '',
         remark: ''
@@ -504,9 +514,8 @@ export default{
           ckId: '',
           typeName: '',
           typeId: '',
-          jfkhName: '',
-          jfkhNumber: '',
-          jfkhId: '',
+          jfkhName: '其他',
+          jfkhNumber: '其他',
           dutyUserName: '',
           dutyUserId: '',
           remark: ''
@@ -529,7 +538,6 @@ export default{
             typeName: this.info.order.goodsCategoryName,
             jfkhName: this.info.order.memoryCardName,
             jfkhNumber: this.info.order.memoryCardNumber,
-            jfkhId: this.info.order.memoryCardId,
             dutyUserName: this.info.order.goodsCategoryDutyUserName,
             dutyUserId: this.info.order.goodsCategoryDutyUserId,
             remark: this.info.order.remark,
@@ -546,6 +554,8 @@ export default{
 
             GetInfo(row.goodsId).then(res => {
               row.ean13List = res.unitList
+              row.goodsCategoryDetailId = res.goodsInfo.goodsCategoryDetailId
+              row.goodsCategoryDetailName = res.goodsInfo.goodsCategoryDetailName
               row.checked = false
               this.list.push(row)
             })
@@ -578,10 +588,10 @@ export default{
     },
     download(row) {
       DownLoadFile(row.id).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, row.fileName, 'application/vnd.ms-excel;charset=UTF-8')
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(res, '', 'application/vnd.ms-excel;charset=UTF-8')
       })
     },
     handleAvatarSuccess(res) {
@@ -597,7 +607,7 @@ export default{
         if (index === 0) {
           sums[index] = '总计'
           return
-        } else if (index === 1 || index === 2 || index === 3 || index === 4) {
+        } else if (index === 1 || index === 2 || index === 3 || index === 4 || index === 5) {
           return
         }
         const values = data.map(item => Number(item[column.property]))
@@ -668,6 +678,8 @@ export default{
         GetInfo(row.id).then(res => {
           row.ean13List = res.unitList
           row.checked = false
+          row.goodsCategoryDetailId = res.goodsInfo.goodsCategoryDetailId
+          row.goodsCategoryDetailName = res.goodsInfo.goodsCategoryDetailName
           this.list[this.goodsIndex] = row
           this.$set(this.list, this.goodsIndex, row)
         })
@@ -714,7 +726,7 @@ export default{
           wareHouseId: this.objs.ckId,
           orderCategory: this.orderCategory,
           goodsCategoryId: this.objs.typeId,
-          memoryCardNumber: this.objs.jfkhId,
+          memoryCardNumber: this.objs.memoryCardName,
           memoryCardName: this.objs.jfkhName,
           receiptDate: filterTimestampToFormatTime(new Date(this.time).getTime(), 'YYYY-MM-DD HH:mm:ss'),
           remark: this.objs.remark,

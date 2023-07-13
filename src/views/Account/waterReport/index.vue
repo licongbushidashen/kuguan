@@ -1,37 +1,51 @@
 <template>
   <div class="main">
-    <xr-header icon-class="iconfont icon-baobiao" icon-color="#2362fb" label="饮水机台账">
+    <xr-header
+      icon-class="iconfont icon-baobiao"
+      icon-color="#2362fb"
+      label="饮水机台账"
+    >
       <template v-slot:ft>
         <el-button
-          v-if="allAuth['PropertyBillManager.WaterDispenser.ReportExport']"
-          class="main-table-header-button "
+          class="main-table-header-button"
           type="primary"
           icon="iconfont icon-daochu1"
-          @click="downs">导出</el-button>
+          @click="downs"
+        >导出</el-button
+        >
       </template>
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
+
         <el-date-picker
           v-model="time"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
-          end-placeholder="结束日期"/>
-        <el-button type="primary" style="margin-left:20px" @click="handleCurrentChange(0)">搜索</el-button>
+          end-placeholder="结束日期"
+        />
+        <el-button
+          type="primary"
+          style="margin-left: 20px"
+          @click="handleCurrentChange(0)"
+        >搜索</el-button
+        >
       </div>
       <el-table
         v-loading="loading"
         id="examine-table"
         :data="list"
-
         class="main-table"
         highlight-current-row
         @row-click="handleRowClick"
       >
-
-        <el-table-column v-for="(item,index) in tableH" :prop="item.props" :label="item.name" :key="index"/>
-
+        <el-table-column
+          v-for="(item, index) in tableH"
+          :prop="item.props"
+          :label="item.name"
+          :key="index"
+        />
       </el-table>
     </div>
   </div>
@@ -79,7 +93,7 @@ export default {
       obj: {},
       info: {},
 
-      time: [new Date() - 24 * 3600 * 1000 * 30, new Date()]
+      time: null
     }
   },
   computed: {
@@ -101,11 +115,20 @@ export default {
      * 导出
      */
     downs() {
-      DownloadWaterDispenserExcel({ 'maxResultCount': 1000, 'skipCount': 0, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+      DownloadWaterDispenserExcel({
+        maxResultCount: 1000,
+        skipCount: 0,
+        beginTime: this.time ? parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00' : null,
+        endTime: this.time ? parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59' : null
+      }).then((res) => {
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(
+          res,
+          '',
+          'application/vnd.ms-excel;charset=UTF-8'
+        )
       })
     },
     handleClick(type, row) {
@@ -127,39 +150,49 @@ export default {
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
     },
     /*
-   * 当checkbox选择change时事件
-   */
+     * 当checkbox选择change时事件
+     */
     onItemCheckboxChange() {
       this.obj = {}
-      this.list.filter((d) => d.checked).map(e => {
-        const key = e.id; const val = e.code
-        this.obj[key] = val
-        return { [key]: val }
-      })
+      this.list
+        .filter((d) => d.checked)
+        .map((e) => {
+          const key = e.id
+          const val = e.code
+          this.obj[key] = val
+          return { [key]: val }
+        })
     },
     /**
      * 获取列表数据
      */
     getList() {
-      debugger
       this.loading = true
-      const data = `?beginTime=${parseTime(this.time[0])}&endTime=${parseTime(this.time[1])}`
+      debugger
+      if (this.time) {
+        var data = `?beginTime=${parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00'}&endTime=${parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59'}`
+      } else {
+        var data = ``
+      }
       WaterDispenserGetBooks(data)
-        .then(res => {
+        .then((res) => {
           let list = {}
           const tableH = []
           this.tableH = [{ name: '空间点位', props: 'size' }]
           const tableHName = new Set()
           for (let i = 0; i < res.length; i++) {
             if (!tableHName.has(res[i].spacePointName)) {
-              tableH.push({ name: res[i].spacePointName, props: res[i].spacePointName })
+              tableH.push({
+                name: res[i].spacePointName,
+                props: res[i].spacePointName
+              })
               tableHName.add(res[i].spacePointName)
             }
           }
           for (let i = 0; i < res.length; i++) {
             const obj = { size: res[i].size }
 
-            tableHName.forEach(e => {
+            tableHName.forEach((e) => {
               if (e == res[i].spacePointName) {
                 obj[res[i].spacePointName] = res[i].totalQuantiy
               }
@@ -186,8 +219,6 @@ export default {
       this.getList()
     },
 
-
-
     /** 列表操作 */
     /**
      * 当某一行被点击时会触发该事件
@@ -198,11 +229,11 @@ export default {
       }
       this.info = row
       this.jurisdictionCreateShow = !this.jurisdictionCreateShow
-    //   GetInfo(row.id).then(res => {
-    //     console.log(res)
-    //     this.info = res
-    //     this.jurisdictionCreateShow = !this.jurisdictionCreateShow
-    //   })
+      //   GetInfo(row.id).then(res => {
+      //     console.log(res)
+      //     this.info = res
+      //     this.jurisdictionCreateShow = !this.jurisdictionCreateShow
+      //   })
     },
     handleClick1(type, scope) {
       this.createAction = {
@@ -211,14 +242,12 @@ export default {
       }
       this.dbsyShow = true
     }
-
-
   }
 }
 </script>
 
 <style lang="scss" scoped>
-/deep/.el-range-editor.el-input__inner{
+/deep/.el-range-editor.el-input__inner {
   // padding: 0px 10px !important;
 }
 .main {
@@ -260,7 +289,7 @@ export default {
 @import '../styles/table.scss';
 .buttonc {
   color: #4f81fc;
-   cursor: pointer;
+  cursor: pointer;
 }
 </style>
 

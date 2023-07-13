@@ -37,11 +37,16 @@
         <el-input v-model="inputs" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入货品名称">
           <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
         </el-input>
+
         <el-button
           v-if="allAuth['OrderSetting.GoodsInfos.BatchSetWarning']"
           class="main-table-header-button xr-btn--orange  "
           type="primary" @click="openwarn('branth')">批量预警设置</el-button>
+        <el-button
+          class="main-table-header-button xr-btn--orange  "
+          type="primary" @click="showDialog=!showDialog ">大类管理</el-button>
       </div>
+
       <el-table
         v-loading="loading"
         id="examine-table"
@@ -96,6 +101,10 @@
           label="所属类目"
         />
         <el-table-column
+          prop="goodsCategoryDetailName"
+          label="大类名称"
+        />
+        <el-table-column
           show-overflow-tooltip
           prop="brand"
           label="品牌"/>
@@ -130,13 +139,16 @@
           @current-change="handleCurrentChange"/>
       </div>
     </div>
+    <Goodstype :showing="showDialog"/>
     <Dio :showing="jurisdictionCreateShow" :info="info" @change="getList"/>
     <Warning :warningshowing="warningshow" :info="info" :ids="ids" @change="getList"/>
     <Plan :planing="planing" :info="info" @change="getList"/>
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
+      import-category="GoodsInfo"
       url="/api/zjlab/GoodsInfo/Upload"
+      mbxz="/api/zjlab/GoodsInfo/DownGoodsInfoTemplate"
       @close="bulkImportShow = false"
       @success="handleCurrentChange(0)"
     />
@@ -153,6 +165,7 @@ import {
   DownloadGoodsInfoExcel,
   GetInfo
 } from '@/api/kchk/goods'
+import Goodstype from './comp/goodstype.vue'
 import Dio from './comp/dio.vue'
 import Warning from './comp/warning.vue'
 import Plan from './comp/plan.vue'
@@ -170,12 +183,13 @@ export default {
     Warning,
     Plan,
     BulkImportUser,
-    TemplateManageDialog
+    TemplateManageDialog,
+    Goodstype
   },
   mixins: [pagest],
   data() {
     return {
-
+      showDialog: false,
       checkedAll: [],
       // 批量导入
       bulkImportShow: false,
@@ -219,8 +233,8 @@ export default {
       this.bulkImportShow = true
     },
     openplan(row) {
-      if (!this.allAuth['OrderSetting.WarningRules.Edit']) {
-        this.$message.error('没有改按钮权限')
+      if (!this.allAuth['OrderSetting.GoodsInfos.SetWarning']) {
+        this.$message.error('没有该按钮权限')
         return
       }
       GetInfo(row.id).then(res => {
@@ -230,8 +244,8 @@ export default {
       })
     },
     openwarn(row) {
-      if (!this.allAuth['OrderSetting.WarningRules.Edit']) {
-        this.$message.error('没有改按钮权限')
+      if (!this.allAuth['OrderSetting.GoodsInfos.SetPlan']) {
+        this.$message.error('没有该按钮权限')
         return
       }
       if (row == 'branth') {
@@ -291,9 +305,9 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = { 'maxResultCount': this.pageSize, 'skipCount': x || this.currentPage, searchKey: this.inputs }
       GoodsInfoPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -313,9 +327,9 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /**
@@ -399,10 +413,10 @@ export default {
      */
     downs() {
       DownloadGoodsInfoExcel({ maxResultCount: 1000, skipCount: 0 }).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(res, '', 'application/vnd.ms-excel;charset=UTF-8')
       })
     }
   }

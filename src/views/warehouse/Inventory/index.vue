@@ -211,8 +211,6 @@ export default {
   },
   methods: {
     handleClick(type, row) {
-      debugger
-
       if (type == 'edit') {
         this.Inventoryid = row.id
         this.flag = row.flag
@@ -247,11 +245,11 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
       const data = {
-        maxResultCount: this.pageSize + this.currentPage,
-        skipCount: this.currentPage,
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage,
         searchKey: this.inputs
       }
       CheckPlanPage(data)
@@ -281,9 +279,9 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /** 列表操作 */

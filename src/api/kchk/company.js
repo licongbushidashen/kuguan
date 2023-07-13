@@ -52,7 +52,7 @@ export function GetInfo(id) {
     }
   })
 }
-export function Company(data) {
+export function DownloadWarehouseExcel(data) {
   return request({
     url: `/api/zjlab/Company/DownloadWarehouseExcel`,
     method: 'post',
@@ -105,3 +105,46 @@ export function CompanyDeleteMany(data) {
   })
 }
 
+// 大类名称
+export function GoodsCategoryDetailGetList(data) {
+  return request({
+    url: `/api/zjlab/GoodsCategoryDetail/GetList${data}`,
+    method: 'get',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+export function GoodsCategoryDetailCreate(data) {
+  return request({
+    url: '/api/zjlab/GoodsCategoryDetail/Create',
+    method: 'post',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+export function GoodsCategoryDetailUpdate(data) {
+  return request({
+    url: `/api/zjlab/GoodsCategoryDetail/Update?id=${data.id}`,
+    method: 'put',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+export function GoodsCategoryDetailDelete(data) {
+  return request({
+    url: `/api/zjlab/GoodsCategoryDetail/Delete?id=${data}`,
+    method: 'delete',
+    data: data,
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}

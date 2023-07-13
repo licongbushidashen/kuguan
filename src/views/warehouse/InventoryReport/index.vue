@@ -16,13 +16,11 @@
       </template>
     </xr-header>
     <div class="main-body">
-      <div class="main-table-header" >
-
+      <div class="main-table-header">
         <!-- <el-input v-model="categoryName" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入类目名称"/> -->
         <el-select
           v-model="categoryName"
           clearable
-
           placeholder="请选择类目名称"
           style="width: 200px; padding: 10px 0px 0px 10px"
         >
@@ -52,7 +50,7 @@
                 v-model="categoryName"
                 placeholder="请选择类目名称"
                 clearable
-                style="width: 200px; "
+                style="width: 200px"
               >
                 <el-option
                   v-for="(item, index) in showDepData"
@@ -67,7 +65,7 @@
               <label for="" style="margin-left: 10px">货品名称</label>
               <el-input
                 v-model="goodsName"
-                style="width: 200px;"
+                style="width: 200px"
                 placeholder="请输入货品名称"
               />
             </div>
@@ -77,23 +75,25 @@
                 v-model="time"
                 :picker-options="pickerOptions"
                 :clearable="false"
-                style="vertical-align: bottom"
+                style="vertical-align: bottom; width: 200px"
                 type="month"
                 laceholder="选择月"
               />
             </div>
           </div>
-          <div
-            class="morecondition2">
+          <div class="morecondition2">
             <el-button
-              class="main-table-header-button "
-              @click="Reset">重置</el-button>
+              class="main-table-header-button" @click="Reset"
+            >重置</el-button
+            >
             <el-button
-              class="main-table-header-button "
-              type="primary" @click="handleCurrentChange(0)">搜索</el-button>
+              class="main-table-header-button"
+              type="primary"
+              @click="handleCurrentChange(0)"
+            >搜索</el-button
+            >
           </div>
         </div>
-
 
         <el-button
           type="primary" @click="handleCurrentChange(0)"
@@ -150,39 +150,36 @@
         /> -->
         <el-table-column prop="initialNum" label="期初数量 ">
           <template slot-scope="{ row, column, $index }">
-            {{ row.initialNum }} {{ row.initialNum > 0 ? row.unitName : '' }}
+            {{ row.initialNum }} {{ row.unitName }}
           </template>
         </el-table-column>
         <el-table-column prop="initialAmount" label="期初金额 (元)" />
         <el-table-column prop="inNum" label="入库数量 ">
           <template slot-scope="{ row, column, $index }">
-            {{ row.inNum }} {{ row.inNum > 0 ? row.unitName : '' }}
+            {{ row.inNum }} {{ row.unitName }}
           </template>
         </el-table-column>
         <el-table-column prop="inPrice" label="入库金额 (元)" />
         <el-table-column prop="outNum" label="出库数量 ">
           <template slot-scope="{ row, column, $index }">
-            {{ row.outNum }} {{ row.outNum > 0 ? row.unitName : '' }}
+            {{ row.outNum }} {{ row.unitName }}
           </template>
         </el-table-column>
         <el-table-column prop="outPrice" label="出库金额 (元)" />
         <el-table-column prop="profitLossNum" label="盈亏数量 ">
           <template slot-scope="{ row, column, $index }">
             {{ row.profitLossNum }}
-            {{ row.profitLossNum > 0 ? row.unitName : '' }}
+            {{ row.unitName }}
           </template>
         </el-table-column>
+        <el-table-column prop="profitLossPrice" label="盈亏金额" />
         <!-- <el-table-column
-          prop="changePrice"
-          label="调整单价"
-        />
-        <el-table-column
           prop="changeAmount"
           label="调整金额"
         /> -->
         <el-table-column prop="endNum" label="期末数量 ">
           <template slot-scope="{ row, column, $index }">
-            {{ row.endNum }} {{ row.endNum > 0 ? row.unitName : '' }}
+            {{ row.endNum }} {{ row.unitName }}
           </template>
         </el-table-column>
         <!-- <el-table-column
@@ -306,12 +303,12 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
 
       const data = {
-        maxResultCount: this.currentPage + 15,
-        skipCount: this.currentPage,
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage,
         goodsName: this.goodsName,
         month: this.gettiem(this.time, 1)
       }
@@ -348,9 +345,9 @@ export default {
      */
     handleCurrentChange(val) {
       this.morecondition = false
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /** 列表操作 */
@@ -383,18 +380,14 @@ export default {
         maxResultCount: 1000,
         skipCount: 0,
         goodsName: this.goodsName,
-        beginTime: this.gettiem(this.time[0], 1),
-        endTime: this.gettiem(this.time[1])
+        month: this.gettiem(this.time, 1)
       }
       if (this.categoryName) {
         data.goodsCategoryId = this.categoryName
       }
       DownloadTotalInventoryExcel(data).then((res) => {
-        const blob = new Blob([res], {
-          type: ''
-        })
         downloadFileWithBuffer(
-          blob,
+          res,
           '',
           'application/vnd.ms-excel;charset=UTF-8'
         )
@@ -444,51 +437,50 @@ export default {
   color: #4f81fc;
   cursor: pointer;
 }
-.morecondition1{
+.morecondition1 {
   align-items: baseline;
-      position: absolute;
-    z-index: 9;
-    background: #fff;
-    width: 100%;
-    border: 1px solid #e6e6e6;
-    top:0px
+  position: absolute;
+  z-index: 9;
+  background: #fff;
+  width: 100%;
+  border: 1px solid #e6e6e6;
+  top: 0px;
+}
+.morecondition2 {
+  width: 100%;
+  padding: 0px 0 8px 8px;
+  text-align: center;
+  .main-table-header-button {
+    float: none !important;
   }
-  .morecondition2{
-    width: 100%;
-    padding: 0px 0 8px 8px;
-    text-align: center;
-    .main-table-header-button{
-      float: none !important;
-    }
-  }
-.morecondition{
-    display: flex;
-    padding: 20px 20px 0px 20px;
-    flex-wrap: wrap;
-    -webkit-box-pack: start;
-    justify-content: flex-start;
-    >div{
-      margin-bottom: 10px;
+}
+.morecondition {
+  display: flex;
+  padding: 20px 20px 0px 20px;
+  flex-wrap: wrap;
+  -webkit-box-pack: start;
+  justify-content: flex-start;
+  > div {
+    margin-bottom: 10px;
     margin-right: 1.5%;
     width: 31.33%;
     display: flex;
     -webkit-box-align: center;
     align-items: center;
-    >div{
+    > div {
       width: 100%;
     }
-      label{
-        // width: 80px;
-    display: inline-block;
-    text-align: right;
-      }
-      label:after {
-    content: " ";
-    position: relative;
-    top: -0.5px;
-    margin: 0 8px 0 2px;
-}
+    label {
+      // width: 80px;
+      display: inline-block;
+      text-align: right;
     }
-
+    label:after {
+      content: ' ';
+      position: relative;
+      top: -0.5px;
+      margin: 0 8px 0 2px;
+    }
+  }
 }
 </style>

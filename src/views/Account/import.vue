@@ -62,6 +62,12 @@
         :class="{ 'is-hidden': !showCancel }" @click="closeView"
       >{{ flag==3?'关闭':'取消' }}</el-button
       >
+      <el-button
+        v-if="mbxz"
+        :class="{ 'is-hidden': !showCancel }"
+        @click="DownloadGoodsInfoExcel"
+      >模板下载</el-button
+      >
       <el-button v-if="flag!=3" :disabled="flag" type="primary" @click="uploads">{{
         sureTitle
       }}</el-button>
@@ -70,6 +76,7 @@
 </template>
 
 <script>
+import { downloadFileWithBuffer } from '@/utils'
 import {
   userImportTemplateAPI,
   userErrorExcelDownAPI,
@@ -84,6 +91,10 @@ export default {
   name: 'BulkImportUser',
   components: {},
   props: {
+    mbxz: {
+      type: String,
+      default: ''
+    },
     show: {
       type: Boolean,
       default: false
@@ -97,6 +108,10 @@ export default {
     url: {
       type: String,
       default: ''
+    },
+    importCategory: {
+      type: String,
+      default: 'Company'
     }
   },
   data() {
@@ -135,8 +150,12 @@ export default {
     },
     /** 附件上传 */
     fileUpload(val) {
-      console.log(val, 555)
-      if (val.file.type != 'application/vnd.ms-excel') {
+      debugger
+      window.valqwe = val
+      if (val.file.name.indexOf('.xlsx') == -1) {
+        this.$message.error('请上传xlsx格式文件')
+        return
+      } else if (val.file.type.indexOf('application/vnd.') == -1) {
         this.$message.error('请上传xlsx格式文件')
         return
       }
@@ -195,9 +214,15 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       }).then(res => {
+        this.$emit('success', 0)
         this.loading = false
-        ImportLogPageAysnc({ 'maxResultCount': 20, 'skipCount': 0 }).then(res => {
-          debugger
+        if (res.data.length > 0) {
+          this.$message.error(res.data.join())
+        }
+        if (res.success == false) {
+          this.$message.error(res.msg)
+        }
+        ImportLogPageAysnc({ 'maxResultCount': 20, 'skipCount': 0, importCategory: this.importCategory }).then(res => {
           this.list = res.items
           this.flag = 3
         })
@@ -257,6 +282,23 @@ export default {
         this.stepList[0].status = 'finish'
       }
       event.target.value = ''
+    },
+    DownloadGoodsInfoExcel() {
+      return request({
+        url: this.mbxz,
+        method: 'post',
+        responseType: 'arraybuffer',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((res) => {
+        this.loading = false
+        downloadFileWithBuffer(res).then((res) => {
+          debugger
+          this.list = res.items
+          this.flag = 3
+        })
+      })
     },
 
     /**

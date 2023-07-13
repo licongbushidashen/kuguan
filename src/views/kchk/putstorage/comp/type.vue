@@ -50,7 +50,7 @@
           show-overflow-tooltip
           type="index"
           width="80"
-          label="序号">
+          label="选择">
 
           <template slot-scope="{ row, column, $index}">
             <span class="status-name">
@@ -301,13 +301,14 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      if (this.p == '经费卡号') {
-        this.currentPage = val
-      } else {
-        this.currentPage = x ? x * this.pageSize : x
-      }
-      this.Pagelist()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      // if (this.p == '经费卡号') {
+      //   this.currentPage = val
+      // } else {
+      //   this.currentPage = x ? x * this.pageSize : x
+      // }
+      this.Pagelist(x)
     },
     changeParam(param) {
       return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
@@ -319,9 +320,10 @@ export default {
       this.orderCategory = null
       this.startTime = []
     },
-    Pagelist() {
+    Pagelist(x) {
+      debugger
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
+      const data = { 'maxResultCount': this.pageSize, 'skipCount': x || this.currentPage, searchKey: this.inputContent }
       if (this.name == 'goods') {
         data.categoryId = this.objs.typeId
       }
@@ -361,7 +363,6 @@ export default {
         })
       } else {
         if (this.p == '经费卡号') {
-          debugger
           this.currentPage == 0 ? this.currentPage = 1 : this.currentPage
           data.maxResultCount = 15
           data.skipCount = this.currentPage

@@ -55,8 +55,12 @@ var httpAuto = ''
 if (process.env.NODE_ENV === 'production') {
   // https = 'https://wms.demo.wy5u.com'
   // httpAuto = 'https://wms-auth.demo.wy5u.com'
-  https = 'https://wms-test.zhejianglab.com'
-  httpAuto = 'https://wms-auth-test.zhejianglab.com'
+
+  https = 'https://wms.zhejianglab.com'
+  httpAuto = 'https://wms-auth.zhejianglab.com'
+
+  // https = 'https://wms-test.zhejianglab.com'
+  // httpAuto = 'https://wms-auth-test.zhejianglab.com'
 } else {
   https = 'https://wms.demo.wy5u.com'
   // https = 'http://identity.zisu.edu.cn'
@@ -134,7 +138,6 @@ service.interceptors.response.use(
      * code为非20000是抛错 可结合自己业务进行修改
      */
     const res = response.data
-
     if (response.status === 200 && response.config.responseType === 'blob') {
       // 文件类型特殊处理
       if (
@@ -158,6 +161,8 @@ service.interceptors.response.use(
         fr.readAsText(resultBlob)
       }
       // eslint-disable-next-line no-constant-condition
+    } else if (response.status === 200 && response.config.responseType === 'arraybuffer') {
+      return response
     } else {
       return res
     }

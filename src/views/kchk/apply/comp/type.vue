@@ -308,16 +308,16 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.Pagelist()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.Pagelist(x)
     },
     changeParam(param) {
       return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
     },
-    Pagelist() {
+    Pagelist(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputContent }
+      const data = { 'maxResultCount': this.pageSize , 'skipCount': x || this.currentPage, searchKey: this.inputContent }
       if (this.name == 'gldj1' || this.name == 'gldj2') {
         if (this.name == 'gldj1') {
           data.isOutbound = false

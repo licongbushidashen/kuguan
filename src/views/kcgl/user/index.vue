@@ -102,7 +102,7 @@
           @current-change="handleCurrentChange"/>
       </div>
     </div>
-    <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList"/>
+    <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList(0)"/>
     <el-dialog :close-on-click-modal="false" :visible.sync="passwording" class="ttser" style="    width: 800px;left: 30%;   " title="重置密码">
       <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm">
         <el-form-item label="新密码：" prop="password">
@@ -211,9 +211,9 @@ export default {
     changeParam(param) {
       return JSON.stringify(param).replace(/:/g, '=').replace(/,/g, '&').replace(/{/g, '?').replace(/}/g, '').replace(/"/g, '')
     },
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, Filter: this.inputs }
+      const data = { 'maxResultCount': this.pageSize, 'skipCount': x || this.currentPage, Filter: this.inputs }
       Pageusers(this.changeParam(data))
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
@@ -233,9 +233,14 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      if (x == 0) {
+        this.currentPage = 0
+      } else {
+        this.currentPage = val
+      }
+
+      this.getList(x)
     },
 
     /**

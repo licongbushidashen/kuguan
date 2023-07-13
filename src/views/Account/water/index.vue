@@ -26,6 +26,7 @@
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
+        <label for="">填写日期:</label>
         <el-date-picker
           v-model="time"
           type="daterange"
@@ -75,6 +76,8 @@
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
+      mbxz="/api/zjlab/WaterDispenser/WaterDispenserDownloadTemplate"
+      import-category="WaterDispenser"
       url="api/zjlab/WaterDispenser/Upload"
       @close="bulkImportShow = false"
       @success="handleCurrentChange(0)"
@@ -131,7 +134,7 @@ export default {
       obj: {},
       info: {},
 
-      time: [new Date() - 24 * 3600 * 1000 * 30, new Date()]
+      time: null
     }
   },
   computed: {
@@ -153,11 +156,15 @@ export default {
      * 导出
      */
     downs() {
-      DownloadWaterDispenserPage({ 'maxResultCount': 1000, 'skipCount': 0, beginTime: parseTime(this.time[0]), endTime: parseTime(this.time[1]) }).then(res => {
-        const blob = new Blob([res], {
-          type: ''
-        })
-        downloadFileWithBuffer(blob, '', 'application/vnd.ms-excel;charset=UTF-8')
+      DownloadWaterDispenserPage({ 'maxResultCount': 1000, 'skipCount': 0,
+        beginTime: this.time ? parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00' : null,
+        endTime: this.time ? parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59' : null
+      }
+      ).then(res => {
+        // const blob = new Blob([res], {
+        //   type: ''
+        // })
+        downloadFileWithBuffer(res, '', 'application/vnd.ms-excel;charset=UTF-8')
       })
     },
     /**
@@ -199,17 +206,19 @@ export default {
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, beginTime: parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00', endTime: parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59' }
+      const data = { 'maxResultCount': this.pageSize , 'skipCount': x || this.currentPage,
+        beginTime: this.time ? parseTime(this.time[0], '{y}-{m}-{d}') + ' 00:00:00' : null,
+        endTime: this.time ? parseTime(this.time[1], '{y}-{m}-{d}') + ' 23:59:59' : null }
       WaterDispenserGetPage(data)
         .then(res => {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
             res.items[i].checked = false
-            res.items[i].fillingDate = parseTime(res.items[i].fillingDate, '{y}-{m}-{d} {h}:{m}')
-            res.items[i].installationDate = parseTime(res.items[i].installationDate, '{y}-{m}-{d} {h}:{m}')
-            res.items[i].maintenanceDate = parseTime(res.items[i].maintenanceDate, '{y}-{m}-{d} {h}:{m}')
+            res.items[i].fillingDate = parseTime(res.items[i].fillingDate, '{y}-{m}-{d} {h}:{i}')
+            res.items[i].installationDate = parseTime(res.items[i].installationDate, '{y}-{m}-{d} {h}:{i}')
+            res.items[i].maintenanceDate = parseTime(res.items[i].maintenanceDate, '{y}-{m}-{d} {h}:{i}')
           }
           this.list = res.items
           this.total = res.totalCount
@@ -224,9 +233,9 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
 

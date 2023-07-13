@@ -3,15 +3,18 @@
     <xr-header
       icon-class="iconfont icon-danwei"
       icon-color="#2362FB"
-      label="往来单位" >
+      label="往来单位"
+    >
       <template v-slot:ft>
         <el-button
           v-if="allAuth['OrderSetting.Companys.Create']"
-          class="main-table-header-button "
+          class="main-table-header-button"
           type="primary"
           icon="el-icon-plus"
-          @click="addJurisdiction">新建</el-button>
-        <el-button
+          @click="addJurisdiction"
+        >新建</el-button
+        >
+        <!-- <el-button
           v-if="allAuth['OrderSetting.Companys.Import']"
           class="main-table-header-button "
           type=""
@@ -22,26 +25,38 @@
           class="main-table-header-button "
           type=""
           icon="iconfont icon-daochu1"
-          @click="downs">导出</el-button>
+          @click="downs">导出</el-button> -->
         <el-button
-          v-if="allAuth['OrderSetting.Companys.Export']"
-          :disabled="JSON.stringify(obj)=='{}'"
-          class="main-table-header-button "
+          v-if="allAuth['OrderSetting.Companys.Delete']"
+          :disabled="JSON.stringify(obj) == '{}'"
+          class="main-table-header-button"
           type=""
           icon="wk wk-delete"
-          @click="handleClick('delete')">删除</el-button>
+          @click="handleClick('delete')"
+        >删除</el-button
+        >
       </template>
     </xr-header>
     <div class="main-body">
       <div class="main-table-header">
-        <el-input v-model="inputs" style="width:200px;padding: 10px 0px 0px 10px;" placeholder="请输入单位名称">
-          <el-button slot="append" icon="el-icon-search" @click="handleCurrentChange(0)"/>
+        <el-input
+          v-model="inputs"
+          style="width: 200px; padding: 10px 0px 0px 10px"
+          placeholder="请输入单位名称"
+        >
+          <el-button
+            slot="append"
+            icon="el-icon-search"
+            @click="handleCurrentChange(0)"
+          />
         </el-input>
         <el-button
           v-if="allAuth['OrderSetting.Companys.CompanyCategorys']"
-          class="main-table-header-button xr-btn--orange  "
+          class="main-table-header-button xr-btn--orange"
           type="primary"
-          @click="addtype">单位类型管理</el-button>
+          @click="addtype"
+        >单位类型管理</el-button
+        >
       </div>
       <el-table
         v-loading="loading"
@@ -50,15 +65,16 @@
         :height="tableHeight"
         class="main-table"
         highlight-current-row
-
-        @row-click="handleRowClick">
+        @row-click="handleRowClick"
+      >
         <el-table-column
           show-overflow-tooltip
           type="index"
           width="50"
-          label="序号">
+          label="序号"
+        >
           <template slot="header" slot-scope="scope">
-            <div style="text-align: center; display: block;">
+            <div style="text-align: center; display: block">
               <el-checkbox
                 v-model="checkedAll"
                 :disabled="!list || !list.length"
@@ -66,16 +82,15 @@
               />
             </div>
           </template>
-          <template slot-scope="{ row, column, $index}">
+          <template slot-scope="{ row, column, $index }">
             <span class="status-name">
               <span
                 class="index"
-                style="text-align: center; display: block;"
+                style="text-align: center; display: block"
                 @mouseenter="row.hover = true"
                 @mouseleave="row.hover = false"
               >
                 <el-checkbox
-
                   v-model="row.checked"
                   @change="onItemCheckboxChange"
                 />
@@ -83,36 +98,16 @@
                   $index+1
                 }}</span> -->
               </span>
-
             </span>
           </template>
         </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          prop="name"
-          label="单位名称"/>
+        <el-table-column show-overflow-tooltip prop="name" label="单位名称" />
 
-
-        <el-table-column
-          prop="categoryName"
-          label="类别"
-        />
-        <el-table-column
-          prop="linkman"
-          label="联系人"
-        />
-        <el-table-column
-          prop="phone"
-          label="联系方式"
-        />
-        <el-table-column
-          prop="remark"
-          label="说明"
-        />
-        <el-table-column
-          prop="creationTime"
-          label="创建时间"
-        />
+        <el-table-column prop="categoryName" label="类别" />
+        <el-table-column prop="linkman" label="联系人" />
+        <el-table-column prop="phone" label="联系方式" />
+        <el-table-column prop="remark" label="说明" />
+        <el-table-column prop="creationTime" label="创建时间" />
         <!-- <el-table-column
           prop="ean13"
           label="单位"
@@ -122,7 +117,6 @@
             <span class="buttonc" @click.stop="openwarn(row)">预警管理</span>
           </template>
         </el-table-column> -->
-
       </el-table>
       <div class="p-contianer">
         <el-pagination
@@ -133,14 +127,16 @@
           class="p-bar"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"/>
+          @current-change="handleCurrentChange"
+        />
       </div>
     </div>
-    <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList"/>
-    <Cctype :showing="typeShow"/>
+    <Ccware :showing="jurisdictionCreateShow" :info="info" @change="getList" />
+    <Cctype :showing="typeShow" />
     <!-- 批量导入 -->
     <bulk-import-user
       :show="bulkImportShow"
+      import-category="Company"
       url="/api/zjlab/Company/Upload"
       @close="bulkImportShow = false"
       @success="handleCurrentChange(0)"
@@ -149,6 +145,7 @@
 </template>
 
 <script>
+import { downloadFileWithBuffer } from '@/utils'
 import {
   CompanyPage,
   DeleteMany,
@@ -226,8 +223,8 @@ export default {
       this.warningshow = !this.warningshow
     },
     /**
-   * 全选
-   */
+     * 全选
+     */
     selectAll(e) {
       const isChecked = e
       if (isChecked) {
@@ -244,10 +241,10 @@ export default {
       this.onItemCheckboxChange()
     },
     /*
-   * 当checkbox选择change时事件
-   */
+     * 当checkbox选择change时事件
+     */
     onItemCheckboxChange() {
-      const isCheckedItems = this.list.filter(d => d.checked)
+      const isCheckedItems = this.list.filter((d) => d.checked)
       this.isCheckedItems = isCheckedItems.length
       if (isCheckedItems.length < this.list.length) {
         this.checkedAll = false
@@ -255,24 +252,34 @@ export default {
         this.checkedAll = true
       }
       this.obj = {}
-      this.list.filter((d) => d.checked).map(e => {
-        const key = e.id; const val = e.code
-        this.obj[key] = val
-        return { [key]: val }
-      })
+      this.list
+        .filter((d) => d.checked)
+        .map((e) => {
+          const key = e.id
+          const val = e.code
+          this.obj[key] = val
+          return { [key]: val }
+        })
     },
     /**
      * 获取列表数据
      */
-    getList() {
+    getList(x) {
       this.loading = true
-      const data = { 'maxResultCount': this.pageSize + this.currentPage, 'skipCount': this.currentPage, searchKey: this.inputs }
+      const data = {
+        maxResultCount: this.pageSize ,
+        skipCount: x || this.currentPage,
+        searchKey: this.inputs
+      }
       CompanyPage(data)
-        .then(res => {
+        .then((res) => {
           for (let i = 0; i < res.items.length; i++) {
             res.items[i].hover = false
             res.items[i].checked = false
-            res.items[i].creationTime = filterTimestampToFormatTime(new Date(res.items[i].creationTime).getTime(), 'YYYY-MM-DD HH:mm')
+            res.items[i].creationTime = filterTimestampToFormatTime(
+              new Date(res.items[i].creationTime).getTime(),
+              'YYYY-MM-DD HH:mm'
+            )
           }
           this.list = res.items
           this.total = res.totalCount
@@ -287,9 +294,9 @@ export default {
      * @param {*} val
      */
     handleCurrentChange(val) {
-      const x = val > 0 ? val - 1 : 0
-      this.currentPage = x ? x * this.pageSize : x
-      this.getList()
+      const x = (val > 0 ? val - 1 : 0) * this.pageSize
+      this.currentPage = val
+      this.getList(x)
     },
 
     /**
@@ -318,7 +325,7 @@ export default {
       if (column.label == '序号') {
         return
       }
-      GetInfo(row.id).then(res => {
+      GetInfo(row.id).then((res) => {
         console.log(res)
         this.info = res
         this.jurisdictionCreateShow = !this.jurisdictionCreateShow
@@ -344,8 +351,8 @@ export default {
         })
           .then(() => {
             DeleteMany(this.obj)
-              .then(res => {
-                const arr = res.data.failMsg.map(e => {
+              .then((res) => {
+                const arr = res.data.failMsg.map((e) => {
                   return e + '<br/>'
                 })
                 if (!res.data.failCount) {
@@ -358,7 +365,9 @@ export default {
                   this.$message({
                     type: 'error',
                     dangerouslyUseHTMLString: true,
-                    message: `成功删除${res.data.successCount}条，失败${res.data.failCount}条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
+                    message: `成功删除${res.data.successCount}条，失败${
+                      res.data.failCount
+                    }条，失败原因<br/>${arr.length > 0 ? arr.toString() : ''}`
                   })
                 }
                 this.getList()
@@ -377,9 +386,18 @@ export default {
      * 导出
      */
     downs() {
-      DownloadWarehouseExcel({ maxResultCount: 1000, skipCount: 0 }).then(res => {
-
-      })
+      DownloadWarehouseExcel({ maxResultCount: 1000, skipCount: 0 }).then(
+        (res) => {
+          // const blob = new Blob([res], {
+          //   type: ''
+          // })
+          downloadFileWithBuffer(
+            res,
+            '',
+            'application/vnd.ms-excel;charset=UTF-8'
+          )
+        }
+      )
     }
   }
 }
@@ -387,7 +405,7 @@ export default {
 
 <style lang="scss" scoped>
 .main {
-  height:100%;
+  height: 100%;
 
   /deep/ .xr-header {
     padding: 15px 30px;
@@ -395,7 +413,7 @@ export default {
 }
 
 .main-body {
-      // height: calc(100% - 61px);
+  // height: calc(100% - 61px);
   background-color: white;
   border-top: 1px solid $xr-border-line-color;
   border-bottom: 1px solid $xr-border-line-color;
@@ -421,8 +439,8 @@ export default {
   margin-top: 10px;
 }
 @import '../styles/table.scss';
-.buttonc{
-  color:#4f81fc;
-   cursor: pointer;
+.buttonc {
+  color: #4f81fc;
+  cursor: pointer;
 }
 </style>

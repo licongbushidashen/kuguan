@@ -1,19 +1,45 @@
 <template>
   <el-dialog :visible.sync="showDialog" title="预警设置" width="750px">
     <create-sections title="库存预警">
-      <div class="kuwaring">库存总量 <span class="ku-ap">上限</span><el-input v-model="ware.allup" placeholder="请输入"/><span>下限</span><el-input v-model="ware.alldown" placeholder="请输入"/></div>
+      <div class="kuwaring">
+        库存总量 <span class="ku-ap">上限</span
+        ><el-input v-model="ware.allup" placeholder="请输入" /><span>下限</span
+        ><el-input v-model="ware.alldown" placeholder="请输入" />
+      </div>
     </create-sections>
-
-
     <create-sections title="出库预警">
-      <div class="kuwaring">每单预警 <span class="ku-ap">上限</span><el-input v-model="ware.oneup" placeholder="请输入"/><span>下限</span><el-input v-model="ware.onedown" placeholder="请输入"/></div>
-      <div class="kuwaring">月度预警 <span class="ku-ap">上限</span><el-input v-model="ware.mouthup" placeholder="请输入"/><span>下限</span><el-input v-model="ware.mouthdown" placeholder="请输入"/></div>
-      <div class="kuwaring">季度预警 <span class="ku-ap">上限</span><el-input v-model="ware.quarterup" placeholder="请输入"/><span>下限</span><el-input v-model="ware.quarterdown" placeholder="请输入"/></div>
+      <div class="kuwaring">
+        每单预警 <span class="ku-ap">上限</span
+        ><el-input v-model="ware.oneup" placeholder="请输入" /><span>下限</span
+        ><el-input v-model="ware.onedown" placeholder="请输入" />
+      </div>
+      <div class="kuwaring">
+        月度预警 <span class="ku-ap">上限</span
+        ><el-input v-model="ware.mouthup" placeholder="请输入" /><span
+        >下限</span
+        ><el-input v-model="ware.mouthdown" placeholder="请输入" />
+      </div>
+      <div class="kuwaring">
+        季度预警 <span class="ku-ap">上限</span
+        ><el-input v-model="ware.quarterup" placeholder="请输入" /><span
+        >下限</span
+        ><el-input v-model="ware.quarterdown" placeholder="请输入" />
+      </div>
     </create-sections>
     <create-sections>
-      <mtForm :rules="fieldsRules" :field-from="aoiinfo" :field-list="fields" :is-save="isSave" @save="saveClick"/>
+      <mtForm
+        :rules="fieldsRules"
+        :field-from="aoiinfo"
+        :field-list="fields"
+        :is-save="isSave"
+        @save="saveClick"
+      />
     </create-sections>
-    <span slot="footer" class="dialog-footer" style="text-align: center !important;">
+    <span
+      slot="footer"
+      class="dialog-footer"
+      style="text-align: center !important"
+    >
       <el-button @click="showDialog = false">取 消</el-button>
       <el-button type="primary" @click="savechange">保 存</el-button>
     </span>
@@ -24,7 +50,8 @@ import { mapGetters } from 'vuex'
 import { objDeepCopy } from '@/utils'
 import {
   Getrole,
-  CreateRole
+  SetWarning,
+  BatchSetWarning
   // updataRole
 } from '@/api/kchk/goods'
 import CreateSections from '@/components/CreateSections'
@@ -51,7 +78,8 @@ export default {
       default: () => {
         return {}
       }
-    }},
+    }
+  },
 
   data() {
     return {
@@ -75,9 +103,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'userInfo'
-    ])
+    ...mapGetters(['userInfo'])
   },
   watch: {
     warningshowing: {
@@ -132,7 +158,7 @@ export default {
     handleFields(list) {
       const fieldRules = {}
       const fieldForm = {}
-      list.forEach(item => {
+      list.forEach((item) => {
         fieldRules[item.field] = this.getRules(item)
         fieldForm[item.field] = item.value
       })
@@ -146,58 +172,61 @@ export default {
       const data = {
         listDto: [
           {
-            'orderKind': 3,
-            'warningCategory': 11,
-            'upperLimit': this.ware.allup, // 上线
-            'lowerLimit': this.ware.alldown, // 下限
-            'slidingScales': 0,
-            'flag': this.aoiinfo.flag
-
+            orderKind: 3,
+            warningCategory: 11,
+            upperLimit: this.ware.allup == '' ? null : this.ware.allup, // 上线
+            lowerLimit: this.ware.alldown == '' ? null : this.ware.alldown, // 下限
+            slidingScales: 0,
+            flag: this.aoiinfo.flag
           },
           {
-            'orderKind': 3,
-            'warningCategory': 23,
-            'upperLimit': this.ware.oneup, // 上线
-            'lowerLimit': this.ware.onedown, // 下限
-            'slidingScales': 0,
-            'flag': this.aoiinfo.flag
-
+            orderKind: 3,
+            warningCategory: 23,
+            upperLimit: this.ware.oneup == '' ? null : this.ware.oneup, // 上线
+            lowerLimit: this.ware.onedown == '' ? null : this.ware.onedown, // 下限
+            slidingScales: 0,
+            flag: this.aoiinfo.flag
           },
           {
-
-            'orderKind': 3,
-            'warningCategory': 21,
-            'upperLimit': this.ware.mouthup, // 上线
-            'lowerLimit': this.ware.mouthdown, // 下限
-            'slidingScales': 0,
-            'flag': this.aoiinfo.flag
-
+            orderKind: 3,
+            warningCategory: 21,
+            upperLimit: this.ware.mouthup == '' ? null : this.ware.mouthup, // 上线
+            lowerLimit: this.ware.mouthdown == '' ? null : this.ware.mouthdown, // 下限
+            slidingScales: 0,
+            flag: this.aoiinfo.flag
           },
           {
-            'orderKind': 3,
-            'warningCategory': 22,
-            'upperLimit': this.ware.quarterup, // 上线
-            'lowerLimit': this.ware.quarterdown, // 下限
-            'slidingScales': 0,
-            'flag': this.aoiinfo.flag
-
+            orderKind: 3,
+            warningCategory: 22,
+            upperLimit: this.ware.quarterup == '' ? null : this.ware.quarterup, // 上线
+            lowerLimit:
+              this.ware.quarterdown == '' ? null : this.ware.quarterdown, // 下限
+            slidingScales: 0,
+            flag: this.aoiinfo.flag
           },
           {
-            'orderKind': 3,
-            'warningCategory': 31,
-            'upperLimit': 0, // 上线
-            'lowerLimit': 0, // 下限
-            'slidingScales': this.slidingScales ? this.slidingScales : null,
-            'flag': this.aoiinfo.flag
+            orderKind: 3,
+            warningCategory: 31,
+            upperLimit: 0, // 上线
+            lowerLimit: 0, // 下限
+            slidingScales: this.slidingScales ? this.slidingScales : null,
+            flag: this.aoiinfo.flag
           }
         ],
         ids: this.ids.length ? this.ids : [this.info.id]
-
       }
-      CreateRole(data).then(res => {
-        this.$message.success('保存成功')
-        this.showDialog = false
-      })
+      if (this.ids.length) {
+        BatchSetWarning(data).then((res) => {
+          this.$message.success('保存成功')
+          this.showDialog = false
+        })
+      } else {
+        SetWarning(data).then((res) => {
+          this.$message.success('保存成功')
+          this.showDialog = false
+        })
+      }
+
       // }
       // else {
       //   const data = [
@@ -253,7 +282,7 @@ export default {
       // }
     },
     getinfo() {
-      Getrole(this.info.id).then(res => {
+      Getrole(this.info.id).then((res) => {
         this.ware = {
           allup: null,
           alldown: null,
@@ -264,9 +293,9 @@ export default {
           quarterup: null,
           quarterdown: null
         }
-        res.length > 0 ? this.flag = true : this.flag = false
         this.alldata = res
         for (let i = 0; i < res.length; i++) {
+          this.aoiinfo.flag = res[i].flag
           if (res[i].warningCategory == 11) {
             this.ware.allup = res[i].upperLimit
             this.ware.alldown = res[i].lowerLimit
@@ -291,22 +320,22 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.kuwaring{
-      padding-left: 16px;
+.kuwaring {
+  padding-left: 16px;
 }
-.kuwaring /deep/.el-input{
-    width:200px;
-    margin:0px 20px;
-    margin-bottom:20px;
-        margin-left: 16px;
+.kuwaring /deep/.el-input {
+  width: 200px;
+  margin: 0px 20px;
+  margin-bottom: 20px;
+  margin-left: 16px;
 }
-.ku-ap{
-    margin-left: 10px;
+.ku-ap {
+  margin-left: 10px;
 }
-/deep/.el-dialog__body{
-    padding-left:50px !important ;
+/deep/.el-dialog__body {
+  padding-left: 50px !important ;
 }
-/deep/.el-dialog__footer{
-    text-align: center !important;
+/deep/.el-dialog__footer {
+  text-align: center !important;
 }
 </style>
